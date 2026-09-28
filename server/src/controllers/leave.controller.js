@@ -1,6 +1,6 @@
 const leaveService = require("../services/leave.service");
 const authorizationService = require("../services/authorization.service");
-const { Company } = require("../models");
+const { Company, LeaveRequest } = require("../models");
 
 // Employer Types
 exports.getCompanyLeaveTypes = async (req, res, next) => {
@@ -122,7 +122,9 @@ exports.deleteLeaveType = async (req, res, next) => {
 // Employee Requests
 exports.getMyLeaveRequests = async (req, res, next) => {
   try {
-    const requests = await leaveService.getMyLeaveRequests(req.user.id);
+    const { companyId } = req.query;
+    if (companyId && !await require("../services/employment.service").hasActiveEmployment(req.user.id, companyId)) return res.status(403).json({ success: false, message: "No active employment for this company" });
+    const requests = await leaveService.getMyLeaveRequests(req.user.id, companyId);
     res.json({ success: true, data: requests });
   } catch (error) {
     next(error);
@@ -131,7 +133,9 @@ exports.getMyLeaveRequests = async (req, res, next) => {
 
 exports.getMyLeaveBalance = async (req, res, next) => {
   try {
-    const balance = await leaveService.getMyLeaveBalance(req.user.id);
+    const { companyId } = req.query;
+    if (!companyId) return res.status(400).json({ success: false, message: "companyId is required" });
+    const balance = await leaveService.getMyLeaveBalance(req.user.id, companyId);
     res.json({ success: true, data: balance });
   } catch (error) {
     next(error);
@@ -194,14 +198,14 @@ exports.getCompanyLeaveRequests = async (req, res, next) => {
 exports.reviewLeaveRequest = async (req, res, next) => {
   try {
     const { id, action } = req.params; // action = approve | reject
-    const { companyId, review_note } = req.body;
-
-    const company = await Company.findByPk(companyId);
-    if (!company) {
-      const error = new Error("Company not found");
+    const { review_note } = req.body;
+    const storedRequest = await LeaveRequest.findByPk(id, { attributes: ["id", "company_id"] });
+    if (!storedRequest) {
+      const error = new Error("Leave request not found");
       error.statusCode = 404;
       throw error;
     }
+    const companyId = storedRequest.company_id;
 
     const hasPerm = await authorizationService.hasCompanyPermission(req.user, companyId, "leave.review");
     if (!hasPerm) {

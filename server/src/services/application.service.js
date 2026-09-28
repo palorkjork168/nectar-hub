@@ -10,10 +10,13 @@ const {
   EmployeeProfile,
   EmploymentRecord,
   Role,
+  Department,
+  Position,
 } = require("../models");
 const sequelize = require("../config/database");
 const authorizationService = require("./authorization.service");
 const notificationService = require("./notification.service");
+const employmentService = require("./employment.service");
 const NOTIFICATION_TYPES = require("../constants/notificationTypes");
 
 const applyForJob = async (
@@ -436,6 +439,28 @@ const hireApplicant = async (applicationId, user, hiringData = {}) => {
 
   // Execute conversion inside a managed transaction
   const conversionResult = await sequelize.transaction(async (t) => {
+    const companyId = application.Job.Company.id;
+    const existingEmployment = await employmentService.getActiveEmployment(
+      applicantUser.id,
+      companyId,
+      { transaction: t }
+    );
+
+    // Repeated hire requests are intentionally read-only: employment changes belong
+    // to a dedicated transfer/update workflow, not to hiring idempotency.
+    if (existingEmployment) {
+      return { profile: applicantUser.employeeProfile, employmentRecord: existingEmployment, isAlreadyHired: true };
+    }
+
+    const { department, position } = await employmentService.validateOrganizationAssignments(
+      companyId,
+      hiringData.departmentId,
+      hiringData.positionId,
+      t
+    );
+    const departmentId = hiringData.departmentId || position?.department_id || null;
+    const legacyDepartment = department?.name || hiringData.department || null;
+
     // 1. Ensure EMPLOYEE role exists
     let employeeRole = await Role.findOne({
       where: { name: "EMPLOYEE" },
@@ -461,50 +486,37 @@ const hireApplicant = async (applicationId, user, hiringData = {}) => {
       transaction: t,
     });
 
-    let isAlreadyHired = false;
     if (!profile) {
       profile = await EmployeeProfile.create(
         {
           user_id: applicantUser.id,
-          department: hiringData?.department || null,
+          department: legacyDepartment,
           joined_date: new Date(),
         },
         { transaction: t }
       );
-    } else {
-      isAlreadyHired = true;
-      if (hiringData?.department && !profile.department) {
+    } else if (legacyDepartment && !profile.department) {
         await profile.update(
-          { department: hiringData.department },
+          { department: legacyDepartment },
           { transaction: t }
         );
-      }
     }
 
-    // 4. Create or verify EmploymentRecord
-    const existingEmployment = await EmploymentRecord.findOne({
-      where: {
+    // 4. Create the authoritative company employment record.
+    const employmentRecord = await employmentService.createEmployment(
+      {
         user_id: applicantUser.id,
-        company_id: application.Job.Company.id,
+        company_id: companyId,
+        department_id: departmentId,
+        position_id: hiringData.positionId || null,
+        employment_type: hiringData.employmentType || application.Job.employment_type,
+        start_date: hiringData.startDate || undefined,
         status: "ACTIVE",
       },
-      transaction: t,
-    });
+      { transaction: t }
+    );
 
-    if (!existingEmployment) {
-      await EmploymentRecord.create(
-        {
-          user_id: applicantUser.id,
-          company_id: application.Job.Company.id,
-          start_date: new Date(),
-          status: "ACTIVE",
-        },
-        { transaction: t }
-      );
-    }
-
-    if (!isAlreadyHired) {
-      await notificationService.notifyUser({
+    await notificationService.notifyUser({
         userId: applicantUser.id,
         type: NOTIFICATION_TYPES.CANDIDATE_HIRED,
         title: "Employment Confirmed",
@@ -517,10 +529,9 @@ const hireApplicant = async (applicationId, user, hiringData = {}) => {
         },
         transaction: t,
         deduplicationKey: `hired_${application.id}`,
-      });
-    }
+    });
 
-    return { profile, isAlreadyHired };
+    return { profile, employmentRecord, isAlreadyHired: false };
   });
 
   // Fetch complete employee representation with refreshed roles & profile
@@ -539,9 +550,18 @@ const hireApplicant = async (applicationId, user, hiringData = {}) => {
     attributes: { exclude: ["password_hash"] },
   });
 
+  const employmentRecord = await EmploymentRecord.findByPk(conversionResult.employmentRecord.id, {
+    include: [
+      { model: Company, as: "company", attributes: ["id", "name"] },
+      { model: Department, as: "department", attributes: ["id", "name"] },
+      { model: Position, as: "position", attributes: ["id", "title", "department_id"] },
+    ],
+  });
+
   return {
     is_already_hired: conversionResult.isAlreadyHired,
     employee: refreshedUser,
+    employmentRecord,
     application: {
       id: application.id,
       job_id: application.job_id,

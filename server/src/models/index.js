@@ -22,6 +22,7 @@ const EmploymentRecord = require("./EmploymentRecord");
 const LeaveType = require("./LeaveType");
 const LeaveRequest = require("./LeaveRequest");
 const Notification = require("./Notification");
+const WorkSchedule = require("./WorkSchedule");
 
 // User Role Many-to-Many
 User.belongsToMany(Role, {
@@ -203,6 +204,12 @@ Attendance.belongsTo(User, {
   foreignKey: "user_id",
   as: "user",
 });
+Company.hasMany(Attendance, { foreignKey: "company_id", as: "attendances" });
+Attendance.belongsTo(Company, { foreignKey: "company_id", as: "company" });
+EmploymentRecord.hasMany(Attendance, { foreignKey: "employment_record_id", as: "attendances" });
+Attendance.belongsTo(EmploymentRecord, { foreignKey: "employment_record_id", as: "employmentRecord" });
+WorkSchedule.hasMany(Attendance, { foreignKey: "work_schedule_id", as: "attendances" });
+Attendance.belongsTo(WorkSchedule, { foreignKey: "work_schedule_id", as: "schedule" });
 
 // Interview
 Application.hasMany(Interview, {
@@ -298,6 +305,27 @@ EmploymentRecord.belongsTo(Position, {
   as: "position",
 });
 
+// WorkSchedule
+Company.hasMany(WorkSchedule, {
+  foreignKey: "company_id",
+  as: "workSchedules",
+});
+
+WorkSchedule.belongsTo(Company, {
+  foreignKey: "company_id",
+  as: "company",
+});
+
+WorkSchedule.hasMany(EmploymentRecord, {
+  foreignKey: "work_schedule_id",
+  as: "employmentRecords",
+});
+
+EmploymentRecord.belongsTo(WorkSchedule, {
+  foreignKey: "work_schedule_id",
+  as: "workSchedule",
+});
+
 // LeaveType
 Company.hasMany(LeaveType, {
   foreignKey: "company_id",
@@ -386,4 +414,5 @@ module.exports = {
   LeaveType,
   LeaveRequest,
   Notification,
+  WorkSchedule,
 };

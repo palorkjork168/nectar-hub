@@ -1,4 +1,4 @@
-const { User, Role, Permission, CompanyUserRole, Company, Job, Application, Interview } = require("../models");
+const { User, Role, Permission, CompanyUserRole, Company, Job, Application, Interview, EmploymentRecord } = require("../models");
 
 class AuthorizationService {
   /**

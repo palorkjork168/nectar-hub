@@ -12,6 +12,8 @@ import {
   LayoutDashboard,
   Calendar,
   BarChart3,
+  Clock,
+  CalendarCheck,
 } from "lucide-react";
 import NotificationBell from "../components/notifications/NotificationBell";
 
@@ -24,6 +26,9 @@ export default function EmployerLayout() {
     { label: "Dashboard", path: "/employer/dashboard", icon: LayoutDashboard },
     { label: "Analytics", path: "/employer/analytics", icon: BarChart3 },
     { label: "Company", path: "/employer/company", icon: Building2 },
+    { label: "Employees", path: "/employer/employees", icon: Users },
+    { label: "Schedules", path: "/employer/schedules", icon: Clock },
+    { label: "Attendance", path: "/employer/attendance", icon: CalendarCheck },
     { label: "Team & Roles", path: "/employer/team", icon: Users },
     { label: "My Jobs", path: "/employer/jobs", icon: Briefcase },
     { label: "Applicants", path: "/employer/applicants", icon: Users },

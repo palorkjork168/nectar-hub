@@ -1,6 +1,5 @@
-const { User, EmployeeProfile, Role } = require("../models");
+const { User, EmployeeProfile, Role, UserRole } = require("../models");
 const sequelize = require("../config/database");
-const bcrypt = require("bcryptjs");
 
 const getAllEmployees = async () => {
   const employees = await User.findAll({
@@ -8,7 +7,7 @@ const getAllEmployees = async () => {
       {
         model: EmployeeProfile,
         as: "employeeProfile",
-        required: true,
+        required: false,
       },
       {
         model: Role,
@@ -28,7 +27,7 @@ const getEmployeeById = async (employeeId) => {
       {
         model: EmployeeProfile,
         as: "employeeProfile",
-        required: true,
+        required: false,
       },
       {
         model: Role,
@@ -48,53 +47,16 @@ const getEmployeeById = async (employeeId) => {
 };
 
 const createEmployee = async (employeeData) => {
-  const { first_name, last_name, email, password, phone, department } = employeeData;
-
-  const existingUser = await User.findOne({ where: { email } });
-  if (existingUser) {
-    const error = new Error("Email already registered");
-    error.statusCode = 409;
-    throw error;
-  }
-
-  const password_hash = await bcrypt.hash(password, 12);
-
-  const createdUserId = await sequelize.transaction(async (t) => {
-    const user = await User.create({
-      first_name,
-      last_name,
-      email,
-      password_hash,
-      phone,
-    }, { transaction: t });
-
-    await EmployeeProfile.create({
-      user_id: user.id,
-      department,
-    }, { transaction: t });
-
-    let employeeRole = await Role.findOne({
-      where: { name: "EMPLOYEE" },
-      transaction: t,
-    });
-    
-    if (!employeeRole) {
-      employeeRole = await Role.create({
-        name: "EMPLOYEE",
-        description: "Internal Employee",
-      }, { transaction: t });
-    }
-
-    await user.addRole(employeeRole, { transaction: t });
-
-    return user.id;
-  });
-
-  const newEmployee = await getEmployeeById(createdUserId);
-  return newEmployee;
+  const error = new Error(
+    "Legacy employee creation is unavailable. Create employment through a company hiring or employment workflow."
+  );
+  error.statusCode = 410;
+  throw error;
 };
 
-const updateEmployeeRole = async (employeeId, roleName) => {
+const GLOBAL_ROLE_NAMES = ["ADMIN", "JOB_SEEKER", "EMPLOYER", "EMPLOYEE"];
+
+const assignGlobalRole = async (employeeId, roleName) => {
   const user = await User.findByPk(employeeId);
   
   if (!user) {
@@ -103,17 +65,28 @@ const updateEmployeeRole = async (employeeId, roleName) => {
     throw error;
   }
 
-  let role = await Role.findOne({ where: { name: roleName } });
-  
-  if (!role) {
-    role = await Role.create({
-      name: roleName,
-    });
+  if (!GLOBAL_ROLE_NAMES.includes(roleName)) {
+    const error = new Error("Only global roles can be assigned through this endpoint");
+    error.statusCode = 400;
+    throw error;
   }
-  
-  await user.setRoles([role]);
 
-  return user;
+  const role = await Role.findOne({ where: { name: roleName } });
+
+  if (!role) {
+    const error = new Error("Role not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  await UserRole.findOrCreate({
+    where: {
+      user_id: user.id,
+      role_id: role.id,
+    },
+  });
+
+  return getEmployeeById(employeeId);
 };
 
 const updateEmployeeStatus = async (employeeId, status) => {
@@ -132,14 +105,14 @@ const updateEmployeeStatus = async (employeeId, status) => {
 };
 
 const updateEmployee = async (employeeId, updateData) => {
-  const { first_name, last_name, phone, department } = updateData;
+  const { first_name, last_name, phone } = updateData;
 
   const existingUser = await User.findByPk(employeeId, {
     include: [{ model: EmployeeProfile, as: "employeeProfile" }],
   });
 
-  if (!existingUser || !existingUser.employeeProfile) {
-    const error = new Error("Employee not found");
+  if (!existingUser) {
+    const error = new Error("User not found");
     error.statusCode = 404;
     throw error;
   }
@@ -154,9 +127,6 @@ const updateEmployee = async (employeeId, updateData) => {
       await existingUser.update(userUpdates, { transaction: t });
     }
 
-    if (department !== undefined) {
-      await existingUser.employeeProfile.update({ department }, { transaction: t });
-    }
   });
 
   return getEmployeeById(employeeId);
@@ -167,6 +137,6 @@ module.exports = {
   getEmployeeById,
   createEmployee,
   updateEmployee,
-  updateEmployeeRole,
+  assignGlobalRole,
   updateEmployeeStatus,
 };

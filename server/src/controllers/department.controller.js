@@ -5,6 +5,8 @@ const { Company } = require("../models");
 exports.getCompanyDepartments = async (req, res, next) => {
   try {
     const { companyId } = req.params;
+    const hasPermission = await authorizationService.hasCompanyPermission(req.user, companyId, "departments.view");
+    if (!hasPermission) return res.status(403).json({ success: false, message: "Not authorized to view this company's departments" });
 
     const departments = await departmentService.getCompanyDepartments(
       companyId,

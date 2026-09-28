@@ -140,3 +140,68 @@ export interface EmployeePersonalAnalyticsData {
     }[];
   };
 }
+
+export interface AttendanceKPIs {
+  totalAttendance: number;
+  completedShifts: number;
+  inProgressShifts: number;
+  onTimeCount: number;
+  lateCount: number;
+  earlyDepartureCount: number;
+  lateAndEarlyDepartureCount: number;
+  avgWorkedHours: number;
+  avgExpectedHours: number;
+  avgCompletionPercentage: number;
+}
+
+export interface AttendanceCompliance {
+  onTimeRate: number;
+  lateRate: number;
+  earlyDepartureRate: number;
+  avgLateMinutes: number;
+  avgEarlyDepartureMinutes: number;
+  avgShiftCompletionPercentage: number;
+}
+
+export interface AttendanceTrendPoint {
+  date: string;
+  total: number;
+  onTime: number;
+  late: number;
+  earlyDeparture: number;
+}
+
+export interface DepartmentAttendanceMetric {
+  id: string;
+  name: string;
+  attendanceCount: number;
+  onTimeRate: number;
+  lateCount: number;
+  earlyDepartureCount: number;
+  avgWorkedHours: number;
+  avgCompletionPercentage: number;
+}
+
+export interface ScheduleAttendanceMetric {
+  id: string;
+  name: string;
+  shiftType: string;
+  assignedEmployees: number;
+  attendanceCount: number;
+  onTimeRate: number;
+  avgLateMinutes: number;
+  avgCompletionPercentage: number;
+}
+
+export interface CompanyAttendanceAnalyticsData {
+  company: {
+    id: string;
+    name: string;
+  };
+  range: DateRange;
+  kpis: AttendanceKPIs;
+  compliance: AttendanceCompliance;
+  trends: AttendanceTrendPoint[];
+  departments: DepartmentAttendanceMetric[];
+  schedules: ScheduleAttendanceMetric[];
+}

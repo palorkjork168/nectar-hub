@@ -31,4 +31,18 @@ router.get(
   analyticsController.getMyAnalytics
 );
 
+// 4. Company Attendance & Work Schedule Analytics
+router.get(
+  "/company/:companyId/attendance",
+  requireCompanyPermission("analytics.company.view"),
+  analyticsController.getCompanyAttendanceAnalytics
+);
+
+// 5. Export Company Attendance Report (CSV)
+router.get(
+  "/company/:companyId/attendance/export",
+  requireCompanyPermission("analytics.company.view"),
+  analyticsController.exportCompanyAttendance
+);
+
 module.exports = router;

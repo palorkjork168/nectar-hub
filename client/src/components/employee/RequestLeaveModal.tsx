@@ -7,9 +7,10 @@ import { useToast } from "../../contexts/ToastContext";
 interface RequestLeaveModalProps {
   onClose: () => void;
   balance: any[];
+  companyId: string;
 }
 
-export default function RequestLeaveModal({ onClose, balance }: RequestLeaveModalProps) {
+export default function RequestLeaveModal({ onClose, balance, companyId }: RequestLeaveModalProps) {
   const queryClient = useQueryClient();
   const toast = useToast();
 
@@ -80,7 +81,7 @@ export default function RequestLeaveModal({ onClose, balance }: RequestLeaveModa
     }
 
     submitMut.mutate({
-      ...formData,
+      ...formData, companyId,
       reason: formData.reason.trim(),
     });
   };

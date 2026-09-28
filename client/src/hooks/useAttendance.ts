@@ -17,8 +17,8 @@ export function useCheckIn() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (coords: { latitude: number; longitude: number }) => {
-      const response = await api.post("/attendance/check-in", coords);
+    mutationFn: async (data: { latitude: number; longitude: number; companyId: string }) => {
+      const response = await api.post("/attendance/check-in", data);
       return response.data;
     },
     onSuccess: () => {
@@ -38,5 +38,23 @@ export function useCheckOut() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["attendance", "me"] });
     },
+  });
+}
+
+export function useCompanyAttendance(
+  companyId: string,
+  filters?: { status?: string; isLate?: boolean; userId?: string },
+  enabled: boolean = true
+) {
+  return useQuery({
+    queryKey: ["attendance", "company", companyId, filters],
+    queryFn: async () => {
+      if (!companyId) return [] as Attendance[];
+      const res = await api.get(`/attendance/company/${companyId}`, {
+        params: filters,
+      });
+      return res.data.data.attendances as Attendance[];
+    },
+    enabled: Boolean(companyId) && enabled,
   });
 }

@@ -62,7 +62,7 @@ const checkOut = async (req, res, next) => {
 
 const getMyAttendance = async (req, res, next) => {
   try {
-    const attendances = await attendanceService.getMyAttendance(req.user.id);
+    const attendances = await attendanceService.getMyAttendance(req.user.id, req.query.companyId);
     
     res.status(200).json({
       success: true,
@@ -106,10 +106,48 @@ const getEmployeeAttendance = async (req, res, next) => {
   }
 };
 
+const getCompanyAttendance = async (req, res, next) => {
+  try {
+    const { companyId } = req.params;
+    const uuidSchema = z.string().uuid();
+    if (!uuidSchema.safeParse(companyId).success) {
+      return res.status(400).json({ success: false, message: "Invalid company ID" });
+    }
+
+    const authorizationService = require("../services/authorization.service");
+    const hasShiftPerm = await authorizationService.hasCompanyPermission(
+      req.user,
+      companyId,
+      "shifts.view"
+    );
+    const hasEmpPerm = await authorizationService.hasCompanyPermission(
+      req.user,
+      companyId,
+      "employees.view"
+    );
+
+    if (!hasShiftPerm && !hasEmpPerm) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to view attendance for this company",
+      });
+    }
+
+    const attendances = await attendanceService.getCompanyAttendance(companyId, req.query);
+    res.status(200).json({
+      success: true,
+      data: { attendances },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   checkIn,
   checkOut,
   getMyAttendance,
   getAllAttendance,
   getEmployeeAttendance,
+  getCompanyAttendance,
 };

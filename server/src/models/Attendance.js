@@ -13,6 +13,8 @@ const Attendance = sequelize.define(
       type: DataTypes.UUID,
       allowNull: false,
     },
+    company_id: { type: DataTypes.UUID, allowNull: true },
+    employment_record_id: { type: DataTypes.UUID, allowNull: true },
     check_in_time: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -37,6 +39,43 @@ const Attendance = sequelize.define(
       type: DataTypes.DECIMAL(11, 8),
       allowNull: true,
     },
+    work_schedule_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
+    is_late: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    late_minutes: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    actual_hours: {
+      type: DataTypes.DECIMAL(5, 2),
+      allowNull: true,
+    },
+    completion_percentage: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    is_early_departure: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    early_departure_minutes: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    status: {
+      type: DataTypes.STRING(30),
+      allowNull: false,
+      defaultValue: "IN_PROGRESS",
+    },
   },
   {
     tableName: "attendances",
@@ -44,5 +83,14 @@ const Attendance = sequelize.define(
     underscored: true,
   }
 );
+
+Attendance.associate = (models) => {
+  if (models.WorkSchedule) {
+    Attendance.belongsTo(models.WorkSchedule, {
+      foreignKey: "work_schedule_id",
+      as: "schedule",
+    });
+  }
+};
 
 module.exports = Attendance;

@@ -7,6 +7,7 @@ const router = express.Router();
 router.use(authenticate);
 
 // Company Team Management
+router.get("/:companyId/employees", teamController.getCompanyEmployees);
 router.get("/:companyId/team", teamController.getCompanyTeam);
 router.post("/:companyId/team/roles", teamController.assignCompanyRole);
 router.delete("/:companyId/team/roles/:assignmentId", teamController.removeCompanyRole);

@@ -285,7 +285,7 @@ async function runMasterLifecycleSuite() {
     // ----------------------------------------------------
     console.log("\n--- STEP 8: Attendance Concurrency & Shift Lifecycle ---");
     // Run two simultaneous check-in requests
-    const checkInPayload = { latitude: 11.5564, longitude: 104.9282 };
+    const checkInPayload = { companyId, latitude: 11.5564, longitude: 104.9282 };
     const [c1, c2] = await Promise.all([
       apiRequest("/attendance/check-in", {
         method: "POST",
@@ -346,6 +346,7 @@ async function runMasterLifecycleSuite() {
       method: "POST",
       headers: { Authorization: `Bearer ${tokenSeeker}` },
       body: JSON.stringify({
+        companyId,
         leave_type_id: leaveTypeId,
         start_date: leaveStart,
         end_date: leaveEnd,
@@ -360,6 +361,7 @@ async function runMasterLifecycleSuite() {
       method: "POST",
       headers: { Authorization: `Bearer ${tokenSeeker}` },
       body: JSON.stringify({
+        companyId,
         leave_type_id: leaveTypeId,
         start_date: leaveStart,
         end_date: leaveEnd,

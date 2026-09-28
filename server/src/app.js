@@ -24,6 +24,8 @@ const roleRoutes = require("./routes/role.routes");
 const teamRoutes = require("./routes/team.routes");
 const notificationRoutes = require("./routes/notification.routes");
 const analyticsRoutes = require("./routes/analytics.routes");
+const employmentRoutes = require("./routes/employment.routes");
+const shiftRoutes = require("./routes/shift.routes");
 
 const app = express();
 
@@ -31,17 +33,23 @@ const app = express();
 app.use(helmet({ contentSecurityPolicy: false }));
 
 // CORS configuration (configured origin with credentials support)
-const clientOrigin = process.env.CLIENT_URL || "http://localhost:5173";
+const isProduction = process.env.NODE_ENV === "production";
+const configuredOrigins = (process.env.CLIENT_URL || "")
+  .split(",").map((origin) => origin.trim()).filter(Boolean);
+const developmentOrigins = ["http://localhost:5173", "http://127.0.0.1:5173"];
+const allowedOrigins = new Set(isProduction ? configuredOrigins : [...configuredOrigins, ...developmentOrigins]);
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, server-to-server tests)
-      if (!origin || origin === clientOrigin || origin.startsWith("http://localhost:") || origin.startsWith("http://127.0.0.1:")) {
+      // No-Origin clients (curl, Postman, server-to-server tests) are intentionally allowed.
+      if (!origin || allowedOrigins.has(origin)) {
         return callback(null, true);
       }
-      return callback(null, true); // Dev-tolerant while respecting clientOrigin in prod
+      return callback(new Error("CORS origin is not allowed"));
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -94,6 +102,7 @@ app.use("/api/companies", companyRoutes);
 // Attendance & Employees
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/employees", employeeRoutes);
+app.use("/api/employment", employmentRoutes);
 
 // Jobs, Skills, Matches, Saves
 app.use("/api/jobs", matchingRoutes);
@@ -110,6 +119,7 @@ app.use("/api/interviews", interviewRoutes);
 app.use("/api/departments", departmentRoutes);
 app.use("/api/positions", positionRoutes);
 app.use("/api/leave", leaveRoutes);
+app.use("/api/shifts", shiftRoutes);
 
 // Administration & Notifications
 app.use("/api/admin", roleRoutes);

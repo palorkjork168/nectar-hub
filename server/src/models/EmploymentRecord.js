@@ -25,6 +25,10 @@ const EmploymentRecord = sequelize.define(
       type: DataTypes.UUID,
       allowNull: true,
     },
+    work_schedule_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
     start_date: {
       type: DataTypes.DATEONLY,
       allowNull: false,

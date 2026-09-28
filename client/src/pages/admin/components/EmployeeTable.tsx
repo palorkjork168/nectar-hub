@@ -57,8 +57,7 @@ export default function EmployeeTable({ employees, onEdit, onEditRole, onView, r
       <table className="table">
         <thead>
           <tr>
-            <th>Employee</th>
-            <th>Department</th>
+            <th>User</th>
             <th>Joined Date</th>
             <th>Status</th>
             <th style={{ width: "60px", textAlign: "center" }}>Actions</th>
@@ -81,13 +80,6 @@ export default function EmployeeTable({ employees, onEdit, onEditRole, onView, r
                     <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "2px" }}>{emp.email}</div>
                   </div>
                 </div>
-              </td>
-              <td>
-                {emp.employeeProfile?.department ? (
-                  <span style={{ color: "var(--text-main)" }}>{emp.employeeProfile.department}</span>
-                ) : (
-                  <span style={{ color: "var(--text-light)" }}>Not assigned</span>
-                )}
               </td>
               <td>
                 <span style={{ color: "var(--text-muted)" }}>
@@ -121,14 +113,14 @@ export default function EmployeeTable({ employees, onEdit, onEditRole, onView, r
                         className="dropdown-item" 
                         onClick={() => { setOpenDropdownId(null); onEdit(emp); }}
                       >
-                        <Edit size={16} /> Edit Employee
+                        <Edit size={16} /> Edit Account
                       </button>
                       {onEditRole && (
                         <button 
                           className="dropdown-item" 
                           onClick={() => { setOpenDropdownId(null); onEditRole(emp); }}
                         >
-                          <Shield size={16} /> Change Role
+                          <Shield size={16} /> Add Global Role
                         </button>
                       )}
                       <button 

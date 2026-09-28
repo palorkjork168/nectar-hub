@@ -12,7 +12,7 @@ export default function AdminLayout() {
   const navItems = [
     { label: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
     { label: "Analytics", path: "/admin/analytics", icon: BarChart3 },
-    { label: "Employees", path: "/admin/employees", icon: Users },
+    { label: "Users", path: "/admin/employees", icon: Users },
     { label: "Roles & Permissions", path: "/admin/roles", icon: ShieldCheck },
   ];
 

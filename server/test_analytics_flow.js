@@ -263,6 +263,8 @@ async function runAnalyticsTestSuite() {
     const session1Out = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 16, 0, 0);
     await Attendance.create({
       user_id: cand1.id,
+      company_id: companyA.id,
+      employment_record_id: empRecord1.id,
       check_in_time: session1In,
       check_out_time: session1Out,
       check_in_lat: 11.5564,
@@ -274,6 +276,8 @@ async function runAnalyticsTestSuite() {
     const session2Out = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 13, 0, 0);
     await Attendance.create({
       user_id: cand4.id,
+      company_id: companyA.id,
+      employment_record_id: empRecord2.id,
       check_in_time: session2In,
       check_out_time: session2Out,
       check_in_lat: 11.5564,

@@ -62,9 +62,9 @@ class LeaveService {
   }
 
   // Leave Requests - Employee
-  async getMyLeaveRequests(userId) {
+  async getMyLeaveRequests(userId, companyId) {
     return await LeaveRequest.findAll({
-      where: { user_id: userId },
+      where: { user_id: userId, ...(companyId ? { company_id: companyId } : {}) },
       include: [
         {
           model: LeaveType,
@@ -76,24 +76,18 @@ class LeaveService {
     });
   }
 
-  async getMyLeaveBalance(userId) {
-    // Determine user's active company
-    const employment = await EmploymentRecord.findOne({
-      where: { user_id: userId, status: "ACTIVE" },
-    });
-
-    if (!employment) {
-      return [];
-    }
+  async getMyLeaveBalance(userId, companyId) {
+    const employment = await EmploymentRecord.findOne({ where: { user_id: userId, company_id: companyId, status: "ACTIVE" } });
+    if (!employment) { const error = new Error("You do not have active employment with this company"); error.statusCode = 403; throw error; }
 
     const leaveTypes = await LeaveType.findAll({
-      where: { company_id: employment.company_id, is_active: true },
+      where: { company_id: companyId, is_active: true },
     });
 
     const approvedRequests = await LeaveRequest.findAll({
       where: {
         user_id: userId,
-        company_id: employment.company_id,
+        company_id: companyId,
         status: "APPROVED",
       },
     });
@@ -125,14 +119,8 @@ class LeaveService {
   }
 
   async createLeaveRequest(userId, data) {
-    const employmentWhere = { user_id: userId, status: "ACTIVE" };
-    if (data.company_id) {
-      employmentWhere.company_id = data.company_id;
-    }
-
-    const employment = await EmploymentRecord.findOne({
-      where: employmentWhere,
-    });
+    const companyId = data.companyId || data.company_id;
+    const employment = await EmploymentRecord.findOne({ where: { user_id: userId, company_id: companyId, status: "ACTIVE" } });
 
     if (!employment) {
       const error = new Error("You do not have an active employment record");
@@ -142,7 +130,7 @@ class LeaveService {
 
 
     const leaveType = await LeaveType.findOne({
-      where: { id: data.leave_type_id, company_id: employment.company_id },
+      where: { id: data.leave_type_id, company_id: companyId, is_active: true },
     });
 
     if (!leaveType) {
@@ -155,6 +143,7 @@ class LeaveService {
     const overlaps = await LeaveRequest.count({
       where: {
         user_id: userId,
+        company_id: companyId,
         status: { [Op.in]: ["PENDING", "APPROVED"] },
         start_date: { [Op.lte]: data.end_date },
         end_date: { [Op.gte]: data.start_date },
@@ -170,7 +159,7 @@ class LeaveService {
     const leaveRequest = await LeaveRequest.create({
       ...data,
       user_id: userId,
-      company_id: employment.company_id,
+      company_id: companyId,
     });
 
     try {

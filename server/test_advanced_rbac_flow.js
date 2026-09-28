@@ -344,6 +344,7 @@ async function runAdvancedRBACTests() {
       method: "POST",
       headers: { Authorization: `Bearer ${tokenUserX}` },
       body: JSON.stringify({
+        companyId: companyB.id,
         company_id: companyB.id,
         leave_type_id: leaveTypeB.id,
         start_date: "2026-10-01",

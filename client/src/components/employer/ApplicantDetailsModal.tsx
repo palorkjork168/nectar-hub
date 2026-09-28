@@ -593,6 +593,7 @@ export default function ApplicantDetailsModal({
           candidateEmail={applicant?.email || ""}
           jobTitle={application?.Job?.title}
           companyName={application?.Job?.Company?.name}
+          companyId={application?.Job?.Company?.id}
           onClose={() => setHireModalOpen(false)}
           onHired={() => {
             queryClient.invalidateQueries({ queryKey: ["applicantDetails", applicationId] });

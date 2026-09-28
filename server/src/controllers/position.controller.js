@@ -5,6 +5,8 @@ const { Company } = require("../models");
 exports.getCompanyPositions = async (req, res, next) => {
   try {
     const { companyId } = req.params;
+    const hasPermission = await authorizationService.hasCompanyPermission(req.user, companyId, "positions.view");
+    if (!hasPermission) return res.status(403).json({ success: false, message: "Not authorized to view this company's positions" });
     const positions = await positionService.getCompanyPositions(companyId);
 
     res.json({
@@ -19,6 +21,10 @@ exports.getCompanyPositions = async (req, res, next) => {
 exports.getDepartmentPositions = async (req, res, next) => {
   try {
     const { departmentId } = req.params;
+    const department = await require("../models").Department.findByPk(departmentId, { attributes: ["company_id"] });
+    if (!department) return res.status(404).json({ success: false, message: "Department not found" });
+    const hasPermission = await authorizationService.hasCompanyPermission(req.user, department.company_id, "positions.view");
+    if (!hasPermission) return res.status(403).json({ success: false, message: "Not authorized to view positions for this department" });
     const positions = await positionService.getDepartmentPositions(departmentId);
 
     res.json({

@@ -15,7 +15,6 @@ export default function EditEmployeeModal({ employee, onClose, onSuccess }: Edit
   const [firstName, setFirstName] = useState(employee.first_name || "");
   const [lastName, setLastName] = useState(employee.last_name || "");
   const [phone, setPhone] = useState(employee.phone || "");
-  const [department, setDepartment] = useState(employee.employeeProfile?.department || "");
   const [error, setError] = useState("");
 
   const updateMutation = useMutation({
@@ -23,7 +22,6 @@ export default function EditEmployeeModal({ employee, onClose, onSuccess }: Edit
       first_name: string;
       last_name: string;
       phone: string;
-      department: string;
     }) => {
       const response = await api.put(`/employees/${employee.id}`, payload);
       return response.data;
@@ -61,7 +59,6 @@ export default function EditEmployeeModal({ employee, onClose, onSuccess }: Edit
       first_name: firstName.trim(),
       last_name: lastName.trim(),
       phone: phone.trim(),
-      department: department.trim(),
     });
   };
 
@@ -70,7 +67,7 @@ export default function EditEmployeeModal({ employee, onClose, onSuccess }: Edit
       <div className="modal-content" style={{ maxWidth: "500px" }}>
         <div className="modal-header">
           <div>
-            <h2 style={{ margin: "0 0 0.25rem 0", fontSize: "1.25rem" }}>Edit Employee</h2>
+            <h2 style={{ margin: "0 0 0.25rem 0", fontSize: "1.25rem" }}>Edit Account</h2>
             <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.875rem" }}>
               Update profile details for {employee.first_name} {employee.last_name}
             </p>
@@ -138,16 +135,6 @@ export default function EditEmployeeModal({ employee, onClose, onSuccess }: Edit
               />
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Department</label>
-              <input
-                type="text"
-                className="input-field"
-                placeholder="e.g. Engineering, Sales, HR"
-                value={department}
-                onChange={(e) => setDepartment(e.target.value)}
-              />
-            </div>
           </div>
 
           <div className="modal-footer">

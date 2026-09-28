@@ -41,6 +41,9 @@ import Interviews from "./pages/employer/Interviews";
 import HRDashboard from "./pages/employer/HRDashboard";
 import LeaveRequests from "./pages/employer/LeaveRequests";
 import CompanyTeam from "./pages/employer/CompanyTeam";
+import CompanyEmployees from "./pages/employer/CompanyEmployees";
+import WorkSchedules from "./pages/employer/WorkSchedules";
+import CompanyAttendance from "./pages/employer/CompanyAttendance";
 import Notifications from "./pages/notifications/Notifications";
 
 
@@ -98,6 +101,9 @@ function App() {
                 <Route path="/employer/analytics" element={<EmployerAnalytics />} />
                 <Route path="/employer/company" element={<CompanyProfile />} />
                 <Route path="/employer/team" element={<CompanyTeam />} />
+                <Route path="/employer/employees" element={<CompanyEmployees />} />
+                <Route path="/employer/schedules" element={<WorkSchedules />} />
+                <Route path="/employer/attendance" element={<CompanyAttendance />} />
                 <Route path="/employer/jobs" element={<MyJobs />} />
                 <Route path="/employer/jobs/new" element={<CreateJob />} />
                 <Route path="/employer/jobs/:id/edit" element={<EditJob />} />

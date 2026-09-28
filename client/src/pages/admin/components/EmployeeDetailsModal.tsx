@@ -1,5 +1,5 @@
 import type { Employee } from "../../../types/employee";
-import { X, Mail, Building, Clock, Shield } from "lucide-react";
+import { X, Mail, Clock, Shield } from "lucide-react";
 
 interface EmployeeDetailsModalProps {
   employee: Employee;
@@ -54,19 +54,12 @@ export default function EmployeeDetailsModal({ employee, onClose }: EmployeeDeta
               </div>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem", padding: "0.75rem", backgroundColor: "var(--bg-color)", borderRadius: "var(--radius-md)" }}>
-              <Building size={18} style={{ color: "var(--text-muted)" }} />
-              <div>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: 500 }}>Department</div>
-                <div style={{ color: "var(--text-main)" }}>{employee.employeeProfile?.department || "Not Assigned"}</div>
-              </div>
-            </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "1rem", padding: "0.75rem", backgroundColor: "var(--bg-color)", borderRadius: "var(--radius-md)" }}>
               <Shield size={18} style={{ color: "var(--text-muted)" }} />
               <div>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: 500 }}>System Role</div>
-                <div style={{ color: "var(--text-main)" }}>{employee.Roles?.[0]?.name || "EMPLOYEE"}</div>
+                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: 500 }}>Global Roles</div>
+                <div style={{ color: "var(--text-main)" }}>{employee.Roles?.map((role) => role.name).join(", ") || "None"}</div>
               </div>
             </div>
 

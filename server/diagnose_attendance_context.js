@@ -1,0 +1,4 @@
+require("dotenv").config();
+const { Attendance, EmploymentRecord } = require("./src/models");
+async function run() { const rows = await Attendance.findAll(); let full=0, partial=0, unresolved=0, resolvable=0, ambiguous=0, noMatch=0; for (const a of rows) { if (a.company_id && a.employment_record_id) full++; else if (a.company_id || a.employment_record_id) partial++; else { unresolved++; const matches=await EmploymentRecord.count({ where:{ user_id:a.user_id } }); if(matches===1) resolvable++; else if(matches>1) ambiguous++; else noMatch++; } } console.log(JSON.stringify({ total:rows.length, fully_resolved:full, partially_resolved:partial, unresolved, resolvable_unresolved:resolvable, ambiguous, no_matching_employment:noMatch },null,2)); }
+run().catch(e=>{console.error(e);process.exitCode=1;});

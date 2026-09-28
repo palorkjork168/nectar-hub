@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../services/api";
 import {
@@ -23,6 +23,10 @@ export default function Leave() {
   const toast = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<LeaveTab>("ALL");
+  const [companyId, setCompanyId] = useState("");
+  const employmentsQuery = useQuery<any[]>({ queryKey: ["myActiveEmployments"], queryFn: async () => (await api.get("/employment/me")).data.data });
+  const employments = employmentsQuery.data || [];
+  useEffect(() => { if (employments.length === 1) setCompanyId(employments[0].company_id); }, [employments]);
 
   const {
     data: balance = [],
@@ -30,12 +34,12 @@ export default function Leave() {
     isError: balanceError,
     refetch: refetchBalance,
   } = useQuery<any[]>({
-    queryKey: ["leaveBalance"],
+    queryKey: ["leaveBalance", companyId],
     queryFn: async () => {
-      const res = await api.get("/leave/balance");
+      const res = await api.get(`/leave/balance?companyId=${companyId}`);
       return res.data.data;
     },
-    staleTime: 60 * 1000,
+    enabled: Boolean(companyId), staleTime: 60 * 1000,
     retry: (failureCount, error: any) => {
       if (error?.response?.status === 404) return false;
       return failureCount < 2;
@@ -48,12 +52,12 @@ export default function Leave() {
     isError: requestsError,
     refetch: refetchRequests,
   } = useQuery<any[]>({
-    queryKey: ["myLeaveRequests"],
+    queryKey: ["myLeaveRequests", companyId],
     queryFn: async () => {
-      const res = await api.get("/leave/my");
+      const res = await api.get(`/leave/my${companyId ? `?companyId=${companyId}` : ""}`);
       return res.data.data;
     },
-    staleTime: 60 * 1000,
+    enabled: Boolean(companyId), staleTime: 60 * 1000,
     retry: (failureCount, error: any) => {
       if (error?.response?.status === 404) return false;
       return failureCount < 2;
@@ -114,6 +118,9 @@ export default function Leave() {
           <Plus size={16} /> Request Time Off
         </button>
       </div>
+      {employmentsQuery.isLoading ? <p>Loading active company employment...</p> : employments.length === 0 ? <EmptyState icon={AlertCircle} title="No active company employment found" description="Leave requests require active employment with a company." /> : <div className="form-group" style={{ maxWidth: "360px", marginBottom: "1.5rem" }}><label className="form-label">Company</label><select className="form-select" value={companyId} onChange={(e) => setCompanyId(e.target.value)}><option value="">Select a company</option>{employments.map((employment) => <option key={employment.id} value={employment.company_id}>{employment.company?.name || "Company"}</option>)}</select></div>}
+
+      {!companyId ? null : <>
 
       {/* Leave Balances Section */}
       <div style={{ marginBottom: "2.5rem" }}>
@@ -398,9 +405,10 @@ export default function Leave() {
       {isModalOpen && (
         <RequestLeaveModal
           balance={balance}
+          companyId={companyId}
           onClose={() => setIsModalOpen(false)}
         />
       )}
-    </div>
+      </>}</div>
   );
 }

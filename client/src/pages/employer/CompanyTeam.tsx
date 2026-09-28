@@ -187,7 +187,7 @@ export default function CompanyTeam() {
             </span>
           </div>
           <p style={{ color: "var(--color-text-secondary)", margin: "0.25rem 0 0 0", fontSize: "0.9375rem" }}>
-            Manage workforce members and assign company-scoped organizational roles (HR, Manager, Recruiter).
+            Manage company-scoped organizational roles (HR, Manager, Recruiter). All active workers are listed separately in Company Employees.
           </p>
         </div>
 

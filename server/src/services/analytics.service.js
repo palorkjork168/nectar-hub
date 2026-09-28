@@ -11,6 +11,7 @@ const {
   Position,
   LeaveType,
   LeaveRequest,
+  WorkSchedule,
 } = require("../models");
 const sequelize = require("../config/database");
 const { Op } = require("sequelize");
@@ -451,14 +452,7 @@ class AnalyticsService {
       }
     });
 
-    // 5. Attendance Analytics
-    // Fetch user IDs of active company employees to isolate attendance
-    const companyActiveEmployees = await EmploymentRecord.findAll({
-      where: { company_id: companyId, status: "ACTIVE" },
-      attributes: ["user_id"],
-      raw: true,
-    });
-    const companyUserIds = companyActiveEmployees.map((e) => e.user_id);
+    // 5. Attendance Analytics: historical tenant attribution comes from attendance.company_id.
 
     let attendanceMetrics = {
       checkedInToday: 0,
@@ -471,14 +465,14 @@ class AnalyticsService {
         "Lateness rate, absence rate, and productivity scores are not calculated because work shift schedules and expected hours are not modeled in the current schema.",
     };
 
-    if (companyUserIds.length > 0) {
+    {
       const todayStart = new Date();
       todayStart.setUTCHours(0, 0, 0, 0);
 
       // Checked in today count
       const checkedInToday = await Attendance.count({
         where: {
-          user_id: { [Op.in]: companyUserIds },
+          company_id: companyId,
           check_in_time: { [Op.gte]: todayStart },
         },
         distinct: true,
@@ -488,7 +482,7 @@ class AnalyticsService {
       // Currently open sessions
       const activeSessionsNow = await Attendance.count({
         where: {
-          user_id: { [Op.in]: companyUserIds },
+          company_id: companyId,
           check_out_time: null,
         },
       });
@@ -496,7 +490,7 @@ class AnalyticsService {
       // Completed sessions in date range
       const completedAttendances = await Attendance.findAll({
         where: {
-          user_id: { [Op.in]: companyUserIds },
+          company_id: companyId,
           check_out_time: { [Op.ne]: null },
           check_in_time: dateRangeFilter,
         },
@@ -523,11 +517,11 @@ class AnalyticsService {
       const sessionsOverTimeRaw = await sequelize.query(
         `SELECT to_char(date_trunc('day', check_in_time), 'YYYY-MM-DD') as date, COUNT(*)::int as count
          FROM attendances
-         WHERE user_id IN (:companyUserIds) AND check_in_time BETWEEN :fromDate AND :toDate
+         WHERE company_id = :companyId AND check_in_time BETWEEN :fromDate AND :toDate
          GROUP BY date_trunc('day', check_in_time)
          ORDER BY date ASC`,
         {
-          replacements: { companyUserIds, fromDate, toDate },
+          replacements: { companyId, fromDate, toDate },
           type: sequelize.QueryTypes.SELECT,
         }
       );
@@ -705,6 +699,353 @@ class AnalyticsService {
         })),
         balances,
       },
+    };
+  }
+
+  /**
+   * ==========================================
+   * 4. ATTENDANCE & WORK SCHEDULE ANALYTICS
+   * ==========================================
+   */
+  async getCompanyAttendanceAnalytics(companyId, query = {}) {
+    const company = await Company.findByPk(companyId);
+    if (!company) {
+      const err = new Error("Company not found");
+      err.statusCode = 404;
+      throw err;
+    }
+
+    const { fromDate, toDate, fromStr, toStr } = parseDateRange(query.from, query.to, 30);
+    const replacements = { companyId, fromDate, toDate };
+
+    let extraWhere = "";
+    if (query.status) {
+      extraWhere += " AND a.status = :status";
+      replacements.status = query.status;
+    }
+    if (query.scheduleId) {
+      extraWhere += " AND a.work_schedule_id = :scheduleId";
+      replacements.scheduleId = query.scheduleId;
+    }
+    if (query.departmentId) {
+      extraWhere += " AND er.department_id = :departmentId";
+      replacements.departmentId = query.departmentId;
+    }
+
+    // 1. Overall KPIs and Compliance Metrics
+    const [summaryRaw] = await sequelize.query(
+      `SELECT
+         COUNT(a.id)::int as total_logs,
+         COUNT(CASE WHEN a.check_out_time IS NOT NULL THEN 1 END)::int as completed_shifts,
+         COUNT(CASE WHEN a.check_out_time IS NULL THEN 1 END)::int as in_progress_shifts,
+         COUNT(CASE WHEN a.is_late = false THEN 1 END)::int as on_time_check_ins,
+         COUNT(CASE WHEN a.is_late = true THEN 1 END)::int as late_arrivals,
+         COUNT(CASE WHEN a.is_early_departure = true THEN 1 END)::int as early_departures,
+         COUNT(CASE WHEN a.is_late = true AND a.is_early_departure = true THEN 1 END)::int as late_and_early_departures,
+         COALESCE(ROUND(AVG(a.actual_hours)::numeric, 1), 0)::float as avg_worked_hours,
+         COALESCE(ROUND(AVG(ws.expected_hours)::numeric, 1), 0)::float as avg_expected_hours,
+         COALESCE(ROUND(AVG(a.completion_percentage)::numeric, 1), 0)::float as avg_completion_percentage,
+         COALESCE(ROUND(AVG(CASE WHEN a.is_late = true THEN a.late_minutes END)::numeric, 1), 0)::float as avg_late_minutes,
+         COALESCE(ROUND(AVG(CASE WHEN a.is_early_departure = true THEN a.early_departure_minutes END)::numeric, 1), 0)::float as avg_early_departure_minutes
+       FROM attendances a
+       LEFT JOIN employment_records er ON a.employment_record_id = er.id
+       LEFT JOIN work_schedules ws ON a.work_schedule_id = ws.id
+       WHERE a.company_id = :companyId
+         AND a.check_in_time BETWEEN :fromDate AND :toDate
+         ${extraWhere}`,
+      { replacements, type: sequelize.QueryTypes.SELECT }
+    );
+
+    const totalLogs = summaryRaw?.total_logs || 0;
+    const completedShifts = summaryRaw?.completed_shifts || 0;
+    const inProgressShifts = summaryRaw?.in_progress_shifts || 0;
+    const onTimeCheckIns = summaryRaw?.on_time_check_ins || 0;
+    const lateArrivals = summaryRaw?.late_arrivals || 0;
+    const earlyDepartures = summaryRaw?.early_departures || 0;
+    const lateAndEarlyDepartures = summaryRaw?.late_and_early_departures || 0;
+    const avgWorkedHours = summaryRaw?.avg_worked_hours || 0;
+    const avgExpectedHours = summaryRaw?.avg_expected_hours || 0;
+    const avgCompletionPercentage = summaryRaw?.avg_completion_percentage || 0;
+    const avgLateMinutes = summaryRaw?.avg_late_minutes || 0;
+    const avgEarlyDepartureMinutes = summaryRaw?.avg_early_departure_minutes || 0;
+
+    const onTimeRate = totalLogs > 0 ? Number(((onTimeCheckIns / totalLogs) * 100).toFixed(1)) : 0;
+    const lateRate = totalLogs > 0 ? Number(((lateArrivals / totalLogs) * 100).toFixed(1)) : 0;
+    const earlyDepartureRate = completedShifts > 0 ? Number(((earlyDepartures / completedShifts) * 100).toFixed(1)) : 0;
+
+    // 2. Attendance Trends (Daily grouped)
+    const trendsRaw = await sequelize.query(
+      `SELECT
+         to_char(date_trunc('day', a.check_in_time), 'YYYY-MM-DD') as date,
+         COUNT(a.id)::int as total,
+         COUNT(CASE WHEN a.is_late = false THEN 1 END)::int as on_time,
+         COUNT(CASE WHEN a.is_late = true THEN 1 END)::int as late,
+         COUNT(CASE WHEN a.is_early_departure = true THEN 1 END)::int as early_departure
+       FROM attendances a
+       LEFT JOIN employment_records er ON a.employment_record_id = er.id
+       WHERE a.company_id = :companyId
+         AND a.check_in_time BETWEEN :fromDate AND :toDate
+         ${extraWhere}
+       GROUP BY date_trunc('day', a.check_in_time)
+       ORDER BY date ASC`,
+      { replacements, type: sequelize.QueryTypes.SELECT }
+    );
+
+    const trends = trendsRaw.map((r) => ({
+      date: r.date,
+      total: Number(r.total || 0),
+      onTime: Number(r.on_time || 0),
+      late: Number(r.late || 0),
+      earlyDeparture: Number(r.early_departure || 0),
+    }));
+
+    // 3. Department-Level Analytics
+    const deptsRaw = await sequelize.query(
+      `SELECT
+         COALESCE(d.id::text, 'unassigned') as department_id,
+         COALESCE(d.name, 'Unassigned') as department_name,
+         COUNT(a.id)::int as attendance_count,
+         COUNT(CASE WHEN a.is_late = false THEN 1 END)::int as on_time_count,
+         COUNT(CASE WHEN a.is_late = true THEN 1 END)::int as late_count,
+         COUNT(CASE WHEN a.is_early_departure = true THEN 1 END)::int as early_departure_count,
+         COALESCE(ROUND(AVG(a.actual_hours)::numeric, 1), 0)::float as avg_worked_hours,
+         COALESCE(ROUND(AVG(a.completion_percentage)::numeric, 1), 0)::float as avg_completion_percentage
+       FROM attendances a
+       LEFT JOIN employment_records er ON a.employment_record_id = er.id
+       LEFT JOIN departments d ON er.department_id = d.id
+       WHERE a.company_id = :companyId
+         AND a.check_in_time BETWEEN :fromDate AND :toDate
+         ${extraWhere}
+       GROUP BY d.id, d.name
+       ORDER BY attendance_count DESC`,
+      { replacements, type: sequelize.QueryTypes.SELECT }
+    );
+
+    const departments = deptsRaw.map((d) => {
+      const attCount = Number(d.attendance_count || 0);
+      const onTime = Number(d.on_time_count || 0);
+      return {
+        departmentId: d.department_id,
+        departmentName: d.department_name,
+        attendanceCount: attCount,
+        onTimeCount: onTime,
+        onTimeRate: attCount > 0 ? Number(((onTime / attCount) * 100).toFixed(1)) : 0,
+        lateCount: Number(d.late_count || 0),
+        earlyDepartureCount: Number(d.early_departure_count || 0),
+        avgWorkedHours: Number(d.avg_worked_hours || 0),
+        avgCompletionPercentage: Number(d.avg_completion_percentage || 0),
+      };
+    });
+
+    // 4. Schedule-Level Analytics
+    const schedulesRaw = await sequelize.query(
+      `SELECT
+         COALESCE(ws.id::text, 'no_schedule') as schedule_id,
+         COALESCE(ws.name, 'Open / Flexible Shift') as schedule_name,
+         COUNT(a.id)::int as attendance_count,
+         COUNT(CASE WHEN a.is_late = false THEN 1 END)::int as on_time_count,
+         COUNT(CASE WHEN a.is_late = true THEN 1 END)::int as late_count,
+         COUNT(CASE WHEN a.is_early_departure = true THEN 1 END)::int as early_departure_count,
+         COALESCE(ROUND(AVG(CASE WHEN a.is_late = true THEN a.late_minutes END)::numeric, 1), 0)::float as avg_late_minutes,
+         COALESCE(ROUND(AVG(a.completion_percentage)::numeric, 1), 0)::float as avg_completion_percentage
+       FROM attendances a
+       LEFT JOIN work_schedules ws ON a.work_schedule_id = ws.id
+       LEFT JOIN employment_records er ON a.employment_record_id = er.id
+       WHERE a.company_id = :companyId
+         AND a.check_in_time BETWEEN :fromDate AND :toDate
+         ${extraWhere}
+       GROUP BY ws.id, ws.name
+       ORDER BY attendance_count DESC`,
+      { replacements, type: sequelize.QueryTypes.SELECT }
+    );
+
+    // Active employee counts per schedule in company
+    const assignedCounts = await EmploymentRecord.findAll({
+      where: { company_id: companyId, status: "ACTIVE", work_schedule_id: { [Op.ne]: null } },
+      attributes: [
+        "work_schedule_id",
+        [sequelize.fn("COUNT", sequelize.col("id")), "count"],
+      ],
+      group: ["work_schedule_id"],
+      raw: true,
+    });
+    const assignedCountMap = {};
+    assignedCounts.forEach((r) => {
+      assignedCountMap[r.work_schedule_id] = Number(r.count || 0);
+    });
+
+    const schedules = schedulesRaw.map((s) => {
+      const attCount = Number(s.attendance_count || 0);
+      const onTime = Number(s.on_time_count || 0);
+      return {
+        scheduleId: s.schedule_id,
+        scheduleName: s.schedule_name,
+        assignedEmployeesCount: assignedCountMap[s.schedule_id] || 0,
+        attendanceCount: attCount,
+        onTimeCount: onTime,
+        onTimeRate: attCount > 0 ? Number(((onTime / attCount) * 100).toFixed(1)) : 0,
+        lateCount: Number(s.late_count || 0),
+        earlyDepartureCount: Number(s.early_departure_count || 0),
+        avgLateMinutes: Number(s.avg_late_minutes || 0),
+        avgCompletionPercentage: Number(s.avg_completion_percentage || 0),
+      };
+    });
+
+    return {
+      company: { id: company.id, name: company.name },
+      range: { from: fromStr, to: toStr },
+      kpis: {
+        totalLogs,
+        completedShifts,
+        inProgressShifts,
+        onTimeCheckIns,
+        lateArrivals,
+        earlyDepartures,
+        lateAndEarlyDepartures,
+        avgWorkedHours,
+        avgExpectedHours,
+        avgCompletionPercentage,
+      },
+      compliance: {
+        onTimeRate,
+        lateRate,
+        earlyDepartureRate,
+        avgLateMinutes,
+        avgEarlyDepartureMinutes,
+        avgCompletionPercentage,
+      },
+      trends,
+      departments,
+      schedules,
+    };
+  }
+
+  /**
+   * ==========================================
+   * 5. EXPORT COMPANY ATTENDANCE (CSV)
+   * ==========================================
+   */
+  async exportCompanyAttendance(companyId, query = {}) {
+    const company = await Company.findByPk(companyId);
+    if (!company) {
+      const err = new Error("Company not found");
+      err.statusCode = 404;
+      throw err;
+    }
+
+    const { fromDate, toDate, fromStr, toStr } = parseDateRange(query.from, query.to, 30);
+    const where = {
+      company_id: companyId,
+      check_in_time: { [Op.between]: [fromDate, toDate] },
+    };
+
+    if (query.status) {
+      where.status = query.status;
+    }
+    if (query.scheduleId) {
+      where.work_schedule_id = query.scheduleId;
+    }
+
+    const employmentInclude = {
+      model: EmploymentRecord,
+      as: "employmentRecord",
+      attributes: ["id", "department_id"],
+      include: [
+        {
+          model: Department,
+          as: "department",
+          attributes: ["id", "name"],
+        },
+      ],
+    };
+
+    if (query.departmentId) {
+      employmentInclude.where = { department_id: query.departmentId };
+    }
+
+    const attendances = await Attendance.findAll({
+      where,
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "first_name", "last_name", "email"],
+        },
+        {
+          model: WorkSchedule,
+          as: "schedule",
+          attributes: ["id", "name", "start_time", "end_time", "expected_hours"],
+        },
+        employmentInclude,
+      ],
+      order: [["check_in_time", "DESC"]],
+    });
+
+    const escapeCsv = (val) => {
+      if (val === null || val === undefined) return "";
+      const str = String(val);
+      if (str.includes(",") || str.includes('"') || str.includes("\n") || str.includes("\r")) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    const headers = [
+      "Employee",
+      "Email",
+      "Department",
+      "Work Schedule",
+      "Date",
+      "Check-In",
+      "Check-Out",
+      "Late (Minutes)",
+      "Early Departure (Minutes)",
+      "Worked Hours",
+      "Expected Hours",
+      "Completion %",
+      "Status",
+    ];
+
+    const rows = attendances.map((a) => {
+      const empName = a.user ? `${a.user.first_name} ${a.user.last_name}` : "Unknown";
+      const empEmail = a.user?.email || "";
+      const deptName = a.employmentRecord?.department?.name || "Unassigned";
+      const schedName = a.schedule ? a.schedule.name : "Open Shift";
+      const dateStr = a.check_in_time ? new Date(a.check_in_time).toISOString().split("T")[0] : "";
+      const checkInStr = a.check_in_time ? new Date(a.check_in_time).toLocaleTimeString() : "";
+      const checkOutStr = a.check_out_time ? new Date(a.check_out_time).toLocaleTimeString() : "";
+      const lateMins = a.late_minutes ?? 0;
+      const earlyMins = a.early_departure_minutes ?? 0;
+      const workedHours = a.actual_hours !== null && a.actual_hours !== undefined ? Number(a.actual_hours).toFixed(1) : "";
+      const expectedHours = a.schedule?.expected_hours ? Number(a.schedule.expected_hours).toFixed(1) : "";
+      const completionPct = a.completion_percentage !== null && a.completion_percentage !== undefined ? `${a.completion_percentage}%` : "";
+      const status = a.status || "";
+
+      return [
+        escapeCsv(empName),
+        escapeCsv(empEmail),
+        escapeCsv(deptName),
+        escapeCsv(schedName),
+        escapeCsv(dateStr),
+        escapeCsv(checkInStr),
+        escapeCsv(checkOutStr),
+        escapeCsv(lateMins),
+        escapeCsv(earlyMins),
+        escapeCsv(workedHours),
+        escapeCsv(expectedHours),
+        escapeCsv(completionPct),
+        escapeCsv(status),
+      ].join(",");
+    });
+
+    const csvContent = [headers.join(","), ...rows].join("\n");
+    const sanitizedCompanyName = company.name.toLowerCase().replace(/[^a-z0-9]/g, "-");
+    const filename = `attendance-report-${sanitizedCompanyName}-${fromStr}-to-${toStr}.csv`;
+
+    return {
+      filename,
+      csvContent,
+      count: attendances.length,
     };
   }
 }

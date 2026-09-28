@@ -39,6 +39,10 @@ const defaultPermissions = [
   { name: "departments.manage", description: "Create and manage organizational departments", category: "departments" },
   { name: "positions.manage", description: "Create and manage job titles and positions", category: "positions" },
 
+  // Shifts & Schedules
+  { name: "shifts.view", description: "View company work schedules and shifts", category: "shifts" },
+  { name: "shifts.manage", description: "Create, update, and manage company work schedules", category: "shifts" },
+
   // Analytics
   { name: "analytics.platform.view", description: "View platform-wide operational analytics and trends", category: "analytics" },
   { name: "analytics.company.view", description: "View company recruitment, workforce, leave, and attendance analytics", category: "analytics" },
@@ -59,6 +63,7 @@ const rolePermissionsMap = {
     "attendance.view_own", "attendance.manage",
     "leave.request", "leave.view_own", "leave.review", "leave.policy_manage",
     "departments.manage", "positions.manage",
+    "shifts.view", "shifts.manage",
     "analytics.platform.view", "analytics.company.view", "analytics.personal.view",
     "users.manage", "roles.manage"
   ],
@@ -71,11 +76,13 @@ const rolePermissionsMap = {
     "attendance.view_own", "attendance.manage",
     "leave.request", "leave.view_own", "leave.review", "leave.policy_manage",
     "departments.manage", "positions.manage",
+    "shifts.view", "shifts.manage",
     "analytics.company.view", "analytics.personal.view"
   ],
   HR: [
     "employees.view", "employees.manage",
     "departments.manage", "positions.manage",
+    "shifts.view", "shifts.manage",
     "leave.review", "leave.policy_manage",
     "leave.request", "leave.view_own",
     "attendance.manage", "attendance.view_own",
@@ -90,6 +97,7 @@ const rolePermissionsMap = {
   ],
   MANAGER: [
     "employees.view",
+    "shifts.view",
     "leave.review",
     "attendance.view_own", "leave.request", "leave.view_own",
     "analytics.company.view", "analytics.personal.view"

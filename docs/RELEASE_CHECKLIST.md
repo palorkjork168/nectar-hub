@@ -15,7 +15,8 @@ Before releasing Sakol Universe to staging or production environments, verify ev
 ## 2. Database & Data Integrity
 - [ ] Production database accessible with valid connection credentials
 - [ ] Safe startup confirmed: `sequelize.sync({ force: true })` and `{ alter: true }` are NEVER executed in production
-- [ ] Migration strategy verified: Schema migrations applied via formal migration scripts
+- [ ] Run `cd server && npm run db:migrate` before API deployment; verify with `npm run db:migrate:status`
+- [ ] Migration strategy verified: existing schema is baseline; no force/alter sync, table recreation, or destructive reset is used
 - [ ] Automated backup schedule configured on PostgreSQL database
 - [ ] Point-in-time recovery enabled on database provider
 

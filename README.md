@@ -66,6 +66,22 @@ cd client
 npm run dev
 ```
 
+### Database migrations
+
+Existing databases are the migration baseline; migrations apply only intentional V2 changes going forward. Run migrations explicitly before deploying the API:
+
+```bash
+cd server
+npm run db:migrate
+npm run db:migrate:status
+# Revert only the most recently applied migration when its down migration is safe
+npm run db:migrate:down
+```
+
+Never use `sequelize.sync({ force: true })` or `sequelize.sync({ alter: true })`. Development retains non-destructive `sequelize.sync()` temporarily; production connects without syncing and expects migrations to be applied first.
+
+Frontend API configuration uses `client/.env` with `VITE_API_URL`. Development defaults to the local API only when unset; production uses the configured URL or same-origin `/api`.
+
 Frontend runs at `http://localhost:5173` and backend runs at `http://localhost:5000`.
 
 ---

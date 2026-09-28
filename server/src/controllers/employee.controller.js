@@ -1,6 +1,6 @@
 const employeeService = require("../services/employee.service");
 const { z } = require("zod");
-const { createEmployeeSchema, updateRoleSchema, updateStatusSchema, updateEmployeeSchema } = require("../validators/employee.validator");
+const { updateRoleSchema, updateStatusSchema, updateEmployeeSchema } = require("../validators/employee.validator");
 
 const getAllEmployees = async (req, res, next) => {
   try {
@@ -29,24 +29,14 @@ const getEmployeeById = async (req, res, next) => {
 
 const createEmployee = async (req, res, next) => {
   try {
-    const validationResult = createEmployeeSchema.safeParse(req.body);
-
-    if (!validationResult.success) {
-      const errors = validationResult.error.issues.map((issue) => ({
-        field: issue.path.join("."),
-        message: issue.message,
-      }));
-      return res.status(400).json({ success: false, message: "Validation failed", errors });
-    }
-
-    const employee = await employeeService.createEmployee(validationResult.data);
-    res.status(201).json({ success: true, message: "Employee created successfully", data: { employee } });
+    // Deliberately deprecated: company employment must be created through hiring/employment flows.
+    await employeeService.createEmployee(req.body);
   } catch (error) {
     next(error);
   }
 };
 
-const updateEmployeeRole = async (req, res, next) => {
+const assignGlobalRole = async (req, res, next) => {
   try {
     const { id } = req.params;
     
@@ -60,8 +50,8 @@ const updateEmployeeRole = async (req, res, next) => {
       return res.status(400).json({ success: false, message: validationResult.error.issues[0].message });
     }
 
-    const employee = await employeeService.updateEmployeeRole(id, validationResult.data.role);
-    res.status(200).json({ success: true, message: "Employee role updated", data: { employee } });
+    const employee = await employeeService.assignGlobalRole(id, validationResult.data.role);
+    res.status(200).json({ success: true, message: "Global role assigned", data: { employee } });
   } catch (error) {
     next(error);
   }
@@ -118,6 +108,6 @@ module.exports = {
   getEmployeeById,
   createEmployee,
   updateEmployee,
-  updateEmployeeRole,
+  assignGlobalRole,
   updateEmployeeStatus,
 };

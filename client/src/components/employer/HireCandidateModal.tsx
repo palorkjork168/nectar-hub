@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../services/api";
 import {
   X,
@@ -17,6 +17,7 @@ interface HireCandidateModalProps {
   candidateEmail: string;
   jobTitle?: string;
   companyName?: string;
+  companyId?: string;
   onClose: () => void;
   onHired?: () => void;
 }
@@ -27,17 +28,40 @@ export default function HireCandidateModal({
   candidateEmail,
   jobTitle,
   companyName,
+  companyId,
   onClose,
   onHired,
 }: HireCandidateModalProps) {
   const queryClient = useQueryClient();
-  const [department, setDepartment] = useState("");
+  const [departmentId, setDepartmentId] = useState("");
+  const [positionId, setPositionId] = useState("");
+  const [employmentType, setEmploymentType] = useState("FULL_TIME");
+  const [startDate, setStartDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [errorMsg, setErrorMsg] = useState("");
+
+  const { data: departments = [], isLoading: departmentsLoading } = useQuery<any[]>({
+    queryKey: ["departments", companyId],
+    queryFn: async () => (await api.get(`/departments/company/${companyId}`)).data.data,
+    enabled: Boolean(companyId),
+  });
+  const { data: positions = [], isLoading: positionsLoading } = useQuery<any[]>({
+    queryKey: ["positions", companyId],
+    queryFn: async () => (await api.get(`/positions/company/${companyId}`)).data.data,
+    enabled: Boolean(companyId),
+  });
+  const activeDepartments = departments.filter((department) => department.is_active !== false);
+  const activePositions = positions.filter((position) => position.is_active !== false);
+  const compatiblePositions = departmentId
+    ? activePositions.filter((position) => !position.department_id || position.department_id === departmentId)
+    : activePositions;
 
   const hireMutation = useMutation({
     mutationFn: async () => {
       const res = await api.post(`/applications/${applicationId}/hire`, {
-        department: department.trim() || undefined,
+        departmentId: departmentId || null,
+        positionId: positionId || null,
+        employmentType,
+        startDate,
       });
       return res.data;
     },
@@ -201,24 +225,48 @@ export default function HireCandidateModal({
               </div>
             </div>
 
-            {/* Department Input */}
+            {/* Structured employment fields */}
             <div className="form-group" style={{ margin: 0 }}>
               <label className="form-label" htmlFor="department" style={{ fontSize: "0.8125rem" }}>
                 Assigned Department (Optional)
               </label>
-              <input
+              <select
                 id="department"
-                type="text"
                 className="form-input"
-                placeholder="e.g. Engineering, Product, Marketing"
-                value={department}
-                onChange={(e) => setDepartment(e.target.value)}
-                maxLength={100}
-                disabled={hireMutation.isPending}
-              />
+                value={departmentId}
+                onChange={(e) => {
+                  setDepartmentId(e.target.value);
+                  if (positionId && !activePositions.some((position) => position.id === positionId && (!e.target.value || !position.department_id || position.department_id === e.target.value))) setPositionId("");
+                }}
+                disabled={hireMutation.isPending || departmentsLoading || !companyId}
+              >
+                <option value="">{departmentsLoading ? "Loading departments..." : "No department"}</option>
+                {activeDepartments.map((department) => <option key={department.id} value={department.id}>{department.name}</option>)}
+              </select>
               <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.25rem", display: "block" }}>
-                Can be updated later in Employee Management.
+                Stored on the company employment record; legacy profile text is mirrored only for compatibility.
               </span>
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label" htmlFor="position" style={{ fontSize: "0.8125rem" }}>Position (Optional)</label>
+              <select id="position" className="form-input" value={positionId} disabled={hireMutation.isPending || positionsLoading || !companyId} onChange={(e) => {
+                const selected = activePositions.find((position) => position.id === e.target.value);
+                setPositionId(e.target.value);
+                if (selected?.department_id) setDepartmentId(selected.department_id);
+              }}>
+                <option value="">{positionsLoading ? "Loading positions..." : "No position"}</option>
+                {compatiblePositions.map((position) => <option key={position.id} value={position.id}>{position.title}</option>)}
+              </select>
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label" htmlFor="employment-type" style={{ fontSize: "0.8125rem" }}>Employment Type</label>
+              <select id="employment-type" className="form-input" value={employmentType} disabled={hireMutation.isPending} onChange={(e) => setEmploymentType(e.target.value)}>
+                <option value="FULL_TIME">Full Time</option><option value="PART_TIME">Part Time</option><option value="INTERNSHIP">Internship</option><option value="CONTRACT">Contract</option><option value="FREELANCE">Freelance</option>
+              </select>
+            </div>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label" htmlFor="start-date" style={{ fontSize: "0.8125rem" }}>Start Date</label>
+              <input id="start-date" type="date" className="form-input" value={startDate} onChange={(e) => setStartDate(e.target.value)} disabled={hireMutation.isPending} required />
             </div>
           </div>
 
@@ -228,7 +276,7 @@ export default function HireCandidateModal({
               type="button"
               onClick={onClose}
               className="btn btn-secondary"
-              disabled={hireMutation.isPending}
+              disabled={hireMutation.isPending || !companyId || departmentsLoading || positionsLoading}
             >
               Cancel
             </button>

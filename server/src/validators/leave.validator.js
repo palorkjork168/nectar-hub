@@ -15,12 +15,16 @@ const leaveTypeSchema = z
 
 const leaveRequestSchema = z
   .object({
-    company_id: z.string().optional(),
-    companyId: z.string().optional(),
+    company_id: z.string().uuid().optional(),
+    companyId: z.string().uuid().optional(),
     leave_type_id: z.string().uuid(),
     start_date: z.string().min(1, "Start date is required"),
     end_date: z.string().min(1, "End date is required"),
     reason: z.string().max(1000).min(1, "Reason is required"),
+  })
+  .refine((data) => Boolean(data.company_id || data.companyId), {
+    message: "Company selection is required",
+    path: ["companyId"],
   })
   .passthrough();
 

@@ -3,11 +3,16 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useMyAttendance, useCheckIn, useCheckOut } from "../../hooks/useAttendance";
 import { usePersonalAnalytics } from "../../hooks/useAnalytics";
-import { LogOut, MapPin, Clock, Calendar, Briefcase, Loader2, AlertCircle, History } from "lucide-react";
+import { LogOut, MapPin, Clock, Calendar, Briefcase, Loader2, AlertCircle, History, Timer, AlertTriangle } from "lucide-react";
 import CheckOutDialog from "../../components/employee/CheckOutDialog";
 import EmptyState from "../../components/common/EmptyState";
 import { useToast } from "../../contexts/ToastContext";
 import NotificationBell from "../../components/notifications/NotificationBell";
+import { useQuery } from "@tanstack/react-query";
+import api from "../../services/api";
+import { useMySchedule } from "../../hooks/useWorkSchedules";
+import AttendanceStatusBadge from "../../components/attendance/AttendanceStatusBadge";
+import ShiftCompletionProgress from "../../components/attendance/ShiftCompletionProgress";
 
 export default function EmployeeDashboard() {
   const { user, logout, isEmployee } = useAuth();
@@ -21,6 +26,11 @@ export default function EmployeeDashboard() {
   const [locationStatus, setLocationStatus] = useState<string>("");
   const [isCheckOutOpen, setIsCheckOutOpen] = useState(false);
   const [currentDuration, setCurrentDuration] = useState<string>("00h 00m");
+  const [companyId, setCompanyId] = useState("");
+  const { data: employments = [] } = useQuery<any[]>({ queryKey: ["myActiveEmployments"], queryFn: async () => (await api.get("/employment/me")).data.data });
+  useEffect(() => { if (employments.length === 1) setCompanyId(employments[0].company_id); }, [employments]);
+
+  const { data: mySchedule = null } = useMySchedule(companyId || undefined);
 
   // Check if there is an active (not checked out) attendance record
   const activeAttendance = useMemo(() => {
@@ -110,7 +120,8 @@ export default function EmployeeDashboard() {
     try {
       const coords = await handleGeolocation();
       setLocationStatus("Checking in...");
-      await checkInMutation.mutateAsync(coords);
+      if (!companyId) throw new Error("Select a work company before checking in.");
+      await checkInMutation.mutateAsync({ ...coords, companyId });
       setLocationStatus("");
       toast.success("Checked in successfully!");
     } catch (error: any) {
@@ -185,6 +196,90 @@ export default function EmployeeDashboard() {
       </header>
 
       <div style={{ display: "grid", gap: "1.5rem", gridTemplateColumns: "1fr", maxWidth: "760px", margin: "0 auto" }}>
+        {/* Today's Schedule Card */}
+        <div
+          className="card"
+          style={{
+            padding: "1.5rem",
+            backgroundColor: "var(--color-surface)",
+            border: "1px solid var(--color-border)",
+            borderRadius: "var(--radius-lg)",
+            boxShadow: "var(--shadow-sm)",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+            <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <Clock size={18} style={{ color: "var(--color-primary)" }} /> Today's Schedule
+            </h3>
+            {mySchedule ? (
+              <span className="badge badge-success" style={{ fontSize: "0.75rem" }}>
+                Assigned Shift
+              </span>
+            ) : (
+              <span className="badge badge-secondary" style={{ fontSize: "0.75rem" }}>
+                Flexible Hours
+              </span>
+            )}
+          </div>
+
+          {mySchedule ? (
+            <div>
+              <div style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--color-text)", marginBottom: "0.25rem" }}>
+                {mySchedule.name}
+              </div>
+              {mySchedule.description && (
+                <div style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", marginBottom: "0.75rem" }}>
+                  {mySchedule.description}
+                </div>
+              )}
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+                  gap: "0.75rem",
+                  marginTop: "0.75rem",
+                  padding: "0.75rem 1rem",
+                  backgroundColor: "var(--color-surface-muted, #f8fafc)",
+                  borderRadius: "var(--radius)",
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "0.2rem" }}>
+                    Shift Hours
+                  </div>
+                  <div style={{ fontWeight: 600, fontSize: "0.9375rem" }}>
+                    {mySchedule.start_time.slice(0, 5)} — {mySchedule.end_time.slice(0, 5)}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "0.2rem" }}>
+                    Grace Period
+                  </div>
+                  <div style={{ fontWeight: 600, fontSize: "0.9375rem" }}>
+                    {mySchedule.grace_period_minutes} min
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "0.2rem" }}>
+                    Expected Hours
+                  </div>
+                  <div style={{ fontWeight: 600, fontSize: "0.9375rem" }}>
+                    {mySchedule.expected_hours} hours
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div style={{ color: "var(--color-text-secondary)", fontSize: "0.9375rem" }}>
+              <p style={{ margin: "0.25rem 0", fontWeight: 500 }}>No work schedule assigned</p>
+              <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
+                You have open working hours for your employment.
+              </span>
+            </div>
+          )}
+        </div>
+
         {/* Dominant Attendance Card */}
         <div
           className="card"
@@ -209,13 +304,14 @@ export default function EmployeeDashboard() {
               <p style={{ color: "var(--color-text)", marginBottom: "2rem", fontSize: "1.125rem", fontWeight: 500 }}>
                 You are currently not checked in for today's shift.
               </p>
+              {employments.length === 0 ? <p>No active company employment found.</p> : <select className="form-select" value={companyId} onChange={(e) => setCompanyId(e.target.value)} style={{ maxWidth: "320px", marginBottom: "1rem" }}><option value="">Select work company</option>{employments.map((employment) => <option key={employment.id} value={employment.company_id}>{employment.company?.name || "Company"}</option>)}</select>}
 
               <button
                 type="button"
                 onClick={handleCheckIn}
                 className="btn btn-primary btn-lg"
                 style={{ padding: "0.875rem 2.5rem", fontSize: "1.125rem" }}
-                disabled={checkInMutation.isPending || !!locationStatus}
+                disabled={!companyId || checkInMutation.isPending || !!locationStatus}
               >
                 {checkInMutation.isPending || !!locationStatus ? (
                   <>
@@ -249,6 +345,7 @@ export default function EmployeeDashboard() {
               <p style={{ color: "var(--color-text-secondary)", margin: 0, fontSize: "0.9375rem" }}>
                 Elapsed Working Time
               </p>
+              <p style={{ color: "var(--color-text-secondary)" }}>Currently checked in at <strong>{activeAttendance?.company?.name || "Legacy / Unknown Company"}</strong></p>
               <h1
                 style={{
                   fontSize: "3.25rem",
@@ -328,6 +425,122 @@ export default function EmployeeDashboard() {
             </div>
           </div>
         </div>
+
+        {/* Today's Shift Intelligence Panel */}
+        {todayAttendance && (
+          <div
+            className="card"
+            style={{
+              padding: "1.25rem 1.5rem",
+              backgroundColor: "var(--color-surface)",
+              border: "1px solid var(--color-border)",
+              borderRadius: "var(--radius-lg)",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+              <div style={{ fontSize: "0.9375rem", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                <Timer size={16} style={{ color: "var(--color-primary)" }} /> Attendance Intelligence
+              </div>
+              <AttendanceStatusBadge status={todayAttendance.status} />
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
+                gap: "0.75rem",
+                marginBottom: "1rem",
+              }}
+            >
+              <div>
+                <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>Shift</div>
+                <div style={{ fontWeight: 600, fontSize: "0.875rem" }}>
+                  {todayAttendance.schedule?.name || mySchedule?.name || "Open Shift"}
+                </div>
+                {Boolean(todayAttendance.schedule || mySchedule) && (
+                  <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
+                    {(todayAttendance.schedule || mySchedule)?.start_time.slice(0, 5)} —{" "}
+                    {(todayAttendance.schedule || mySchedule)?.end_time.slice(0, 5)}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>Punctuality</div>
+                <div
+                  style={{
+                    fontWeight: 600,
+                    fontSize: "0.875rem",
+                    color: todayAttendance.is_late ? "var(--color-danger, #ef4444)" : "var(--color-success, #10b981)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.25rem",
+                  }}
+                >
+                  {todayAttendance.is_late ? (
+                    <>
+                      <AlertTriangle size={13} /> {todayAttendance.late_minutes ?? 0}m late
+                    </>
+                  ) : todayAttendance.schedule || mySchedule ? (
+                    "On time"
+                  ) : (
+                    "Flexible"
+                  )}
+                </div>
+              </div>
+
+              {todayAttendance.check_out_time && (
+                <div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>Departure</div>
+                  <div
+                    style={{
+                      fontWeight: 600,
+                      fontSize: "0.875rem",
+                      color: todayAttendance.is_early_departure
+                        ? "var(--color-warning, #f59e0b)"
+                        : "var(--color-success, #10b981)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.25rem",
+                    }}
+                  >
+                    {todayAttendance.is_early_departure ? (
+                      <>
+                        <AlertTriangle size={13} /> {todayAttendance.early_departure_minutes ?? 0}m early
+                      </>
+                    ) : (
+                      "Full shift"
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>Worked / Expected</div>
+                <div style={{ fontWeight: 600, fontSize: "0.875rem" }}>
+                  {todayAttendance.actual_hours !== null && todayAttendance.actual_hours !== undefined
+                    ? `${Number(todayAttendance.actual_hours).toFixed(1)}h`
+                    : currentDuration}{" "}
+                  /{" "}
+                  {todayAttendance.schedule?.expected_hours
+                    ? `${todayAttendance.schedule.expected_hours}h`
+                    : mySchedule?.expected_hours
+                    ? `${mySchedule.expected_hours}h`
+                    : "8h"}
+                </div>
+              </div>
+            </div>
+
+            {todayAttendance.completion_percentage !== undefined && todayAttendance.completion_percentage !== null && (
+              <div>
+                <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "0.35rem" }}>
+                  Shift Completion
+                </div>
+                <ShiftCompletionProgress percentage={todayAttendance.completion_percentage} size="md" showLabel={true} />
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Personal Monthly Analytics Summary */}
         <div

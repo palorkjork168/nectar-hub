@@ -12,7 +12,10 @@ interface EditRoleModalProps {
 
 export default function EditRoleModal({ employee, onClose, onSuccess }: EditRoleModalProps) {
   const queryClient = useQueryClient();
-  const [role, setRole] = useState(employee.Roles?.[0]?.name || "EMPLOYEE");
+  const globalRoles = ["EMPLOYEE", "EMPLOYER", "JOB_SEEKER", "ADMIN"];
+  const currentRoles = employee.Roles?.map((currentRole) => currentRole.name) || [];
+  const assignableRoles = globalRoles.filter((globalRole) => !currentRoles.includes(globalRole));
+  const [role, setRole] = useState(assignableRoles[0] || "");
 
   const updateRoleMutation = useMutation({
     mutationFn: async (newRole: string) => {
@@ -21,7 +24,7 @@ export default function EditRoleModal({ employee, onClose, onSuccess }: EditRole
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employees"] });
-      alert("Role updated successfully!");
+      alert("Global role assigned successfully!");
       onSuccess();
     },
     onError: (error: any) => {
@@ -31,7 +34,7 @@ export default function EditRoleModal({ employee, onClose, onSuccess }: EditRole
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateRoleMutation.mutate(role);
+    if (role) updateRoleMutation.mutate(role);
   };
 
   return (
@@ -39,9 +42,9 @@ export default function EditRoleModal({ employee, onClose, onSuccess }: EditRole
       <div className="modal-content" style={{ maxWidth: "400px" }}>
         <div className="modal-header">
           <div>
-            <h2 style={{ margin: "0 0 0.25rem 0", fontSize: "1.25rem" }}>Change Role</h2>
+            <h2 style={{ margin: "0 0 0.25rem 0", fontSize: "1.25rem" }}>Add Global Role</h2>
             <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.875rem" }}>
-              Update access level for {employee.first_name} {employee.last_name}
+              Adds access without removing existing roles for {employee.first_name} {employee.last_name}
             </p>
           </div>
           <button onClick={onClose} className="btn-icon">
@@ -52,18 +55,32 @@ export default function EditRoleModal({ employee, onClose, onSuccess }: EditRole
         <form onSubmit={handleSubmit}>
           <div className="modal-body">
             <div className="form-group">
+              <label className="form-label">Current Roles</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                {currentRoles.length > 0 ? currentRoles.map((currentRole) => (
+                  <span key={currentRole} className="badge badge-gray">{currentRole}</span>
+                )) : (
+                  <span style={{ color: "var(--text-muted)", fontSize: "0.875rem" }}>No global roles assigned</span>
+                )}
+              </div>
+            </div>
+            <div className="form-group">
               <label className="form-label">
-                System Role <span className="required">*</span>
+                Add Global Role <span className="required">*</span>
               </label>
               <select
                 className="input-field"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
+                disabled={assignableRoles.length === 0}
               >
-                <option value="EMPLOYEE">Employee</option>
-                <option value="ADMIN">Admin</option>
-                <option value="JOB_SEEKER">Job Seeker</option>
-                <option value="EMPLOYER">Employer</option>
+                {assignableRoles.length === 0 ? (
+                  <option value="">All global roles are already assigned</option>
+                ) : assignableRoles.map((assignableRole) => (
+                  <option key={assignableRole} value={assignableRole}>
+                    {assignableRole.replace("_", " ")}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -74,15 +91,15 @@ export default function EditRoleModal({ employee, onClose, onSuccess }: EditRole
             </button>
             <button
               type="submit"
-              disabled={updateRoleMutation.isPending}
+              disabled={updateRoleMutation.isPending || !role}
               className="btn btn-primary"
             >
               {updateRoleMutation.isPending ? (
                 <>
-                  <Loader2 size={16} className="spinner" /> Saving...
+                  <Loader2 size={16} className="spinner" /> Adding...
                 </>
               ) : (
-                "Save Changes"
+                "Add Role"
               )}
             </button>
           </div>

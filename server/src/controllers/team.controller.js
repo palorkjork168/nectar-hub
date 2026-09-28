@@ -1,5 +1,43 @@
 const { User, Company, EmploymentRecord, Department, Position, CompanyUserRole, Role } = require("../models");
 const authorizationService = require("../services/authorization.service");
+const employmentService = require("../services/employment.service");
+
+/**
+ * Company-scoped workforce directory. Membership is defined only by an active
+ * EmploymentRecord, never by a global EMPLOYEE role or legacy profile fields.
+ */
+const getCompanyEmployees = async (req, res, next) => {
+  try {
+    const { companyId } = req.params;
+    const company = await Company.findByPk(companyId, { attributes: ["id", "name"] });
+    if (!company) return res.status(404).json({ success: false, message: "Company not found" });
+
+    const hasPermission = await authorizationService.hasCompanyPermission(req.user, companyId, "employees.view");
+    if (!hasPermission) {
+      return res.status(403).json({ success: false, message: "You do not have permission to view this company's employees" });
+    }
+
+    const records = await employmentService.getActiveCompanyEmployees(companyId);
+    const employees = records.map((record) => ({
+      employee: { user: record.user },
+      employment: {
+        id: record.id,
+        status: record.status,
+        employment_type: record.employment_type,
+        start_date: record.start_date,
+        end_date: record.end_date,
+        work_schedule_id: record.work_schedule_id,
+        workSchedule: record.workSchedule,
+      },
+      department: record.department,
+      position: record.position,
+    }));
+
+    return res.status(200).json({ success: true, data: { company, employees } });
+  } catch (error) {
+    next(error);
+  }
+};
 
 /**
  * Get company team members with department, position, and company roles
@@ -25,7 +63,7 @@ const getCompanyTeam = async (req, res, next) => {
 
     // Fetch employment records for this company
     const records = await EmploymentRecord.findAll({
-      where: { company_id: companyId },
+      where: { company_id: companyId, status: "ACTIVE" },
       include: [
         {
           model: User,
@@ -142,10 +180,18 @@ const assignCompanyRole = async (req, res, next) => {
       return res.status(404).json({ success: false, message: "Company not found" });
     }
 
-    // Verify target user exists and has employment or is part of company
+    // Workforce roles may be granted only to an active member of this company.
     const targetUser = await User.findByPk(user_id);
     if (!targetUser) {
       return res.status(404).json({ success: false, message: "Target user not found" });
+    }
+
+    const isCompanyOwner = company.owner_id === targetUser.id;
+    if (!isCompanyOwner && !await employmentService.hasActiveEmployment(targetUser.id, companyId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Target user must have active employment with this company",
+      });
     }
 
     // Verify role exists
@@ -223,6 +269,7 @@ const removeCompanyRole = async (req, res, next) => {
 };
 
 module.exports = {
+  getCompanyEmployees,
   getCompanyTeam,
   assignCompanyRole,
   removeCompanyRole,
