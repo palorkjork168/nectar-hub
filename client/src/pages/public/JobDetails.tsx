@@ -25,6 +25,7 @@ import {
   Link2,
 } from "lucide-react";
 import BackButton from "../../components/common/BackButton";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 function formatDisplayDate(dateStr?: string | Date | null, fallback = "Recently"): string {
   if (!dateStr) return fallback;
@@ -62,6 +63,8 @@ export default function JobDetails() {
     },
     enabled: !!id,
   });
+
+  useDocumentTitle(jobData ? `Nectar Hub | ${jobData.title}` : "Nectar Hub | Job Details");
 
   // 2. Fetch Job Skills
   const { data: skillsData } = useQuery({
@@ -459,7 +462,7 @@ export default function JobDetails() {
                 </p>
               ) : (
                 <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", marginBottom: "1rem" }}>
-                  A verified employer on Sakol Universe.
+                  A verified employer on Nectar Hub.
                 </p>
               )}
 

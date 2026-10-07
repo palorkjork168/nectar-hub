@@ -4,6 +4,8 @@ import { useAuth } from "../../contexts/AuthContext";
 import { Briefcase, Menu, X, LogIn, UserPlus, LogOut, LayoutDashboard } from "lucide-react";
 import NotificationBell from "../notifications/NotificationBell";
 
+import { NectarIcon } from "../brand/NectarLogo";
+
 export default function PublicNavbar() {
   const { user, isAdmin, isEmployee, isJobSeeker, isEmployer, logout } = useAuth();
   const location = useLocation();
@@ -21,11 +23,11 @@ export default function PublicNavbar() {
         {/* Brand */}
         <Link to="/" className="brand-logo" onClick={() => setMobileMenuOpen(false)}>
           <div className="brand-icon">
-            <Briefcase size={20} />
+            <NectarIcon size={20} />
           </div>
           <div className="brand-text">
-            <span className="brand-title">Sakol Universe</span>
-            <span className="brand-subtitle">Career Marketplace</span>
+            <span className="brand-title">Nectar Hub</span>
+            <span className="brand-subtitle">Workforce Platform</span>
           </div>
         </Link>
 

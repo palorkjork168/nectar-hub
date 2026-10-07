@@ -1,8 +1,16 @@
 /* ==========================================================================
-   Sakol Universe - Global Design System & Token Architecture
+   Nectar Hub - Global Design System & Token Architecture
    ========================================================================== */
 
 :root {
+  /* Brand Accent Tokens — Nectar Golden Warmth */
+  --color-nectar-gold: #f59e0b;
+  --color-nectar-amber: #d97706;
+  --color-nectar-light: #fbbf24;
+  --color-nectar-soft: rgba(245, 158, 11, 0.12);
+  --color-nectar-border: rgba(245, 158, 11, 0.3);
+  --color-nectar-glow: 0 0 20px rgba(245, 158, 11, 0.35);
+
   /* Surface & Background — Deep Obsidian & Dark Emerald */
   --color-bg: #070c09;             /* Obsidian Black Base */
   --color-bg-secondary: #0b1410;   /* Secondary Dark Slate */

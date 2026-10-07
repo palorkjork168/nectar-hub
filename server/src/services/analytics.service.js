@@ -54,7 +54,7 @@ function parseDateRange(queryFrom, queryTo, defaultDays = 30) {
 }
 
 /**
- * Calculate leave days using the established Sakol Universe formula:
+ * Calculate leave days using the established Nectar Hub formula:
  * diffDays = Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24)) + 1
  */
 function calculateLeaveDays(startDate, endDate) {

@@ -1,4 +1,4 @@
-/* public.css - Sakol Universe Public Job Portal Styling (Dark Neon Emerald Luxury Theme) */
+/* public.css - Nectar Hub Public Portal Styling (Modern Obsidian Emerald Theme) */
 
 /* Public Layout Container */
 .public-layout {
@@ -884,7 +884,7 @@
 }
 
 /* Back tilted card peeking underneath */
-.sakol-glass-card-back {
+.nectar-glass-card-back {
   position: absolute;
   inset: 0;
   border-radius: 24px;
@@ -898,7 +898,7 @@
 }
 
 /* Primary Front Frosted Glass Card */
-.sakol-glass-card-front {
+.nectar-glass-card-front {
   position: absolute;
   inset: 0;
   border-radius: 24px;
@@ -918,7 +918,7 @@
   transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
 }
 
-.sakol-glass-card-front:hover {
+.nectar-glass-card-front:hover {
   transform: rotate(0deg) scale(1.03);
   box-shadow: 0 30px 70px -10px rgba(0, 0, 0, 0.9),
               0 0 50px rgba(16, 185, 129, 0.45),

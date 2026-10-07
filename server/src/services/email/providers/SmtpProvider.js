@@ -9,8 +9,8 @@ class SmtpProvider extends EmailProvider {
     this.secure = config.secure !== undefined ? config.secure : this.port === 465;
     this.user = config.user || process.env.SMTP_USER;
     this.password = config.password || process.env.SMTP_PASSWORD;
-    this.from = config.from || process.env.EMAIL_FROM || "noreply@sakoluniverse.com";
-    this.fromName = config.fromName || process.env.EMAIL_FROM_NAME || "Sakol Universe";
+    this.from = config.from || process.env.EMAIL_FROM || "noreply@nectarhub.com";
+    this.fromName = config.fromName || process.env.EMAIL_FROM_NAME || "Nectar Hub";
 
     if (this.host && this.user && this.password) {
       try {

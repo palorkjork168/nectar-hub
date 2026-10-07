@@ -95,7 +95,7 @@ async function api(path, options = {}) {
     const welcomeEmail = mockProvider.getLastEmail();
     assert(welcomeEmail !== null, "Welcome email was dispatched to MockProvider");
     assert(welcomeEmail.to.toLowerCase() === candidateEmail.toLowerCase(), "Welcome email addressed to candidate");
-    assert(welcomeEmail.subject.includes("Welcome to Sakol Universe"), "Welcome email subject verified");
+    assert(welcomeEmail.subject.includes("Welcome to Nectar Hub"), "Welcome email subject verified");
     assert(welcomeEmail.html.includes("Bruce Wayne"), "Welcome email body contains candidate greeting");
 
     // Login candidate

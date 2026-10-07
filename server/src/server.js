@@ -36,7 +36,7 @@ const startServer = async () => {
     await seedPermissions();
 
     server = app.listen(PORT, () => {
-      console.log(`Sakol Universe API running on port ${PORT} [Mode: ${process.env.NODE_ENV || "development"}]`);
+      console.log(`Nectar Hub API running on port ${PORT} [Mode: ${process.env.NODE_ENV || "development"}]`);
     });
   } catch (error) {
     console.error("Unable to start server or connect to database:", error.message);

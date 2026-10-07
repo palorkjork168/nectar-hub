@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../services/api";
-import { Briefcase, Loader2, Lock, Mail, Phone, User, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { Loader2, Lock, Mail, Phone, User, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { NectarIcon } from "../../components/brand/NectarLogo";
 
 export default function Register() {
   const [searchParams] = useSearchParams();
@@ -108,28 +109,33 @@ export default function Register() {
           >
             <div
               style={{
-                width: "40px",
-                height: "40px",
-                borderRadius: "var(--radius-md)",
-                backgroundColor: "var(--color-primary)",
-                color: "#ffffff",
+                width: "44px",
+                height: "44px",
+                borderRadius: "12px",
+                backgroundColor: "rgba(16, 185, 129, 0.12)",
+                border: "1px solid rgba(16, 185, 129, 0.25)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                boxShadow: "0 2px 8px rgba(37, 99, 235, 0.25)",
+                boxShadow: "0 2px 12px rgba(16, 185, 129, 0.2)",
               }}
             >
-              <Briefcase size={20} />
+              <NectarIcon size={24} />
             </div>
-            <span style={{ fontSize: "1.375rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em" }}>
-              Sakol Universe
-            </span>
+            <div style={{ textAlign: "left" }}>
+              <span style={{ fontSize: "1.375rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em", display: "block", lineHeight: 1.15 }}>
+                Nectar Hub
+              </span>
+              <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--color-primary)", letterSpacing: "0.02em" }}>
+                Your Workplace, Connected.
+              </span>
+            </div>
           </Link>
           <h1 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "0 0 0.375rem", color: "var(--color-text)" }}>
-            Create an account
+            Join Nectar Hub
           </h1>
           <p style={{ color: "var(--color-text-secondary)", fontSize: "0.875rem", margin: 0 }}>
-            Join Sakol Universe to explore careers and track applications.
+            Build your career. Find opportunities. Connect with the right people.
           </p>
         </div>
 

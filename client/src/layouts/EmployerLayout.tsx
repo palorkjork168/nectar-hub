@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import NotificationBell from "../components/notifications/NotificationBell";
 import PageTransition from "../components/common/PageTransition";
+import { NectarIcon } from "../components/brand/NectarLogo";
 
 export default function EmployerLayout() {
   const { user, logout } = useAuth();
@@ -61,10 +62,10 @@ export default function EmployerLayout() {
           {/* Brand */}
           <Link to="/employer/dashboard" className="brand-logo" onClick={() => setMobileMenuOpen(false)}>
             <div className="brand-icon">
-              <Briefcase size={20} />
+              <NectarIcon size={20} />
             </div>
             <div className="brand-text">
-              <span className="brand-title">Sakol Universe</span>
+              <span className="brand-title">Nectar Hub</span>
               <span className="brand-subtitle">Employer Portal</span>
             </div>
           </Link>

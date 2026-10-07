@@ -1,19 +1,20 @@
 import { Link } from "react-router-dom";
-import { Briefcase, Globe, Shield } from "lucide-react";
+import { Globe, Shield } from "lucide-react";
+import { NectarIcon } from "../brand/NectarLogo";
 
 export default function PublicFooter() {
   return (
     <footer className="public-footer">
       <div className="footer-container">
         <div className="footer-brand">
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginBottom: "1rem" }}>
             <div className="brand-icon" style={{ width: "32px", height: "32px" }}>
-              <Briefcase size={16} />
+              <NectarIcon size={18} />
             </div>
-            <h3 style={{ margin: 0, fontSize: "1.125rem", color: "#ffffff" }}>Sakol Universe</h3>
+            <h3 style={{ margin: 0, fontSize: "1.125rem", color: "#ffffff", fontWeight: 800 }}>Nectar Hub</h3>
           </div>
           <p style={{ color: "#94a3b8", fontSize: "0.875rem", lineHeight: 1.6, maxWidth: "320px" }}>
-            The premier career and talent marketplace connecting forward-thinking companies with exceptional professionals across Cambodia and Southeast Asia.
+            The unified workforce and talent platform connecting job seekers, employers, and teams across modern workplaces.
           </p>
         </div>
 
@@ -53,7 +54,7 @@ export default function PublicFooter() {
       </div>
 
       <div className="footer-bottom">
-        <div>&copy; {new Date().getFullYear()} Sakol Universe. All rights reserved.</div>
+        <div>&copy; {new Date().getFullYear()} Nectar Hub. All rights reserved.</div>
         <div style={{ display: "flex", gap: "1.5rem" }}>
           <span>Privacy Policy</span>
           <span>Terms of Service</span>

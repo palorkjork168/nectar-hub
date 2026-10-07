@@ -297,7 +297,7 @@ async function api(path, options = {}) {
       headers: { Authorization: `Bearer ${ownerAToken}` },
       body: JSON.stringify({
         title: `Fullstack Lead V1 ${timestamp}`,
-        description: "Lead the engineering team on core platforms for Sakol Universe v1.0",
+        description: "Lead the engineering team on core platforms for Nectar Hub v1.0",
         requirements: "TypeScript, Node, React, PostgreSQL",
         location: "Bangkok",
         employment_type: "FULL_TIME",
@@ -317,7 +317,7 @@ async function api(path, options = {}) {
       method: "POST",
       headers: { Authorization: `Bearer ${seekerToken}` },
       body: JSON.stringify({
-        cover_letter: "Excited to apply for Sakol Universe v1.0 lead role!",
+        cover_letter: "Excited to apply for Nectar Hub v1.0 lead role!",
       }),
     });
     assert(applyRes.status === 201, "Candidate submitted application (201)");

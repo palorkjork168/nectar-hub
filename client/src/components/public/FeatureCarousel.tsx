@@ -65,7 +65,7 @@ const SLIDES: SlideData[] = [
     tag: "Frictionless Workflow",
     title: "1-Click Fast-Track Application Pipeline",
     description:
-      "Apply in a single click with your Sakol Universe master credentials. Real-time stage updates ensure candidates and employers are never left waiting.",
+      "Apply in a single click with your Nectar Hub master credentials. Real-time stage updates ensure candidates and employers are never left waiting.",
     badgeText: "Instant Pipeline",
     badgeNumber: "3x Faster",
     ctaText: "Start Applying",
@@ -236,7 +236,7 @@ export default function FeatureCarousel() {
               margin: "0 auto",
             }}
           >
-            Explore how Sakol Universe redefines technical recruitment, workflow management, and applicant matching.
+            Explore how Nectar Hub redefines technical recruitment, workflow management, and applicant matching.
           </p>
         </div>
 
@@ -536,7 +536,7 @@ export default function FeatureCarousel() {
                       fontWeight: 700,
                     }}
                   >
-                    SAKOL-PASSPORT
+                    NECTAR-PASSPORT
                   </span>
                 </div>
 

@@ -1,6 +1,7 @@
-# Sakol Universe API Documentation
+# Nectar Hub API Documentation
+*(formerly Sakol Universe)*
 
-This document outlines the RESTful API endpoints available in Sakol Universe, specifying authentication requirements, role/permission requirements, and request/response specifications.
+This document outlines the RESTful API endpoints available in Nectar Hub, specifying authentication requirements, role/permission requirements, and request/response specifications.
 
 ---
 

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import {
-  Briefcase,
   User,
   FileText,
   Bookmark,
@@ -15,6 +14,7 @@ import {
   Calendar,
 } from "lucide-react";
 import NotificationBell from "../components/notifications/NotificationBell";
+import { NectarIcon } from "../components/brand/NectarLogo";
 import PageTransition from "../components/common/PageTransition";
 
 export default function JobSeekerLayout() {
@@ -47,10 +47,10 @@ export default function JobSeekerLayout() {
           {/* Brand */}
           <Link to="/job-seeker/dashboard" className="brand-logo" onClick={() => setMobileMenuOpen(false)}>
             <div className="brand-icon">
-              <Briefcase size={20} />
+              <NectarIcon size={20} />
             </div>
             <div className="brand-text">
-              <span className="brand-title">Sakol Universe</span>
+              <span className="brand-title">Nectar Hub</span>
               <span className="brand-subtitle">Job Seeker Portal</span>
             </div>
           </Link>

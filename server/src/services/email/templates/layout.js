@@ -12,7 +12,7 @@ function escapeHtml(str) {
 }
 
 /**
- * Base responsive HTML email layout for Sakol Universe
+ * Base responsive HTML email layout for Nectar Hub
  */
 function renderEmailLayout({
   title,
@@ -20,8 +20,8 @@ function renderEmailLayout({
   introText,
   detailsHtml = "",
   actionUrl = null,
-  actionText = "Open in Sakol Universe",
-  footerText = "This is an automated transactional notification from Sakol Universe.",
+  actionText = "Open in Nectar Hub",
+  footerText = "This is an automated transactional notification from Nectar Hub.",
 }) {
   const safeName = escapeHtml(recipientName);
   const safeTitle = escapeHtml(title);
@@ -53,8 +53,8 @@ function renderEmailLayout({
           <!-- Header Bar -->
           <tr>
             <td style="background-color: #0f172a; padding: 24px 32px; text-align: left;">
-              <span style="font-size: 20px; font-weight: 700; color: #ffffff; letter-spacing: -0.5px;">Sakol Universe</span>
-              <span style="display: block; font-size: 12px; color: #94a3b8; margin-top: 4px;">Global Workforce & Talent Ecosystem</span>
+              <span style="font-size: 20px; font-weight: 700; color: #ffffff; letter-spacing: -0.5px;">Nectar Hub</span>
+              <span style="display: block; font-size: 12px; color: #94a3b8; margin-top: 4px;">Your Workplace, Connected.</span>
             </td>
           </tr>
 
@@ -73,7 +73,7 @@ function renderEmailLayout({
           <tr>
             <td style="padding: 20px 32px 24px 32px; background-color: #f8fafc; border-top: 1px solid #f1f5f9; text-align: center;">
               <p style="margin: 0; font-size: 12px; color: #64748b; line-height: 1.5;">${escapeHtml(footerText)}</p>
-              <p style="margin: 6px 0 0 0; font-size: 11px; color: #94a3b8;">© ${new Date().getFullYear()} Sakol Universe. All rights reserved.</p>
+              <p style="margin: 6px 0 0 0; font-size: 11px; color: #94a3b8;">© ${new Date().getFullYear()} Nectar Hub. All rights reserved.</p>
             </td>
           </tr>
         </table>

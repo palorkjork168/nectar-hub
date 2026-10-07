@@ -75,7 +75,7 @@ export default function Home() {
             </h1>
 
             <p className="hero-subheadline">
-              Unlock verified career opportunities, automated skill verifications, and enterprise-grade recruitment pathways on Sakol Universe.
+              Unlock verified career opportunities, automated skill verifications, and enterprise-grade recruitment pathways on Nectar Hub.
             </p>
 
             {/* Glass Search Form */}
@@ -142,10 +142,10 @@ export default function Home() {
 
             <div className="card-stack-wrapper">
               {/* Back Card */}
-              <div className="sakol-glass-card-back" />
+              <div className="nectar-glass-card-back" />
 
               {/* Front Card */}
-              <div className="sakol-glass-card-front">
+              <div className="nectar-glass-card-front">
                 <div className="card-top-row">
                   <div className="card-chip" />
                   <div className="card-brand">
@@ -158,7 +158,7 @@ export default function Home() {
                 </div>
 
                 <div className="card-number">
-                  SAKOL • 2026 • 8820
+                  NECTAR • 2026 • 8820
                 </div>
 
                 <div className="card-bottom-row">
@@ -382,7 +382,7 @@ export default function Home() {
             Ready to Accelerate Your Career or Scale Your Team?
           </h2>
           <p style={{ color: "#94a3b8", fontSize: "1.0625rem", maxWidth: "560px", margin: "0 auto 2rem", lineHeight: 1.6 }}>
-            Join thousands of professionals and forward-thinking enterprises building the future of work on Sakol Universe today.
+            Join thousands of professionals and forward-thinking enterprises building the future of work on Nectar Hub today.
           </p>
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
             <Link to="/register" className="btn btn-primary" style={{ padding: "0.875rem 2rem", fontSize: "1rem" }}>

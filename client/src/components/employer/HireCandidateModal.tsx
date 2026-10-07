@@ -221,7 +221,7 @@ export default function HireCandidateModal({
             >
               <ShieldCheck size={18} style={{ color: "var(--primary)", flexShrink: 0, marginTop: "0.1rem" }} />
               <div>
-                <strong>Single Account Architecture:</strong> This candidate's existing Sakol Universe account will receive the <strong>Employee</strong> role alongside their <strong>Job Seeker</strong> role. No duplicate account is created.
+                <strong>Single Account Architecture:</strong> This candidate's existing Nectar Hub account will receive the <strong>Employee</strong> role alongside their <strong>Job Seeker</strong> role. No duplicate account is created.
               </div>
             </div>
 

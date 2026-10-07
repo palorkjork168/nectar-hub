@@ -3,8 +3,8 @@ const EmailProvider = require("./EmailProvider");
 class DevelopmentProvider extends EmailProvider {
   constructor(config = {}) {
     super();
-    this.from = config.from || process.env.EMAIL_FROM || "noreply@sakoluniverse.com";
-    this.fromName = config.fromName || process.env.EMAIL_FROM_NAME || "Sakol Universe";
+    this.from = config.from || process.env.EMAIL_FROM || "noreply@nectarhub.com";
+    this.fromName = config.fromName || process.env.EMAIL_FROM_NAME || "Nectar Hub";
   }
 
   async send({ to, subject, text, html }) {

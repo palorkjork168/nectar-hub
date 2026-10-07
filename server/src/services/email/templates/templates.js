@@ -8,20 +8,20 @@ const templates = {
    */
   welcome: (data) => {
     const name = data.name || "Member";
-    const subject = "Welcome to Sakol Universe!";
-    const introText = "Welcome to Sakol Universe! Your account has been registered successfully. Explore career opportunities, manage company workforces, and optimize your schedule all in one place.";
+    const subject = "Welcome to Nectar Hub!";
+    const introText = "Welcome to Nectar Hub! Your account has been registered successfully. Explore career opportunities, manage company workforces, and optimize your schedule all in one place.";
     const actionUrl = `${CLIENT_BASE}/login`;
     const actionText = "Sign In to Your Account";
 
     const html = renderEmailLayout({
-      title: "Welcome to Sakol Universe",
+      title: "Welcome to Nectar Hub",
       recipientName: name,
       introText,
       actionUrl,
       actionText,
     });
 
-    const text = `Hello ${name},\n\nWelcome to Sakol Universe! Your account has been registered successfully.\n\nSign in at: ${actionUrl}\n\n— Sakol Universe`;
+    const text = `Hello ${name},\n\nWelcome to Nectar Hub! Your account has been registered successfully.\n\nSign in at: ${actionUrl}\n\n— Nectar Hub`;
 
     return { subject, html, text };
   },
@@ -46,7 +46,7 @@ const templates = {
       actionText,
     });
 
-    const text = `Hello ${candidateName},\n\nYour application for "${jobTitle}" at ${companyName} has been received.\n\nTrack your application at: ${actionUrl}\n\n— Sakol Universe`;
+    const text = `Hello ${candidateName},\n\nYour application for "${jobTitle}" at ${companyName} has been received.\n\nTrack your application at: ${actionUrl}\n\n— Nectar Hub`;
 
     return { subject, html, text };
   },
@@ -81,7 +81,7 @@ const templates = {
       actionText,
     });
 
-    const text = `Hello ${candidateName},\n\nYour application for "${jobTitle}" at ${companyName} has been updated to ${status}.\n\nView details at: ${actionUrl}\n\n— Sakol Universe`;
+    const text = `Hello ${candidateName},\n\nYour application for "${jobTitle}" at ${companyName} has been updated to ${status}.\n\nView details at: ${actionUrl}\n\n— Nectar Hub`;
 
     return { subject, html, text };
   },
@@ -120,7 +120,7 @@ const templates = {
       actionText,
     });
 
-    const text = `Hello ${candidateName},\n\nAn interview has been scheduled for "${jobTitle}" at ${companyName} on ${scheduledAt}.\nLocation/Format: ${location}\n\nView details: ${actionUrl}\n\n— Sakol Universe`;
+    const text = `Hello ${candidateName},\n\nAn interview has been scheduled for "${jobTitle}" at ${companyName} on ${scheduledAt}.\nLocation/Format: ${location}\n\nView details: ${actionUrl}\n\n— Nectar Hub`;
 
     return { subject, html, text };
   },
@@ -155,7 +155,7 @@ const templates = {
       actionText,
     });
 
-    const text = `Hello ${candidateName},\n\nYour interview for "${jobTitle}" at ${companyName} has been rescheduled to ${scheduledAt}.\n\nView details: ${actionUrl}\n\n— Sakol Universe`;
+    const text = `Hello ${candidateName},\n\nYour interview for "${jobTitle}" at ${companyName} has been rescheduled to ${scheduledAt}.\n\nView details: ${actionUrl}\n\n— Nectar Hub`;
 
     return { subject, html, text };
   },
@@ -180,7 +180,7 @@ const templates = {
       actionText,
     });
 
-    const text = `Hello ${candidateName},\n\nYour scheduled interview for "${jobTitle}" at ${companyName} has been cancelled.\n\n— Sakol Universe`;
+    const text = `Hello ${candidateName},\n\nYour scheduled interview for "${jobTitle}" at ${companyName} has been cancelled.\n\n— Nectar Hub`;
 
     return { subject, html, text };
   },
@@ -217,7 +217,7 @@ const templates = {
       actionText,
     });
 
-    const text = `Hello ${candidateName},\n\nCongratulations! You have officially been hired by ${companyName} as ${positionTitle}!\n\nAccess your employee portal: ${actionUrl}\n\n— Sakol Universe`;
+    const text = `Hello ${candidateName},\n\nCongratulations! You have officially been hired by ${companyName} as ${positionTitle}!\n\nAccess your employee portal: ${actionUrl}\n\n— Nectar Hub`;
 
     return { subject, html, text };
   },
@@ -253,7 +253,7 @@ const templates = {
       actionText,
     });
 
-    const text = `Hello ${employeeName},\n\nYour leave request for ${leaveType} (${days} days: ${startDate} to ${endDate}) has been submitted.\n\nView status: ${actionUrl}\n\n— Sakol Universe`;
+    const text = `Hello ${employeeName},\n\nYour leave request for ${leaveType} (${days} days: ${startDate} to ${endDate}) has been submitted.\n\nView status: ${actionUrl}\n\n— Nectar Hub`;
 
     return { subject, html, text };
   },
@@ -289,7 +289,7 @@ const templates = {
       actionText,
     });
 
-    const text = `Hello ${employeeName},\n\nYour leave request for ${leaveType} (${startDate} to ${endDate}) has been approved.\n\nView details: ${actionUrl}\n\n— Sakol Universe`;
+    const text = `Hello ${employeeName},\n\nYour leave request for ${leaveType} (${startDate} to ${endDate}) has been approved.\n\nView details: ${actionUrl}\n\n— Nectar Hub`;
 
     return { subject, html, text };
   },
@@ -326,7 +326,7 @@ const templates = {
       actionText,
     });
 
-    const text = `Hello ${employeeName},\n\nYour leave request for ${leaveType} was not approved.${reviewNote ? ` Note: "${reviewNote}"` : ""}\n\nView details: ${actionUrl}\n\n— Sakol Universe`;
+    const text = `Hello ${employeeName},\n\nYour leave request for ${leaveType} was not approved.${reviewNote ? ` Note: "${reviewNote}"` : ""}\n\nView details: ${actionUrl}\n\n— Nectar Hub`;
 
     return { subject, html, text };
   },

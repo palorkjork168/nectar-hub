@@ -1,6 +1,7 @@
-# Sakol Universe (v1.0)
+# Nectar Hub (v1.0)
+*(formerly Sakol Universe)*
 
-**Sakol Universe** is an enterprise-grade job marketplace and workforce management platform connecting job seekers, employers, and employees in a unified ecosystem. It integrates job recruitment, candidate profiling, interview pipelines, hiring-to-employee onboarding, GPS-verified attendance with work schedule intelligence, HR leave management, multi-role granular RBAC, transactional emails, immutable audit logging, and platform analytics.
+**Nectar Hub** is an enterprise-grade workforce, talent, and employment platform connecting job seekers, employers, and employees in a unified ecosystem — *Your Workplace, Connected.* It integrates job recruitment, candidate profiling, interview pipelines, hiring-to-employee onboarding, GPS-verified attendance with work schedule intelligence, HR leave management, multi-role granular RBAC, transactional emails, immutable audit logging, and platform analytics.
 
 ---
 
@@ -23,7 +24,7 @@
 
 ```
 +-------------------------------------------------------------+
-|                       Sakol Universe                        |
+|                         Nectar Hub                          |
 +-------------------------------------------------------------+
 |  Frontend (Client)                                          |
 |  - React 19 + TypeScript + Vite                             |
@@ -99,8 +100,8 @@ CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 
 # Transactional Email System ('smtp' | 'mock' | 'development')
 EMAIL_PROVIDER=mock
-EMAIL_FROM=noreply@sakoluniverse.com
-EMAIL_FROM_NAME="Sakol Universe"
+EMAIL_FROM=noreply@nectarhub.com
+EMAIL_FROM_NAME="Nectar Hub"
 SMTP_HOST=smtp.mailtrap.io
 SMTP_PORT=587
 SMTP_USER=your_smtp_username
@@ -123,8 +124,8 @@ VITE_API_URL=http://localhost:5000/api
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/palorkjork168/sakol-universe.git
-cd sakol-universe
+git clone https://github.com/palorkjork168/nectar-hub.git
+cd nectar-hub
 ```
 
 ### 2. Backend Setup & Migrations
@@ -166,7 +167,7 @@ npm run dev
 
 ## 🧪 Testing & Verification
 
-Sakol Universe includes a complete automated regression test suite covering all business flows, tenant isolation boundaries, and security policies.
+Nectar Hub includes a complete automated regression test suite covering all business flows, tenant isolation boundaries, and security policies.
 
 ### Run All Backend Regression Tests (16 Suites)
 ```bash

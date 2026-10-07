@@ -4,6 +4,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { LayoutDashboard, Users, LogOut, Menu, X, ShieldCheck, BarChart3 } from "lucide-react";
 import NotificationBell from "../components/notifications/NotificationBell";
 import PageTransition from "../components/common/PageTransition";
+import { NectarIcon } from "../components/brand/NectarLogo";
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
@@ -67,22 +68,22 @@ export default function AdminLayout() {
                 width: "36px",
                 height: "36px",
                 borderRadius: "var(--radius-md)",
-                backgroundColor: "var(--color-primary)",
-                color: "#000000",
+                backgroundColor: "rgba(16, 185, 129, 0.15)",
+                border: "1px solid rgba(16, 185, 129, 0.35)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                boxShadow: "0 2px 10px rgba(16, 185, 129, 0.4)",
+                boxShadow: "0 2px 10px rgba(16, 185, 129, 0.25)",
               }}
             >
-              <ShieldCheck size={20} />
+              <NectarIcon size={22} />
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <span style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--color-text)", lineHeight: 1.1 }}>
-                Sakol Universe
+              <span style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--color-text)", lineHeight: 1.1, letterSpacing: "-0.01em" }}>
+                NECTAR HUB
               </span>
               <span style={{ fontSize: "0.6875rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary)" }}>
-                Admin Portal
+                ADMIN PORTAL
               </span>
             </div>
           </Link>

@@ -230,7 +230,7 @@ export default function CompanyProfile() {
             No Company Registered Yet
           </h3>
           <p style={{ margin: "0 0 1.5rem 0", color: "var(--text-muted)", maxWidth: "450px", fontSize: "0.875rem" }}>
-            To post jobs and receive applicants on Sakol Universe, you must first register your business or organization profile.
+            To post jobs and receive applicants on Nectar Hub, you must first register your business or organization profile.
           </p>
           <button onClick={openCreateModal} className="btn btn-primary">
             <Plus size={16} /> Register Your Company

@@ -1,6 +1,7 @@
-# Sakol Universe - Production Release Checklist (v1.0)
+# Nectar Hub - Production Release Checklist (v1.0)
+*(formerly Sakol Universe)*
 
-Before releasing Sakol Universe v1.0 to staging or production environments, verify every item below:
+Before releasing Nectar Hub v1.0 to staging or production environments, verify every item below:
 
 ---
 

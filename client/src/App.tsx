@@ -7,6 +7,7 @@ import PublicLayout from "./layouts/PublicLayout";
 import PageLoading from "./components/common/PageLoading";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import ScrollToTop from "./components/common/ScrollToTop";
+import { PageTitleSynchronizer } from "./hooks/useDocumentTitle";
 
 // Eagerly loaded landing page for instant first paint
 import Home from "./pages/public/Home";
@@ -69,6 +70,7 @@ function App() {
         <ToastProvider>
           <BrowserRouter>
             <ScrollToTop />
+            <PageTitleSynchronizer />
             <Suspense fallback={<PageLoading />}>
               <Routes>
                 {/* Public Portal Routes with PublicLayout */}
