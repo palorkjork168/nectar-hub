@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Clock,
@@ -57,7 +57,7 @@ export default function WorkSchedules() {
     queryKey: ["companies", "my"],
     queryFn: async () => (await api.get("/companies/my")).data.data.companies as Company[],
   });
-  const companies = companiesQuery.data || [];
+  const companies = useMemo(() => companiesQuery.data || [], [companiesQuery.data]);
 
   useEffect(() => {
     if (companies.length === 1 && !companyId) {

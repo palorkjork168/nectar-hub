@@ -12,6 +12,7 @@ const {
 const authorizationService = require("./authorization.service");
 const notificationService = require("./notification.service");
 const NOTIFICATION_TYPES = require("../constants/notificationTypes");
+const emailService = require("./email.service");
 
 const createInterview = async (user, interviewData) => {
   const application = await Application.findByPk(
@@ -93,7 +94,7 @@ const createInterview = async (user, interviewData) => {
     await transaction.commit();
 
     // Reload with associations
-    return await Interview.findByPk(interview.id, {
+    const reloaded = await Interview.findByPk(interview.id, {
       include: [
         {
           model: Application,
@@ -118,6 +119,22 @@ const createInterview = async (user, interviewData) => {
         },
       ],
     });
+
+    // Asynchronous candidate interview email
+    if (reloaded?.application?.applicant?.email) {
+      emailService
+        .sendTemplateEmail("interviewScheduled", reloaded.application.applicant.email, {
+          candidateName: `${reloaded.application.applicant.first_name || ""} ${reloaded.application.applicant.last_name || ""}`.trim() || "Candidate",
+          jobTitle: reloaded.application.Job?.title || "Position",
+          companyName: reloaded.application.Job?.Company?.name || "Company",
+          scheduledAt: reloaded.scheduled_at,
+          type: reloaded.interview_type,
+          location: reloaded.meeting_link || reloaded.location || "Online",
+        })
+        .catch((err) => console.error("Interview scheduled email failed:", err.message));
+    }
+
+    return reloaded;
   } catch (error) {
     await transaction.rollback();
     throw error;
@@ -391,6 +408,11 @@ const updateInterview = async (
             model: Job,
             include: [{ model: Company }],
           },
+          {
+            model: User,
+            as: "applicant",
+            attributes: ["id", "first_name", "last_name", "email"],
+          },
         ],
       },
     ],
@@ -457,6 +479,17 @@ const updateInterview = async (
     } catch (err) {
       console.error("Failed to send reschedule notification:", err);
     }
+
+    if (interview.application?.applicant?.email) {
+      emailService
+        .sendTemplateEmail("interviewRescheduled", interview.application.applicant.email, {
+          candidateName: `${interview.application.applicant.first_name || ""} ${interview.application.applicant.last_name || ""}`.trim() || "Candidate",
+          jobTitle: interview.application.Job?.title || "Position",
+          companyName: interview.application.Job?.Company?.name || "Company",
+          scheduledAt: updateData.scheduled_at,
+        })
+        .catch((err) => console.error("Interview rescheduled email failed:", err.message));
+    }
   }
 
   return interview;
@@ -472,6 +505,11 @@ const cancelInterview = async (interviewId, user) => {
           {
             model: Job,
             include: [{ model: Company }],
+          },
+          {
+            model: User,
+            as: "applicant",
+            attributes: ["id", "first_name", "last_name", "email"],
           },
         ],
       },
@@ -528,6 +566,16 @@ const cancelInterview = async (interviewId, user) => {
     });
   } catch (err) {
     console.error("Failed to send interview cancellation notification:", err);
+  }
+
+  if (interview.application?.applicant?.email) {
+    emailService
+      .sendTemplateEmail("interviewCancelled", interview.application.applicant.email, {
+        candidateName: `${interview.application.applicant.first_name || ""} ${interview.application.applicant.last_name || ""}`.trim() || "Candidate",
+        jobTitle: interview.application.Job?.title || "Position",
+        companyName: interview.application.Job?.Company?.name || "Company",
+      })
+      .catch((err) => console.error("Interview cancelled email failed:", err.message));
   }
 
   return interview;

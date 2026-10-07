@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../services/api";
 import type { EducationItem } from "../../types/profile";
 import { Plus, Edit2, Trash2, X, GraduationCap, Calendar, AlertCircle } from "lucide-react";
+import { useToast } from "../../contexts/ToastContext";
 
 interface EducationSectionProps {
   educations: EducationItem[];
@@ -10,6 +11,7 @@ interface EducationSectionProps {
 
 export default function EducationSection({ educations }: EducationSectionProps) {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<EducationItem | null>(null);
@@ -96,7 +98,7 @@ export default function EducationSection({ educations }: EducationSectionProps) 
       setDeleteConfirmId(null);
     },
     onError: (err: any) => {
-      alert(err.response?.data?.message || "Failed to delete education record");
+      toast.error(err.response?.data?.message || "Failed to delete education record");
     },
   });
 

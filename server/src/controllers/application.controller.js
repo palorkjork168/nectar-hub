@@ -1,6 +1,7 @@
 const applicationService = require(
   "../services/application.service"
 );
+const auditService = require("../services/audit.service");
 
 const applyForJob = async (req, res, next) => {
   try {
@@ -81,6 +82,17 @@ const updateApplicationStatus = async (
         req.body.status
       );
 
+    auditService.recordAuditEvent({
+      companyId: application.Job?.company_id || application.job?.company_id,
+      actorUserId: req.user?.id,
+      action: "APPLICATION_STATUS_CHANGED",
+      entityType: "Application",
+      entityId: application.id,
+      description: `Application status updated to ${req.body.status}`,
+      metadata: { status: req.body.status, job_id: application.job_id },
+      req,
+    });
+
     res.status(200).json({
       success: true,
       message: "Application status updated successfully!",
@@ -123,6 +135,20 @@ const hireApplicant = async (req, res, next) => {
       req.user,
       req.body
     );
+
+    auditService.recordAuditEvent({
+      companyId: result.employmentRecord?.company_id,
+      actorUserId: req.user?.id,
+      action: "HIRING_ACTION",
+      entityType: "Application",
+      entityId: req.params.id,
+      description: `Candidate hired for position`,
+      metadata: {
+        employment_record_id: result.employmentRecord?.id,
+        candidate_user_id: result.employee?.id,
+      },
+      req,
+    });
 
     res.status(200).json({
       success: true,

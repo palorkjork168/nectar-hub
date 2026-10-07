@@ -63,7 +63,7 @@ export default function WorkScheduleFormModal({
       });
     }
     setErrorMsg("");
-  }, [scheduleToEdit, isOpen]);
+  }, [activeSchedule, isOpen]);
 
   if (!isOpen) return null;
 

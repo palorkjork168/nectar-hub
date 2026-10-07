@@ -91,17 +91,18 @@ export default function JobList() {
       {/* Top Search & Filter Bar */}
       <div
         style={{
-          background: "#ffffff",
+          background: "linear-gradient(135deg, rgba(16, 28, 21, 0.9) 0%, rgba(9, 16, 12, 0.95) 100%)",
           padding: "1.25rem",
           borderRadius: "var(--radius-lg)",
           border: "1px solid var(--border-color)",
-          boxShadow: "var(--shadow-sm)",
+          boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.5)",
           marginBottom: "2rem",
+          backdropFilter: "blur(12px)",
         }}
       >
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1rem", alignItems: "center" }}>
-          <div className="search-field-wrapper" style={{ backgroundColor: "#f8fafc", border: "1px solid var(--border-color)" }}>
-            <Search size={18} style={{ color: "var(--text-light)" }} />
+          <div className="search-field-wrapper" style={{ backgroundColor: "#09120e", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <Search size={18} style={{ color: "#10b981" }} />
             <input
               type="text"
               className="search-field-input"
@@ -120,8 +121,8 @@ export default function JobList() {
             )}
           </div>
 
-          <div className="search-field-wrapper" style={{ backgroundColor: "#f8fafc", border: "1px solid var(--border-color)" }}>
-            <MapPin size={18} style={{ color: "var(--text-light)" }} />
+          <div className="search-field-wrapper" style={{ backgroundColor: "#09120e", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+            <MapPin size={18} style={{ color: "#10b981" }} />
             <input
               type="text"
               className="search-field-input"

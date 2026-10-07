@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
+import { useToast } from "../../contexts/ToastContext";
+import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
 import type { GetJobResponse, GetJobSkillsResponse, JobSkill } from "../../types/job";
 import {
   Building2,
@@ -24,18 +26,28 @@ import {
 } from "lucide-react";
 import BackButton from "../../components/common/BackButton";
 
+function formatDisplayDate(dateStr?: string | Date | null, fallback = "Recently"): string {
+  if (!dateStr) return fallback;
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? fallback : d.toLocaleDateString();
+}
+
 export default function JobDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const { user, isJobSeeker } = useAuth();
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [coverLetter, setCoverLetter] = useState("");
   const [cvUrl, setCvUrl] = useState("");
   const [applySuccess, setApplySuccess] = useState(false);
   const [applyError, setApplyError] = useState("");
+
+  // Lock body scroll when apply modal is open
+  useBodyScrollLock(isApplyModalOpen);
 
   // 1. Fetch Job Details
   const {
@@ -86,7 +98,7 @@ export default function JobDetails() {
       queryClient.invalidateQueries({ queryKey: ["job-saved", id] });
     },
     onError: (err: any) => {
-      alert(err.response?.data?.message || "Failed to update saved job");
+      toast.error(err.response?.data?.message || "Failed to update saved job.");
     },
   });
 
@@ -123,7 +135,7 @@ export default function JobDetails() {
       return;
     }
     if (!isJobSeeker) {
-      alert("Only Job Seeker accounts can apply for jobs. Please log in with a Job Seeker account.");
+      toast.info("Only Job Seeker accounts can apply for jobs. Please log in with a Job Seeker account.");
       return;
     }
     setIsApplyModalOpen(true);
@@ -388,7 +400,7 @@ export default function JobDetails() {
                 <Clock size={16} style={{ color: "var(--text-muted)" }} />
                 <div>
                   <div style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>Posted On</div>
-                  <div style={{ fontWeight: 500 }}>{new Date(jobData.created_at).toLocaleDateString()}</div>
+                  <div style={{ fontWeight: 500 }}>{formatDisplayDate(jobData.created_at || (jobData as any).createdAt)}</div>
                 </div>
               </div>
 
@@ -397,7 +409,7 @@ export default function JobDetails() {
                   <Calendar size={16} style={{ color: "var(--text-muted)" }} />
                   <div>
                     <div style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>Deadline</div>
-                    <div style={{ fontWeight: 500 }}>{new Date(jobData.application_deadline).toLocaleDateString()}</div>
+                    <div style={{ fontWeight: 500 }}>{formatDisplayDate(jobData.application_deadline)}</div>
                   </div>
                 </div>
               )}
@@ -469,8 +481,20 @@ export default function JobDetails() {
 
       {/* Apply Modal */}
       {isApplyModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content" style={{ maxWidth: "560px" }}>
+        <div
+          className="modal-overlay"
+          role="presentation"
+          onClick={(e) => { if (e.target === e.currentTarget) setIsApplyModalOpen(false); }}
+          onKeyDown={(e) => { if (e.key === "Escape") setIsApplyModalOpen(false); }}
+        >
+          <div
+            className="modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="apply-modal-title"
+            style={{ maxWidth: "560px" }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-header">
               <div>
                 <h2 style={{ margin: "0 0 0.25rem 0", fontSize: "1.25rem" }}>Apply for {jobData.title}</h2>

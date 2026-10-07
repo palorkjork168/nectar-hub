@@ -15,6 +15,7 @@ import {
   Calendar,
 } from "lucide-react";
 import NotificationBell from "../components/notifications/NotificationBell";
+import PageTransition from "../components/common/PageTransition";
 
 export default function JobSeekerLayout() {
   const { user, logout } = useAuth();
@@ -98,7 +99,7 @@ export default function JobSeekerLayout() {
               <span style={{ fontSize: "0.875rem", fontWeight: 500, color: "var(--text-main)", display: "none" }} className="desktop-user-name">
                 {user?.first_name}
               </span>
-              <button onClick={logout} className="btn btn-ghost" title="Logout" style={{ padding: "0.5rem" }}>
+              <button onClick={logout} className="btn btn-ghost" title="Logout" aria-label="Log out of account" style={{ padding: "0.5rem" }}>
                 <LogOut size={16} />
               </button>
             </div>
@@ -116,7 +117,9 @@ export default function JobSeekerLayout() {
 
       {/* Main Content Area */}
       <main className="public-main">
-        <Outlet />
+        <PageTransition>
+          <Outlet />
+        </PageTransition>
       </main>
     </div>
   );

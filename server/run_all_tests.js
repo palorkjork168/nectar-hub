@@ -16,6 +16,9 @@ const testSuites = [
   "test_cors_security.js",
   "test_structured_hiring_flow.js",
   "test_attendance_analytics_flow.js",
+  "test_security_audit_flow.js",
+  "test_email_flow.js",
+  "test_v1_production_readiness.js",
 ];
 
 console.log("==================================================");

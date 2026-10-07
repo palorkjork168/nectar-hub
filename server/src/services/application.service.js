@@ -17,6 +17,7 @@ const sequelize = require("../config/database");
 const authorizationService = require("./authorization.service");
 const notificationService = require("./notification.service");
 const employmentService = require("./employment.service");
+const emailService = require("./email.service");
 const NOTIFICATION_TYPES = require("../constants/notificationTypes");
 
 const applyForJob = async (
@@ -24,7 +25,9 @@ const applyForJob = async (
   user,
   applicationData
 ) => {
-  const job = await Job.findByPk(jobId);
+  const job = await Job.findByPk(jobId, {
+    include: [{ model: Company, attributes: ["id", "name"] }],
+  });
 
   if (!job) {
     const error = new Error("Job not found");
@@ -84,6 +87,15 @@ const applyForJob = async (
   } catch (err) {
     console.error("Failed to send application notification:", err);
   }
+
+  // Asynchronous non-blocking candidate confirmation email
+  emailService
+    .sendTemplateEmail("applicationSubmitted", user.email, {
+      candidateName: `${user.first_name || ""} ${user.last_name || ""}`.trim() || "Candidate",
+      jobTitle: job.title,
+      companyName: job.Company?.name || "the employer",
+    })
+    .catch((err) => console.error("Application submitted email delivery failed:", err.message));
 
   return application;
 };
@@ -217,9 +229,14 @@ const updateApplicationStatus = async (
           include: [
             {
               model: Company,
-              attributes: ["id", "owner_id"],
+              attributes: ["id", "name", "owner_id"],
             },
           ],
+        },
+        {
+          model: User,
+          as: "applicant",
+          attributes: ["id", "email", "first_name", "last_name", "email_notifications_enabled"],
         },
       ],
     }
@@ -286,6 +303,18 @@ const updateApplicationStatus = async (
       });
     } catch (err) {
       console.error("Failed to send status notification:", err);
+    }
+
+    // Asynchronous non-blocking candidate email notification
+    if (application.applicant?.email) {
+      emailService
+        .sendTemplateEmail("applicationStatusChanged", application.applicant.email, {
+          candidateName: `${application.applicant.first_name || ""} ${application.applicant.last_name || ""}`.trim() || "Candidate",
+          jobTitle: application.Job?.title || "Position",
+          companyName: application.Job?.Company?.name || "the company",
+          status,
+        })
+        .catch((err) => console.error("Application status email delivery failed:", err.message));
     }
   }
 
@@ -533,6 +562,17 @@ const hireApplicant = async (applicationId, user, hiringData = {}) => {
 
     return { profile, employmentRecord, isAlreadyHired: false };
   });
+
+  // Asynchronous non-blocking candidate hiring confirmation email
+  emailService
+    .sendTemplateEmail("candidateHired", applicantUser.email, {
+      candidateName: `${applicantUser.first_name || ""} ${applicantUser.last_name || ""}`.trim() || "New Team Member",
+      companyName: application.Job?.Company?.name || "the company",
+      positionTitle: application.Job?.title || "Employee",
+      departmentName: hiringData.department || null,
+      startDate: hiringData.startDate || null,
+    })
+    .catch((err) => console.error("Hiring email delivery failed:", err.message));
 
   // Fetch complete employee representation with refreshed roles & profile
   const refreshedUser = await User.findByPk(applicantUser.id, {

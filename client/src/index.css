@@ -3,50 +3,53 @@
    ========================================================================== */
 
 :root {
-  /* Surface & Background */
-  --color-bg: #f8fafc;
-  --color-surface: #ffffff;
-  --color-surface-muted: #f1f5f9;
-  --color-surface-hover: #f8fafc;
+  /* Surface & Background — Deep Obsidian & Dark Emerald */
+  --color-bg: #070c09;             /* Obsidian Black Base */
+  --color-bg-secondary: #0b1410;   /* Secondary Dark Slate */
+  --color-surface: #0e1712;        /* Glass Card Surface */
+  --color-surface-muted: #132219;  /* Elevated Card Surface */
+  --color-surface-hover: #192d21;  /* Hover Surface */
+  --color-surface-glass: rgba(14, 23, 18, 0.8);
 
   /* Typography Colors */
-  --color-text: #0f172a;           /* Slate 900 - Headings & Primary */
-  --color-text-secondary: #475569; /* Slate 600 - Body & Secondary */
-  --color-text-muted: #94a3b8;     /* Slate 400 - Captions, Placeholders */
-  --color-text-inverse: #ffffff;
+  --color-text: #f8fafc;           /* Pure Titanium White — Headings */
+  --color-text-secondary: #cbd5e1; /* Clear Silver Slate — Body */
+  --color-text-muted: #64748b;     /* Muted Grey Slate — Captions & Placeholders */
+  --color-text-inverse: #05190f;   /* Dark Text for Glowing Neon Buttons */
 
-  /* Borders */
-  --color-border: #e2e8f0;         /* Slate 200 - Card/Input outlines */
-  --color-border-subtle: #f1f5f9;  /* Slate 100 - Row dividers */
-  --color-border-strong: #cbd5e1;  /* Slate 300 - Focused/Active */
+  /* Borders — Glowing & Subtle Translucent */
+  --color-border: rgba(16, 185, 129, 0.18);
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(16, 185, 129, 0.4);
 
-  /* Brand Primary */
-  --color-primary: #2563eb;        /* Blue 600 */
-  --color-primary-hover: #1d4ed8;  /* Blue 700 */
-  --color-primary-active: #1e40af; /* Blue 800 */
-  --color-primary-soft: #eff6ff;   /* Blue 50 */
-  --color-primary-border: #bfdbfe; /* Blue 200 */
+  /* Brand Primary — Electric Neon Emerald & Mint */
+  --color-primary: #10b981;        /* Vivid Emerald */
+  --color-primary-hover: #059669;  /* Emerald 600 */
+  --color-primary-active: #047857; /* Emerald 700 */
+  --color-primary-soft: rgba(16, 185, 129, 0.12); /* Subtle Neon Backing */
+  --color-primary-border: rgba(16, 185, 129, 0.35);
+  --color-primary-glow: 0 0 25px rgba(16, 185, 129, 0.35);
 
   /* Semantic Feedback */
   --color-success: #10b981;        /* Emerald 500 */
-  --color-success-soft: #ecfdf5;   /* Emerald 50 */
-  --color-success-border: #a7f3d0; /* Emerald 200 */
-  --color-success-text: #065f46;   /* Emerald 800 */
+  --color-success-soft: rgba(16, 185, 129, 0.12);
+  --color-success-border: rgba(16, 185, 129, 0.3);
+  --color-success-text: #34d399;   /* Emerald 400 */
 
   --color-warning: #f59e0b;        /* Amber 500 */
-  --color-warning-soft: #fffbeb;   /* Amber 50 */
-  --color-warning-border: #fde68a; /* Amber 200 */
-  --color-warning-text: #92400e;   /* Amber 800 */
+  --color-warning-soft: rgba(245, 158, 11, 0.12);
+  --color-warning-border: rgba(245, 158, 11, 0.3);
+  --color-warning-text: #fbbf24;   /* Amber 400 */
 
   --color-danger: #ef4444;         /* Red 500 */
-  --color-danger-soft: #fef2f2;    /* Red 50 */
-  --color-danger-border: #fecaca;  /* Red 200 */
-  --color-danger-text: #991b1b;    /* Red 800 */
+  --color-danger-soft: rgba(239, 68, 68, 0.12);
+  --color-danger-border: rgba(239, 68, 68, 0.3);
+  --color-danger-text: #f87171;    /* Red 400 */
 
-  --color-info: #0284c7;           /* Sky 600 */
-  --color-info-soft: #f0f9ff;      /* Sky 50 */
-  --color-info-border: #bae6fd;    /* Sky 200 */
-  --color-info-text: #075985;      /* Sky 800 */
+  --color-info: #06b6d4;           /* Cyan 500 */
+  --color-info-soft: rgba(6, 182, 212, 0.12);
+  --color-info-border: rgba(6, 182, 212, 0.3);
+  --color-info-text: #38bdf8;      /* Sky 400 */
 
   /* Spacing Scale (4px base) */
   --space-1: 0.25rem;  /* 4px */
@@ -68,12 +71,12 @@
   --radius-xl: 16px;
   --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
-  --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  /* Shadows — Ambient Neon & Dark Slate */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 12px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 14px 24px -4px rgba(0, 0, 0, 0.6), 0 6px 10px -4px rgba(0, 0, 0, 0.4);
+  --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 0 40px rgba(16, 185, 129, 0.1);
 
   /* Typography Families */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -89,8 +92,8 @@
   --max-width-form: 520px;
   --max-width-modal: 540px;
 
-  /* Focus Ring */
-  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  /* Focus Ring — Neon Glow */
+  --focus-ring: 0 0 0 3px rgba(16, 185, 129, 0.28);
 
   /* Backward Compatibility Aliases */
   --primary: var(--color-primary);
@@ -98,6 +101,10 @@
   --primary-bg: var(--color-primary-soft);
   --bg-color: var(--color-bg);
   --surface: var(--color-surface);
+  --color-bg-card: #0e1712;
+  --color-bg-card-hover: #132219;
+  --color-text-main: var(--color-text);
+  --color-text-title: var(--color-text);
   --text-main: var(--color-text);
   --text-muted: var(--color-text-secondary);
   --text-light: var(--color-text-muted);
@@ -285,17 +292,22 @@ a:hover {
    ========================================================================== */
 
 .card {
-  background-color: var(--color-surface);
+  background: linear-gradient(135deg, rgba(14, 23, 18, 0.9) 0%, rgba(10, 16, 12, 0.85) 100%);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
   overflow: hidden;
 }
 
-.card-clickable:hover {
+.card:hover {
   border-color: var(--color-border-strong);
-  box-shadow: var(--shadow-md);
+}
+
+.card-clickable:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 8px 30px -4px rgba(16, 185, 129, 0.25);
   transform: translateY(-2px);
   cursor: pointer;
 }
@@ -315,7 +327,7 @@ a:hover {
 .card-footer {
   padding: var(--space-3) var(--space-5);
   border-top: 1px solid var(--color-border-subtle);
-  background-color: var(--color-surface-muted);
+  background-color: rgba(19, 34, 25, 0.5);
 }
 
 /* Metric / Stat Card */
@@ -324,16 +336,18 @@ a:hover {
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  background-color: var(--color-surface);
+  background: linear-gradient(135deg, rgba(16, 28, 21, 0.9) 0%, rgba(10, 17, 13, 0.8) 100%);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xs);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 8px 24px -4px rgba(16, 185, 129, 0.2);
 }
 
 .stat-icon-wrapper {
@@ -344,6 +358,9 @@ a:hover {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: var(--color-primary);
 }
 
 .stat-content {
@@ -391,33 +408,39 @@ a:hover {
 }
 
 .btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
 }
 
 /* Button Variants */
 .btn-primary {
-  background-color: var(--color-primary);
-  color: var(--color-text-inverse);
-  box-shadow: 0 1px 2px 0 rgba(37, 99, 235, 0.2);
+  background: linear-gradient(135deg, #10b981 0%, #00e599 100%);
+  color: #051a10 !important;
+  font-weight: 700;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: var(--color-primary-hover);
-  color: var(--color-text-inverse);
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  color: #ffffff !important;
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.55);
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
   background-color: var(--color-surface);
   color: var(--color-text);
-  border-color: var(--color-border);
+  border: 1px solid var(--color-border);
   box-shadow: var(--shadow-xs);
 }
 
 .btn-secondary:hover:not(:disabled) {
   background-color: var(--color-surface-muted);
   border-color: var(--color-border-strong);
+  color: var(--color-primary);
+  transform: translateY(-1px);
 }
 
 .btn-ghost {
@@ -427,7 +450,7 @@ a:hover {
 
 .btn-ghost:hover:not(:disabled) {
   background-color: var(--color-surface-muted);
-  color: var(--color-text);
+  color: var(--color-primary);
 }
 
 .btn-danger {
@@ -495,10 +518,10 @@ a:hover {
   font-size: 0.9375rem;
   font-family: inherit;
   color: var(--color-text);
-  background-color: var(--color-surface);
+  background-color: #0b1410;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
 }
 
 .form-input::placeholder,
@@ -510,6 +533,7 @@ a:hover {
 .form-select:focus,
 .form-textarea:focus {
   border-color: var(--color-primary);
+  background-color: #0f1c15;
   outline: none;
   box-shadow: var(--focus-ring);
 }
@@ -517,14 +541,14 @@ a:hover {
 .form-input:disabled,
 .form-select:disabled,
 .form-textarea:disabled {
-  background-color: var(--color-surface-muted);
+  background-color: rgba(255, 255, 255, 0.04);
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 0.5;
 }
 
 .form-select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2310b981'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.75rem center;
   background-size: 1rem;
@@ -572,8 +596,9 @@ a:hover {
   overflow-x: auto;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  background-color: var(--color-surface);
-  box-shadow: var(--shadow-xs);
+  background: linear-gradient(135deg, rgba(14, 23, 18, 0.9) 0%, rgba(10, 16, 12, 0.85) 100%);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
 }
 
 .table {
@@ -585,12 +610,12 @@ a:hover {
 
 .table th {
   padding: 0.75rem 1rem;
-  background-color: var(--color-surface-muted);
-  color: var(--color-text-secondary);
-  font-weight: 600;
-  font-size: 0.8125rem;
+  background-color: rgba(19, 34, 25, 0.7);
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -610,7 +635,7 @@ a:hover {
 }
 
 .table tbody tr:hover {
-  background-color: var(--color-surface-hover);
+  background-color: rgba(16, 185, 129, 0.05);
 }
 
 /* ==========================================================================
@@ -630,35 +655,35 @@ a:hover {
 }
 
 .badge-success {
-  background-color: var(--color-success-soft);
-  color: var(--color-success-text);
-  border: 1px solid var(--color-success-border);
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .badge-warning {
-  background-color: var(--color-warning-soft);
-  color: var(--color-warning-text);
-  border: 1px solid var(--color-warning-border);
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .badge-danger {
-  background-color: var(--color-danger-soft);
-  color: var(--color-danger-text);
-  border: 1px solid var(--color-danger-border);
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .badge-info,
 .badge-primary {
-  background-color: var(--color-primary-soft);
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary-border);
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.35);
 }
 
 .badge-neutral,
 .badge-gray {
-  background-color: var(--color-surface-muted);
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* ==========================================================================
@@ -668,9 +693,11 @@ a:hover {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(4px);
-  z-index: 1000;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(6, 11, 8, 0.78);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -680,13 +707,13 @@ a:hover {
 
 .modal,
 .modal-content {
-  background-color: var(--color-surface);
+  background: linear-gradient(135deg, rgba(16, 27, 21, 0.96) 0%, rgba(10, 17, 13, 0.94) 100%);
   width: 100%;
   max-width: var(--max-width-modal);
-  max-height: 90vh;
+  max-height: 88vh;
   border-radius: var(--radius-xl);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-modal);
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.8), 0 0 35px rgba(16, 185, 129, 0.12);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -695,10 +722,11 @@ a:hover {
 
 .modal-header {
   padding: var(--space-5) var(--space-6);
-  border-bottom: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: rgba(14, 23, 18, 0.6);
 }
 
 .modal-title {
@@ -724,7 +752,7 @@ a:hover {
 }
 
 .modal-close:hover {
-  color: var(--color-text);
+  color: var(--color-primary);
   background-color: var(--color-surface-muted);
 }
 
@@ -735,8 +763,8 @@ a:hover {
 
 .modal-footer {
   padding: var(--space-4) var(--space-6);
-  border-top: 1px solid var(--color-border-subtle);
-  background-color: var(--color-surface-muted);
+  border-top: 1px solid var(--color-border);
+  background-color: rgba(10, 16, 12, 0.7);
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -755,7 +783,7 @@ a:hover {
 @keyframes modalSlideUp {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.98);
+    transform: translateY(10px) scale(0.975);
   }
   to {
     opacity: 1;
@@ -768,28 +796,175 @@ a:hover {
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes pulseShimmer {
-  0% { opacity: 1; }
-  50% { opacity: 0.45; }
-  100% { opacity: 1; }
+/* Page route transition */
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
+@keyframes pulseShimmer {
+  0%   { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes successPop {
+  0%   { transform: scale(0.8); opacity: 0; }
+  60%  { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ==========================================================================
+   Animation Utility Classes
+   ========================================================================== */
 
 .fade-in {
   animation: fadeIn var(--transition-base) ease-out forwards;
 }
 
-.skeleton {
-  background-color: #e2e8f0;
-  border-radius: var(--radius-sm);
-  animation: pulseShimmer 1.6s ease-in-out infinite;
+/**
+ * .page-animate — Applied to every page via <PageTransition> wrapper.
+ * Subtle 200ms fade + 8px slide. Fast enough to feel instant.
+ */
+.page-animate {
+  animation: pageEnter 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: opacity;
 }
 
-/* Reduced Motion Override */
+.scale-in {
+  animation: scaleIn var(--transition-fast) ease-out forwards;
+}
+
+.slide-down {
+  animation: slideDown var(--transition-fast) ease-out forwards;
+}
+
+.success-pop {
+  animation: successPop 300ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ==========================================================================
+   Skeleton Loader (Performance-optimized shimmer)
+   ========================================================================== */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 0px,
+    #f1f5f9 50px,
+    #e2e8f0 100px
+  );
+  background-size: 200px 100%;
+  border-radius: var(--radius-sm);
+  animation: pulseShimmer 1.4s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Spinner
+   ========================================================================== */
+
+.spinner {
+  animation: spin 0.8s linear infinite;
+}
+
+/* ==========================================================================
+   Card Hover Interactions
+   ========================================================================== */
+
+/* Already handled in .card-clickable — re-affirmed here for clarity */
+.card-clickable {
+  cursor: pointer;
+}
+
+.card-clickable:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* Interactive stat cards */
+.stat-card {
+  cursor: default;
+}
+
+/* ==========================================================================
+   Dropdown / Popover Animations
+   ========================================================================== */
+
+.dropdown-menu {
+  animation: slideDown var(--transition-fast) cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: top center;
+}
+
+/* ==========================================================================
+   Button Active Press State
+   ========================================================================== */
+
+/* Already defined in .btn:active { transform: scale(0.98); }   */
+/* Adding more specific feedback for primary buttons:             */
+
+.btn-primary:active:not(:disabled) {
+  background-color: var(--color-primary-active);
+  transform: scale(0.975);
+}
+
+.btn-secondary:active:not(:disabled),
+.btn-ghost:active:not(:disabled) {
+  transform: scale(0.975);
+}
+
+/* ==========================================================================
+   Modal Close Animation (closing state via data attribute)
+   ========================================================================== */
+
+[data-modal-closing] .modal-overlay {
+  animation: modalFadeIn var(--transition-fast) forwards reverse;
+}
+
+[data-modal-closing] .modal-content {
+  animation: modalSlideUp var(--transition-fast) forwards reverse;
+}
+
+/* ==========================================================================
+   Accessibility: Reduced Motion Override
+   ========================================================================== */
+
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+
+  .page-animate {
+    animation: none;
+  }
+
+  .skeleton {
+    animation: none;
+    background: #e2e8f0;
+  }
 }
+

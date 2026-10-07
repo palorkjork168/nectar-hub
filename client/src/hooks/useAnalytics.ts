@@ -42,7 +42,8 @@ export function useCompanyAttendanceAnalytics(
   to?: string,
   departmentId?: string,
   scheduleId?: string,
-  status?: string
+  status?: string,
+  enabled: boolean = true
 ) {
   return useQuery({
     queryKey: ["analytics", "company-attendance", companyId, from, to, departmentId, scheduleId, status],
@@ -56,7 +57,7 @@ export function useCompanyAttendanceAnalytics(
       const res = await api.get(`/analytics/company/${companyId}/attendance?${params.toString()}`);
       return res.data.data as CompanyAttendanceAnalyticsData;
     },
-    enabled: Boolean(companyId),
+    enabled: Boolean(companyId) && enabled,
     staleTime: 60 * 1000,
   });
 }

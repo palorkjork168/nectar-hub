@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../services/api";
 import type { UserSkillItem, SkillLevel } from "../../types/profile";
 import { Plus, Edit2, Trash2, X, Award, AlertCircle } from "lucide-react";
+import { useToast } from "../../contexts/ToastContext";
 
 interface SkillsSectionProps {
   skills: UserSkillItem[];
@@ -17,6 +18,7 @@ const SKILL_LEVELS: { value: SkillLevel; label: string; color: string }[] = [
 
 export default function SkillsSection({ skills }: SkillsSectionProps) {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [editingSkill, setEditingSkill] = useState<UserSkillItem | null>(null);
@@ -87,7 +89,7 @@ export default function SkillsSection({ skills }: SkillsSectionProps) {
       setDeleteConfirmId(null);
     },
     onError: (err: any) => {
-      alert(err.response?.data?.message || "Failed to delete skill");
+      toast.error(err.response?.data?.message || "Failed to delete skill");
     },
   });
 

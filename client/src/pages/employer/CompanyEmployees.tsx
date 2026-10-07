@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Building2, Users, AlertCircle, Loader2, Clock, CalendarClock, Plus } from "lucide-react";
 import api from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
 import type { WorkSchedule } from "../../types/attendance";
 import ScheduleAssignmentModal from "../../components/schedules/ScheduleAssignmentModal";
+import EmptyState from "../../components/common/EmptyState";
+import { SkeletonTableRow } from "../../components/common/Skeleton";
 
 type Company = { id: string; name: string };
 type DirectoryEmployee = {
@@ -36,7 +38,7 @@ export default function CompanyEmployees() {
     queryKey: ["companies", "my"],
     queryFn: async () => (await api.get("/companies/my")).data.data.companies as Company[],
   });
-  const companies = companiesQuery.data || [];
+  const companies = useMemo(() => companiesQuery.data || [], [companiesQuery.data]);
 
   useEffect(() => {
     if (companies.length === 1) setCompanyId(companies[0].id);
@@ -95,9 +97,27 @@ export default function CompanyEmployees() {
           <p>Choose the company whose workforce you want to view.</p>
         </div>
       ) : directoryQuery.isLoading ? (
-        <div className="empty-state">
-          <Loader2 className="spinner" size={28} />
-          <p>Loading employees...</p>
+        <div className="table-container">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>Department</th>
+                <th>Position</th>
+                <th>Work Schedule</th>
+                <th>Employment Type</th>
+                <th>Start Date</th>
+                <th>Status</th>
+                {canManageSchedules && <th>Schedule Action</th>}
+              </tr>
+            </thead>
+            <tbody>
+              <SkeletonTableRow cols={canManageSchedules ? 8 : 7} />
+              <SkeletonTableRow cols={canManageSchedules ? 8 : 7} />
+              <SkeletonTableRow cols={canManageSchedules ? 8 : 7} />
+              <SkeletonTableRow cols={canManageSchedules ? 8 : 7} />
+            </tbody>
+          </table>
         </div>
       ) : directoryQuery.isError ? (
         <div className="empty-state">
@@ -106,11 +126,11 @@ export default function CompanyEmployees() {
           <p>You may not have permission to view this company's workforce.</p>
         </div>
       ) : !directoryQuery.data?.length ? (
-        <div className="empty-state">
-          <Users size={32} />
-          <h3>No active employees</h3>
-          <p>Active employment records will appear here.</p>
-        </div>
+        <EmptyState
+          icon={Users}
+          title="No active employees"
+          description="Active employment records will appear here as candidates are hired."
+        />
       ) : (
         <div className="table-container">
           <table className="table">

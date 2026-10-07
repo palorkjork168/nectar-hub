@@ -21,8 +21,10 @@ import {
 } from "lucide-react";
 import BackButton from "../../components/common/BackButton";
 import { SkeletonTableRow } from "../../components/common/Skeleton";
+import { useToast } from "../../contexts/ToastContext";
 
 export default function Interviews() {
+  const toast = useToast();
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<string>("UPCOMING");
   const [activeApplicantId, setActiveApplicantId] = useState<string | null>(null);
@@ -80,7 +82,7 @@ export default function Interviews() {
       setCompleteNotes("");
     },
     onError: (err: any) => {
-      alert(err.response?.data?.message || "Failed to complete interview");
+      toast.error(err.response?.data?.message || "Failed to complete interview");
     },
   });
 
@@ -96,7 +98,7 @@ export default function Interviews() {
       setCancellingInterviewId(null);
     },
     onError: (err: any) => {
-      alert(err.response?.data?.message || "Failed to cancel interview");
+      toast.error(err.response?.data?.message || "Failed to cancel interview");
     },
   });
 

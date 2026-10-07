@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../services/api";
 import type { ExperienceItem } from "../../types/profile";
 import { Plus, Edit2, Trash2, X, Briefcase, MapPin, Calendar, AlertCircle } from "lucide-react";
+import { useToast } from "../../contexts/ToastContext";
 
 interface ExperienceSectionProps {
   experiences: ExperienceItem[];
@@ -18,6 +19,7 @@ const EMPLOYMENT_TYPES = [
 
 export default function ExperienceSection({ experiences }: ExperienceSectionProps) {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<ExperienceItem | null>(null);
@@ -107,7 +109,7 @@ export default function ExperienceSection({ experiences }: ExperienceSectionProp
       setDeleteConfirmId(null);
     },
     onError: (err: any) => {
-      alert(err.response?.data?.message || "Failed to delete experience record");
+      toast.error(err.response?.data?.message || "Failed to delete experience record");
     },
   });
 

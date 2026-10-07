@@ -15,6 +15,7 @@ import EmptyState from "../../components/common/EmptyState";
 import BackButton from "../../components/common/BackButton";
 import { SkeletonStatCard, SkeletonTableRow } from "../../components/common/Skeleton";
 import { useToast } from "../../contexts/ToastContext";
+import Modal from "../../components/common/Modal";
 
 type LeaveTab = "ALL" | "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
 
@@ -22,10 +23,11 @@ export default function Leave() {
   const queryClient = useQueryClient();
   const toast = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [cancelConfirmId, setCancelConfirmId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<LeaveTab>("ALL");
   const [companyId, setCompanyId] = useState("");
   const employmentsQuery = useQuery<any[]>({ queryKey: ["myActiveEmployments"], queryFn: async () => (await api.get("/employment/me")).data.data });
-  const employments = employmentsQuery.data || [];
+  const employments = useMemo(() => employmentsQuery.data || [], [employmentsQuery.data]);
   useEffect(() => { if (employments.length === 1) setCompanyId(employments[0].company_id); }, [employments]);
 
   const {
@@ -70,6 +72,7 @@ export default function Leave() {
       queryClient.invalidateQueries({ queryKey: ["myLeaveRequests"] });
       queryClient.invalidateQueries({ queryKey: ["leaveBalance"] });
       toast.success("Leave request cancelled successfully");
+      setCancelConfirmId(null);
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || "Failed to cancel request");
@@ -380,11 +383,7 @@ export default function Leave() {
                       {req.status === "PENDING" && (
                         <button
                           type="button"
-                          onClick={() => {
-                            if (window.confirm("Are you sure you want to cancel this leave request?")) {
-                              cancelMut.mutate(req.id);
-                            }
-                          }}
+                          onClick={() => setCancelConfirmId(req.id)}
                           disabled={cancelMut.isPending}
                           className="btn btn-sm btn-ghost"
                           style={{ color: "var(--color-danger)" }}
@@ -408,6 +407,39 @@ export default function Leave() {
           companyId={companyId}
           onClose={() => setIsModalOpen(false)}
         />
+      )}
+
+      {/* Cancel Confirmation Modal */}
+      {cancelConfirmId && (
+        <Modal
+          isOpen={true}
+          onClose={() => setCancelConfirmId(null)}
+          title="Cancel Leave Request"
+        >
+          <div style={{ padding: "1.5rem" }}>
+            <p style={{ margin: "0 0 1.5rem 0", color: "var(--color-text-secondary)" }}>
+              Are you sure you want to cancel this leave request? This action cannot be undone.
+            </p>
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => setCancelConfirmId(null)}
+                disabled={cancelMut.isPending}
+              >
+                Keep Request
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={() => cancelMut.mutate(cancelConfirmId)}
+                disabled={cancelMut.isPending}
+              >
+                {cancelMut.isPending ? "Cancelling..." : "Yes, Cancel"}
+              </button>
+            </div>
+          </div>
+        </Modal>
       )}
       </>}</div>
   );

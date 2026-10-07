@@ -2,7 +2,9 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../../services/api";
 import type { Employee } from "../../../types/employee";
-import { X, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { useToast } from "../../../contexts/ToastContext";
+import Modal from "../../../components/common/Modal";
 
 interface EditEmployeeModalProps {
   employee: Employee;
@@ -12,6 +14,7 @@ interface EditEmployeeModalProps {
 
 export default function EditEmployeeModal({ employee, onClose, onSuccess }: EditEmployeeModalProps) {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const [firstName, setFirstName] = useState(employee.first_name || "");
   const [lastName, setLastName] = useState(employee.last_name || "");
   const [phone, setPhone] = useState(employee.phone || "");
@@ -28,7 +31,7 @@ export default function EditEmployeeModal({ employee, onClose, onSuccess }: Edit
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employees"] });
-      alert("Employee updated successfully!");
+      toast.success("Employee profile updated successfully.");
       onSuccess();
     },
     onError: (err: any) => {
@@ -37,7 +40,7 @@ export default function EditEmployeeModal({ employee, onClose, onSuccess }: Edit
         err.response?.data?.errors?.[0]?.message ||
         "Failed to update employee";
       setError(msg);
-      alert(msg);
+      toast.error(msg);
     },
   });
 
@@ -62,101 +65,101 @@ export default function EditEmployeeModal({ employee, onClose, onSuccess }: Edit
     });
   };
 
+  const footer = (
+    <>
+      <button type="button" onClick={onClose} className="btn btn-secondary" disabled={updateMutation.isPending}>
+        Cancel
+      </button>
+      <button
+        type="submit"
+        form="edit-employee-form"
+        disabled={updateMutation.isPending}
+        className="btn btn-primary"
+      >
+        {updateMutation.isPending ? (
+          <>
+            <Loader2 size={16} className="spinner" /> Saving...
+          </>
+        ) : (
+          "Save Changes"
+        )}
+      </button>
+    </>
+  );
+
   return (
-    <div className="modal-overlay">
-      <div className="modal-content" style={{ maxWidth: "500px" }}>
-        <div className="modal-header">
-          <div>
-            <h2 style={{ margin: "0 0 0.25rem 0", fontSize: "1.25rem" }}>Edit Account</h2>
-            <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "0.875rem" }}>
-              Update profile details for {employee.first_name} {employee.last_name}
-            </p>
+    <Modal
+      isOpen={true}
+      onClose={onClose}
+      title="Edit Account"
+      description={`Update profile details for ${employee.first_name} ${employee.last_name}`}
+      footer={footer}
+      maxWidth="500px"
+    >
+      <form id="edit-employee-form" onSubmit={handleSubmit}>
+        {error && (
+          <div
+            style={{
+              padding: "0.75rem",
+              marginBottom: "1rem",
+              backgroundColor: "var(--danger-bg)",
+              color: "var(--danger)",
+              borderRadius: "var(--radius-md)",
+              fontSize: "0.875rem",
+            }}
+            role="alert"
+          >
+            {error}
           </div>
-          <button onClick={onClose} className="btn-icon">
-            <X size={20} />
-          </button>
+        )}
+
+        <div className="form-grid two-cols">
+          <div className="form-group">
+            <label className="form-label" htmlFor="edit-first-name">
+              First Name <span className="required" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="edit-first-name"
+              type="text"
+              className="input-field"
+              placeholder="e.g. Jane"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+              autoComplete="given-name"
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="edit-last-name">
+              Last Name <span className="required" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="edit-last-name"
+              type="text"
+              className="input-field"
+              placeholder="e.g. Doe"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+              autoComplete="family-name"
+            />
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="modal-body">
-            {error && (
-              <div
-                style={{
-                  padding: "0.75rem",
-                  marginBottom: "1rem",
-                  backgroundColor: "var(--danger-bg)",
-                  color: "var(--danger)",
-                  borderRadius: "var(--radius-md)",
-                  fontSize: "0.875rem",
-                }}
-              >
-                {error}
-              </div>
-            )}
-
-            <div className="form-grid two-cols">
-              <div className="form-group">
-                <label className="form-label">
-                  First Name <span className="required">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="input-field"
-                  placeholder="e.g. Jane"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">
-                  Last Name <span className="required">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="input-field"
-                  placeholder="e.g. Doe"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Phone Number</label>
-              <input
-                type="tel"
-                className="input-field"
-                placeholder="e.g. +855 12 345 678"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
-
-          </div>
-
-          <div className="modal-footer">
-            <button type="button" onClick={onClose} className="btn btn-secondary">
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={updateMutation.isPending}
-              className="btn btn-primary"
-            >
-              {updateMutation.isPending ? (
-                <>
-                  <Loader2 size={16} className="spinner" /> Saving...
-                </>
-              ) : (
-                "Save Changes"
-              )}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div className="form-group">
+          <label className="form-label" htmlFor="edit-phone">Phone Number</label>
+          <input
+            id="edit-phone"
+            type="tel"
+            className="input-field"
+            placeholder="e.g. +855 12 345 678"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            autoComplete="tel"
+          />
+        </div>
+      </form>
+    </Modal>
   );
 }

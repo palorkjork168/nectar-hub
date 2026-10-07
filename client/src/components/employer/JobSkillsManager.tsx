@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../services/api";
 import type { JobSkill, GetJobSkillsResponse } from "../../types/job";
 import { Plus, Trash2, Tag, Loader2, AlertCircle } from "lucide-react";
+import { useToast } from "../../contexts/ToastContext";
 
 interface JobSkillsManagerProps {
   jobId: string;
@@ -11,6 +12,7 @@ interface JobSkillsManagerProps {
 
 export default function JobSkillsManager({ jobId, readonly = false }: JobSkillsManagerProps) {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const [skillName, setSkillName] = useState("");
   const [isRequired, setIsRequired] = useState(true);
   const [error, setError] = useState("");
@@ -49,7 +51,7 @@ export default function JobSkillsManager({ jobId, readonly = false }: JobSkillsM
       queryClient.invalidateQueries({ queryKey: ["jobSkills", jobId] });
     },
     onError: (err: any) => {
-      alert(err.response?.data?.message || "Failed to delete skill");
+      toast.error(err.response?.data?.message || "Failed to delete skill");
     },
   });
 

@@ -23,6 +23,7 @@ const LeaveType = require("./LeaveType");
 const LeaveRequest = require("./LeaveRequest");
 const Notification = require("./Notification");
 const WorkSchedule = require("./WorkSchedule");
+const AuditLog = require("./AuditLog");
 
 // User Role Many-to-Many
 User.belongsToMany(Role, {
@@ -389,6 +390,27 @@ Notification.belongsTo(User, {
   as: "user",
 });
 
+// AuditLog
+AuditLog.belongsTo(Company, {
+  foreignKey: "company_id",
+  as: "company",
+});
+
+Company.hasMany(AuditLog, {
+  foreignKey: "company_id",
+  as: "auditLogs",
+});
+
+AuditLog.belongsTo(User, {
+  foreignKey: "actor_user_id",
+  as: "actor",
+});
+
+User.hasMany(AuditLog, {
+  foreignKey: "actor_user_id",
+  as: "auditLogs",
+});
+
 module.exports = {
   User,
   Role,
@@ -415,4 +437,6 @@ module.exports = {
   LeaveRequest,
   Notification,
   WorkSchedule,
+  AuditLog,
 };
+

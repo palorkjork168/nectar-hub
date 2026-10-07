@@ -3,6 +3,7 @@ const sequelize = require("../config/database");
 const { Op } = require("sequelize");
 const notificationService = require("./notification.service");
 const NOTIFICATION_TYPES = require("../constants/notificationTypes");
+const emailService = require("./email.service");
 
 class LeaveService {
   // Leave Types
@@ -163,7 +164,7 @@ class LeaveService {
     });
 
     try {
-      const user = await User.findByPk(userId, { attributes: ["first_name", "last_name"] });
+      const user = await User.findByPk(userId, { attributes: ["first_name", "last_name", "email"] });
       const employeeName = user ? `${user.first_name || ""} ${user.last_name || ""}`.trim() : "An employee";
       const reviewers = await notificationService.getCompanyRecipients(
         employment.company_id,
@@ -182,6 +183,18 @@ class LeaveService {
         },
         actorId: userId,
       });
+
+      if (user?.email) {
+        emailService
+          .sendTemplateEmail("leaveSubmitted", user.email, {
+            employeeName,
+            leaveType: leaveType.name,
+            startDate: data.start_date,
+            endDate: data.end_date,
+            days: leaveRequest.days || 1,
+          })
+          .catch((err) => console.error("Leave submitted email failed:", err.message));
+      }
     } catch (err) {
       console.error("Failed to send leave request notification:", err);
     }
@@ -329,6 +342,38 @@ class LeaveService {
       }
 
       await transaction.commit();
+
+      // Asynchronous review outcome email
+      try {
+        const emp = await User.findByPk(request.user_id, { attributes: ["first_name", "last_name", "email"] });
+        if (emp?.email) {
+          const empName = `${emp.first_name || ""} ${emp.last_name || ""}`.trim() || "Employee";
+          if (status === "APPROVED") {
+            emailService
+              .sendTemplateEmail("leaveApproved", emp.email, {
+                employeeName: empName,
+                leaveType: typeName,
+                startDate: request.start_date,
+                endDate: request.end_date,
+                days: request.days || 1,
+              })
+              .catch((err) => console.error("Leave approved email failed:", err.message));
+          } else if (status === "REJECTED") {
+            emailService
+              .sendTemplateEmail("leaveRejected", emp.email, {
+                employeeName: empName,
+                leaveType: typeName,
+                startDate: request.start_date,
+                endDate: request.end_date,
+                reviewNote,
+              })
+              .catch((err) => console.error("Leave rejected email failed:", err.message));
+          }
+        }
+      } catch (err) {
+        console.error("Leave review email dispatch failed:", err.message);
+      }
+
       return request;
     } catch (error) {
       await transaction.rollback();

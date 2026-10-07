@@ -1,4 +1,4 @@
-const { Role, Permission, RolePermission } = require("../models");
+﻿const { Role, Permission, RolePermission } = require("../models");
 
 const defaultPermissions = [
   // Company
@@ -48,6 +48,9 @@ const defaultPermissions = [
   { name: "analytics.company.view", description: "View company recruitment, workforce, leave, and attendance analytics", category: "analytics" },
   { name: "analytics.personal.view", description: "View personal attendance and leave analytics", category: "analytics" },
 
+  // Audit
+  { name: "audit.view", description: "View company security and administrative audit logs", category: "audit" },
+
   // System Administration
   { name: "users.manage", description: "Global user management and account controls", category: "admin" },
   { name: "roles.manage", description: "Manage system and company roles and permissions", category: "admin" },
@@ -65,7 +68,7 @@ const rolePermissionsMap = {
     "departments.manage", "positions.manage",
     "shifts.view", "shifts.manage",
     "analytics.platform.view", "analytics.company.view", "analytics.personal.view",
-    "users.manage", "roles.manage"
+    "users.manage", "roles.manage", "audit.view"
   ],
   EMPLOYER: [
     "company.view", "company.update",
@@ -77,7 +80,7 @@ const rolePermissionsMap = {
     "leave.request", "leave.view_own", "leave.review", "leave.policy_manage",
     "departments.manage", "positions.manage",
     "shifts.view", "shifts.manage",
-    "analytics.company.view", "analytics.personal.view"
+    "analytics.company.view", "analytics.personal.view", "audit.view"
   ],
   HR: [
     "employees.view", "employees.manage",
@@ -86,7 +89,7 @@ const rolePermissionsMap = {
     "leave.review", "leave.policy_manage",
     "leave.request", "leave.view_own",
     "attendance.manage", "attendance.view_own",
-    "analytics.company.view", "analytics.personal.view"
+    "analytics.company.view", "analytics.personal.view", "audit.view"
   ],
   RECRUITER: [
     "jobs.view", "jobs.create", "jobs.update", "jobs.close",
@@ -153,3 +156,5 @@ module.exports = {
   rolePermissionsMap,
   seedPermissions,
 };
+
+

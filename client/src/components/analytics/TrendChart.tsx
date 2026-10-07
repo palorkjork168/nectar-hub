@@ -26,16 +26,17 @@ export function TrendChart({
     return (
       <div
         style={{
-          background: "var(--color-bg-card, #ffffff)",
+          background: "var(--color-bg-card, #0e1712)",
           borderRadius: "var(--radius-lg, 12px)",
-          border: "1px solid var(--color-border, #e2e8f0)",
+          border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
           padding: "1.25rem",
           display: "flex",
           flexDirection: "column",
           gap: "1rem",
+          boxShadow: "0 10px 25px -5px rgba(0,0,0,0.5)",
         }}
       >
-        <h3 style={{ margin: 0, fontSize: "0.95rem", fontWeight: 600, color: "var(--color-text-main, #1e293b)" }}>
+        <h3 style={{ margin: 0, fontSize: "0.95rem", fontWeight: 600, color: "var(--color-text-main, #f8fafc)" }}>
           {title}
         </h3>
         <div
@@ -85,23 +86,23 @@ export function TrendChart({
   return (
     <div
       style={{
-        background: "var(--color-bg-card, #ffffff)",
+        background: "var(--color-bg-card, #0e1712)",
         borderRadius: "var(--radius-lg, 12px)",
-        border: "1px solid var(--color-border, #e2e8f0)",
+        border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
         padding: "1.25rem",
         display: "flex",
         flexDirection: "column",
         gap: "0.75rem",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.03)",
+        boxShadow: "0 10px 25px -5px rgba(0,0,0,0.5)",
         position: "relative",
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <h3 style={{ margin: 0, fontSize: "0.95rem", fontWeight: 600, color: "var(--color-text-main, #1e293b)" }}>
+        <h3 style={{ margin: 0, fontSize: "0.95rem", fontWeight: 600, color: "var(--color-text-main, #f8fafc)" }}>
           {title}
         </h3>
-        <span style={{ fontSize: "0.85rem", color: "var(--color-text-muted, #64748b)" }}>
-          Total: <strong style={{ color: "var(--color-text-main, #0f172a)" }}>{totalSum}</strong>
+        <span style={{ fontSize: "0.85rem", color: "var(--color-text-muted, #94a3b8)" }}>
+          Total: <strong style={{ color: "var(--color-text-main, #f8fafc)" }}>{totalSum}</strong>
         </span>
       </div>
 
@@ -113,7 +114,7 @@ export function TrendChart({
         >
           <defs>
             <linearGradient id={`grad-${title.replace(/\s+/g, "")}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={color} stopOpacity="0.25" />
+              <stop offset="0%" stopColor={color} stopOpacity="0.3" />
               <stop offset="100%" stopColor={color} stopOpacity="0.01" />
             </linearGradient>
           </defs>
@@ -124,7 +125,7 @@ export function TrendChart({
             y1={paddingY}
             x2={svgWidth - paddingX}
             y2={paddingY}
-            stroke="var(--color-border, #f1f5f9)"
+            stroke="rgba(255, 255, 255, 0.08)"
             strokeDasharray="4 4"
           />
           <line
@@ -132,7 +133,7 @@ export function TrendChart({
             y1={paddingY + chartHeight / 2}
             x2={svgWidth - paddingX}
             y2={paddingY + chartHeight / 2}
-            stroke="var(--color-border, #f1f5f9)"
+            stroke="rgba(255, 255, 255, 0.08)"
             strokeDasharray="4 4"
           />
           <line
@@ -140,7 +141,7 @@ export function TrendChart({
             y1={paddingY + chartHeight}
             x2={svgWidth - paddingX}
             y2={paddingY + chartHeight}
-            stroke="var(--color-border, #e2e8f0)"
+            stroke="rgba(16, 185, 129, 0.2)"
           />
 
           {/* Filled Area */}
@@ -174,19 +175,20 @@ export function TrendChart({
               left: `${(hoveredPoint.x / svgWidth) * 100}%`,
               top: `${(hoveredPoint.y / svgHeight) * 100}%`,
               transform: "translate(-50%, -120%)",
-              background: "#0f172a",
+              background: "#0d1611",
+              border: "1px solid rgba(16, 185, 129, 0.35)",
               color: "#ffffff",
               padding: "0.25rem 0.5rem",
-              borderRadius: "4px",
+              borderRadius: "6px",
               fontSize: "0.75rem",
               pointerEvents: "none",
               whiteSpace: "nowrap",
               zIndex: 10,
-              boxShadow: "0 4px 6px rgba(0,0,0,0.15)",
+              boxShadow: "0 8px 16px rgba(0,0,0,0.6)",
             }}
           >
             <div>{hoveredPoint.point.date}</div>
-            <strong>{hoveredPoint.point.count}</strong>
+            <strong style={{ color: "#34d399" }}>{hoveredPoint.point.count}</strong>
           </div>
         )}
       </div>

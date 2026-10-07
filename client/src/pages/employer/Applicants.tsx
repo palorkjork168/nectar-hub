@@ -19,8 +19,10 @@ import {
   Briefcase,
 } from "lucide-react";
 import BackButton from "../../components/common/BackButton";
+import { useToast } from "../../contexts/ToastContext";
 
 export default function Applicants() {
+  const toast = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
@@ -67,7 +69,7 @@ export default function Applicants() {
       queryClient.invalidateQueries({ queryKey: ["myJobs"] });
     },
     onError: (err: any) => {
-      alert(err.response?.data?.message || "Failed to update status");
+      toast.error(err.response?.data?.message || "Failed to update status");
     },
   });
 

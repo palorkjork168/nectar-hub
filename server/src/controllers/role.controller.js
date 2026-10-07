@@ -1,4 +1,5 @@
 const { Role, Permission, RolePermission, User, UserRole, CompanyUserRole } = require("../models");
+const auditService = require("../services/audit.service");
 
 /**
  * Get all roles with counts
@@ -170,6 +171,16 @@ const updateRolePermissions = async (req, res, next) => {
           through: { attributes: [] },
         },
       ],
+    });
+
+    auditService.recordAuditEvent({
+      actorUserId: req.user?.id,
+      action: "PERMISSION_CHANGED",
+      entityType: "Role",
+      entityId: role.id,
+      description: `Permissions updated for role ${role.name}`,
+      metadata: { role_name: role.name, permission_names },
+      req,
     });
 
     res.status(200).json({

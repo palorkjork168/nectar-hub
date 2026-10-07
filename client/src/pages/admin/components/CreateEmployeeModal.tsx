@@ -1,7 +1,9 @@
+import { createPortal } from "react-dom";
 import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
 import api from "../../../services/api";
 import { X, Loader2 } from "lucide-react";
+import { useToast } from "../../../contexts/ToastContext";
 
 interface CreateEmployeeModalProps {
   onClose: () => void;
@@ -31,6 +33,7 @@ function getErrorMessage(error: unknown): string {
 }
 
 export default function CreateEmployeeModal({ onClose, onSuccess }: CreateEmployeeModalProps) {
+  const toast = useToast();
   const form = useForm({
     defaultValues: {
       first_name: "",
@@ -46,15 +49,15 @@ export default function CreateEmployeeModal({ onClose, onSuccess }: CreateEmploy
     onSubmit: async ({ value }) => {
       try {
         await api.post("/employees", value);
-        alert("Employee created successfully!");
+        toast.success("Employee account created successfully.");
         onSuccess();
       } catch (error: any) {
-        alert(error.response?.data?.message || "Failed to create employee");
+        toast.error(error.response?.data?.message || "Failed to create employee");
       }
     },
   });
 
-  return (
+  return createPortal(
     <div className="modal-overlay">
       <div className="modal-content">
         <div className="modal-header">
@@ -175,6 +178,7 @@ export default function CreateEmployeeModal({ onClose, onSuccess }: CreateEmploy
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -31,16 +31,17 @@ export function BarChart({
     return (
       <div
         style={{
-          background: "var(--color-bg-card, #ffffff)",
+          background: "var(--color-bg-card, #0e1712)",
           borderRadius: "var(--radius-lg, 12px)",
-          border: "1px solid var(--color-border, #e2e8f0)",
+          border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
           padding: "1.25rem",
           display: "flex",
           flexDirection: "column",
           gap: "1rem",
+          boxShadow: "0 10px 25px -5px rgba(0,0,0,0.5)",
         }}
       >
-        <h3 style={{ margin: 0, fontSize: "0.95rem", fontWeight: 600, color: "var(--color-text-main, #1e293b)" }}>
+        <h3 style={{ margin: 0, fontSize: "0.95rem", fontWeight: 600, color: "var(--color-text-main, #f8fafc)" }}>
           {title}
         </h3>
         <div
@@ -66,22 +67,22 @@ export function BarChart({
   return (
     <div
       style={{
-        background: "var(--color-bg-card, #ffffff)",
+        background: "var(--color-bg-card, #0e1712)",
         borderRadius: "var(--radius-lg, 12px)",
-        border: "1px solid var(--color-border, #e2e8f0)",
+        border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
         padding: "1.25rem",
         display: "flex",
         flexDirection: "column",
         gap: "1rem",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.03)",
+        boxShadow: "0 10px 25px -5px rgba(0,0,0,0.5)",
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <h3 style={{ margin: 0, fontSize: "0.95rem", fontWeight: 600, color: "var(--color-text-main, #1e293b)" }}>
+        <h3 style={{ margin: 0, fontSize: "0.95rem", fontWeight: 600, color: "var(--color-text-main, #f8fafc)" }}>
           {title}
         </h3>
-        <span style={{ fontSize: "0.85rem", color: "var(--color-text-muted, #64748b)" }}>
-          Total: <strong style={{ color: "var(--color-text-main, #0f172a)" }}>{total}</strong>
+        <span style={{ fontSize: "0.85rem", color: "var(--color-text-muted, #94a3b8)" }}>
+          Total: <strong style={{ color: "var(--color-text-main, #f8fafc)" }}>{total}</strong>
         </span>
       </div>
 
@@ -98,7 +99,7 @@ export function BarChart({
                   display: "flex",
                   justifyContent: "space-between",
                   fontSize: "0.825rem",
-                  color: "var(--color-text-secondary, #334155)",
+                  color: "var(--color-text-secondary, #cbd5e1)",
                 }}
               >
                 <span
@@ -108,20 +109,21 @@ export function BarChart({
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
                     maxWidth: "70%",
+                    color: "#f8fafc",
                   }}
                   title={item.label}
                 >
                   {item.label}
                 </span>
-                <span style={{ color: "var(--color-text-muted, #64748b)", fontSize: "0.8rem" }}>
-                  <strong>{item.count}</strong> ({percentage}%)
+                <span style={{ color: "var(--color-text-muted, #94a3b8)", fontSize: "0.8rem" }}>
+                  <strong style={{ color: "#f8fafc" }}>{item.count}</strong> ({percentage}%)
                 </span>
               </div>
               <div
                 style={{
                   width: "100%",
                   height: "8px",
-                  background: "var(--color-bg-secondary, #f1f5f9)",
+                  background: "rgba(255, 255, 255, 0.08)",
                   borderRadius: "999px",
                   overflow: "hidden",
                 }}

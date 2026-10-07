@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const { User, Role } = require("../models");
 const generateToken = require("../utils/generateToken");
+const emailService = require("./email.service");
 
 const register = async (userData) => {
   const { first_name, last_name, email, password, phone } = userData;
@@ -34,6 +35,14 @@ const register = async (userData) => {
   });
 
   await user.addRole(jobSeekerRole);
+
+  // Asynchronous non-blocking welcome email delivery
+  emailService
+    .sendTemplateEmail("welcome", user.email, {
+      name: `${user.first_name || ""} ${user.last_name || ""}`.trim() || "Member",
+      email: user.email,
+    })
+    .catch((err) => console.error("Welcome email delivery failed:", err.message));
 
   return user;
 };

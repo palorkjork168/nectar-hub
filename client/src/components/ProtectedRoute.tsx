@@ -17,7 +17,7 @@ export default function ProtectedRoute({
   if (isLoading) {
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "50vh" }}>
-        <div className="skeleton" style={{ width: "150px", height: "24px" }} />
+        <div className="skeleton" style={{ width: "160px", height: "32px", borderRadius: "var(--radius-md)" }} />
       </div>
     );
   }
@@ -27,7 +27,21 @@ export default function ProtectedRoute({
   }
 
   if (requireAdmin && !isAdmin) {
-    return <div style={{ padding: "20px", color: "red" }}>You do not have permission to perform this action.</div>;
+    return (
+      <div style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
+        <div className="card" style={{ maxWidth: "440px", width: "100%", padding: "2rem", textAlign: "center" }}>
+          <h2 style={{ fontSize: "1.25rem", fontWeight: 700, margin: "0 0 0.5rem 0", color: "var(--color-danger, #ef4444)" }}>
+            Access Restricted
+          </h2>
+          <p style={{ fontSize: "0.875rem", color: "var(--color-text-secondary, #475569)", margin: "0 0 1.25rem 0" }}>
+            You do not have administrative permissions to view this section.
+          </p>
+          <a href="/" className="btn btn-secondary">
+            Return to Homepage
+          </a>
+        </div>
+      </div>
+    );
   }
 
   if (requireEmployee && !isEmployee && !isAdmin) {

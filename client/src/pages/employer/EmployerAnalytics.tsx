@@ -8,6 +8,7 @@ import {
 } from "../../hooks/useAnalytics";
 import { useCompanySchedules } from "../../hooks/useWorkSchedules";
 import { useToast } from "../../contexts/ToastContext";
+import { getErrorMessage } from "../../utils/errors";
 import { DateRangeFilter } from "../../components/analytics/DateRangeFilter";
 import { FunnelDiagram } from "../../components/analytics/FunnelDiagram";
 import { TrendChart } from "../../components/analytics/TrendChart";
@@ -81,12 +82,16 @@ export default function EmployerAnalytics() {
       const res = await api.get(`/departments/company/${activeCompanyId}`);
       return res.data.data as { id: string; name: string }[];
     },
-    enabled: Boolean(activeCompanyId),
+    enabled: Boolean(activeCompanyId) && activeTab === "attendance",
   });
   const departments = departmentsQuery.data || [];
 
   // 4. Fetch schedules for filtering
-  const schedulesQuery = useCompanySchedules(activeCompanyId);
+  const schedulesQuery = useCompanySchedules(
+    activeCompanyId || "",
+    undefined,
+    Boolean(activeCompanyId) && activeTab === "attendance"
+  );
   const schedules = schedulesQuery.data || [];
 
   // 5. Fetch Attendance Analytics
@@ -96,7 +101,8 @@ export default function EmployerAnalytics() {
     to,
     selectedDepartmentId || undefined,
     selectedScheduleId || undefined,
-    selectedStatus || undefined
+    selectedStatus || undefined,
+    Boolean(activeCompanyId) && activeTab === "attendance"
   );
   const {
     data: attendanceData,
@@ -123,8 +129,8 @@ export default function EmployerAnalytics() {
         status: selectedStatus || undefined,
       });
       toast.success("Attendance report CSV downloaded successfully.");
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to download attendance report CSV.");
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, "Failed to download attendance report CSV."));
     } finally {
       setIsExportingCsv(false);
     }
@@ -162,11 +168,11 @@ export default function EmployerAnalytics() {
                 style={{
                   padding: "0.4rem 0.75rem",
                   borderRadius: "var(--radius-md, 8px)",
-                  border: "1px solid var(--color-border, #cbd5e1)",
+                  border: "1px solid var(--color-border, rgba(16, 185, 129, 0.3))",
                   fontSize: "0.9rem",
                   fontWeight: 600,
-                  color: "var(--color-text-main, #0f172a)",
-                  background: "#ffffff",
+                  color: "var(--color-text-main, #f8fafc)",
+                  background: "#09120e",
                 }}
               >
                 {companies.map((c) => (
@@ -790,7 +796,7 @@ export default function EmployerAnalytics() {
             <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "0.75rem" }}>
               {/* Department Filter */}
               <div>
-                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#64748b", marginBottom: "0.25rem" }}>
+                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#94a3b8", marginBottom: "0.25rem" }}>
                   Department
                 </label>
                 <select
@@ -799,10 +805,10 @@ export default function EmployerAnalytics() {
                   style={{
                     padding: "0.4rem 0.75rem",
                     borderRadius: "6px",
-                    border: "1px solid var(--color-border, #cbd5e1)",
+                    border: "1px solid var(--color-border, rgba(16, 185, 129, 0.25))",
                     fontSize: "0.85rem",
-                    background: "#ffffff",
-                    color: "var(--color-text-main, #0f172a)",
+                    background: "#09120e",
+                    color: "var(--color-text-main, #f8fafc)",
                     minWidth: "150px",
                   }}
                 >
@@ -817,7 +823,7 @@ export default function EmployerAnalytics() {
 
               {/* Work Schedule Filter */}
               <div>
-                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#64748b", marginBottom: "0.25rem" }}>
+                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#94a3b8", marginBottom: "0.25rem" }}>
                   Work Schedule
                 </label>
                 <select
@@ -826,10 +832,10 @@ export default function EmployerAnalytics() {
                   style={{
                     padding: "0.4rem 0.75rem",
                     borderRadius: "6px",
-                    border: "1px solid var(--color-border, #cbd5e1)",
+                    border: "1px solid var(--color-border, rgba(16, 185, 129, 0.25))",
                     fontSize: "0.85rem",
-                    background: "#ffffff",
-                    color: "var(--color-text-main, #0f172a)",
+                    background: "#09120e",
+                    color: "var(--color-text-main, #f8fafc)",
                     minWidth: "160px",
                   }}
                 >
@@ -844,7 +850,7 @@ export default function EmployerAnalytics() {
 
               {/* Status Filter */}
               <div>
-                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#64748b", marginBottom: "0.25rem" }}>
+                <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 600, color: "#94a3b8", marginBottom: "0.25rem" }}>
                   Shift Status
                 </label>
                 <select
@@ -853,10 +859,10 @@ export default function EmployerAnalytics() {
                   style={{
                     padding: "0.4rem 0.75rem",
                     borderRadius: "6px",
-                    border: "1px solid var(--color-border, #cbd5e1)",
+                    border: "1px solid var(--color-border, rgba(16, 185, 129, 0.25))",
                     fontSize: "0.85rem",
-                    background: "#ffffff",
-                    color: "var(--color-text-main, #0f172a)",
+                    background: "#09120e",
+                    color: "var(--color-text-main, #f8fafc)",
                     minWidth: "140px",
                   }}
                 >
@@ -880,14 +886,14 @@ export default function EmployerAnalytics() {
                   alignItems: "center",
                   gap: "0.4rem",
                   padding: "0.5rem 1rem",
-                  background: "#ffffff",
-                  color: "#1e293b",
-                  border: "1px solid #cbd5e1",
+                  background: "rgba(16, 28, 20, 0.8)",
+                  color: "#34d399",
+                  border: "1px solid rgba(16, 185, 129, 0.3)",
                   borderRadius: "6px",
                   fontWeight: 600,
                   fontSize: "0.85rem",
                   cursor: isExportingCsv ? "not-allowed" : "pointer",
-                  boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
                 }}
               >
                 {isExportingCsv ? <RefreshCw size={15} className="animate-spin" /> : <Download size={15} />}

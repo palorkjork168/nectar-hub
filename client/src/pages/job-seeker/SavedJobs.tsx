@@ -4,9 +4,11 @@ import api from "../../services/api";
 import type { SavedJobRecord, GetSavedJobsResponse } from "../../types/profile";
 import JobCard from "../../components/public/JobCard";
 import { Bookmark, Search, Trash2, Loader2, AlertCircle } from "lucide-react";
+import { useToast } from "../../contexts/ToastContext";
 
 export default function SavedJobs() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const { data: savedJobs, isLoading, error } = useQuery<SavedJobRecord[]>({
     queryKey: ["savedJobs"],
@@ -25,7 +27,7 @@ export default function SavedJobs() {
       queryClient.invalidateQueries({ queryKey: ["savedJobs"] });
     },
     onError: (err: any) => {
-      alert(err.response?.data?.message || "Failed to remove job from saved list");
+      toast.error(err.response?.data?.message || "Failed to remove job from saved list");
     },
   });
 

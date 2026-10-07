@@ -7,12 +7,12 @@ export interface ScheduleFilters {
   search?: string;
 }
 
-export function useCompanySchedules(companyId: string, filters?: ScheduleFilters) {
+export function useCompanySchedules(companyId: string, filters?: ScheduleFilters, enabled: boolean = true) {
   return useQuery({
     queryKey: ["schedules", companyId, filters],
     queryFn: async () => {
       if (!companyId) return [] as WorkSchedule[];
-      const params: Record<string, any> = {};
+      const params: Record<string, string | boolean> = {};
       if (filters?.isActive !== undefined) {
         params.isActive = filters.isActive;
       }
@@ -22,7 +22,7 @@ export function useCompanySchedules(companyId: string, filters?: ScheduleFilters
       const res = await api.get(`/shifts/company/${companyId}`, { params });
       return res.data.data as WorkSchedule[];
     },
-    enabled: Boolean(companyId),
+    enabled: Boolean(companyId) && enabled,
   });
 }
 

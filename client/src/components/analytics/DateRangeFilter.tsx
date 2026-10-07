@@ -67,21 +67,21 @@ export function DateRangeFilter({
         alignItems: "center",
         justifyContent: "space-between",
         gap: "0.75rem",
-        background: "var(--color-bg-card, #ffffff)",
+        background: "var(--color-bg-card, #0e1712)",
         padding: "0.75rem 1rem",
         borderRadius: "var(--radius-lg, 12px)",
-        border: "1px solid var(--color-border, #e2e8f0)",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+        border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
+        boxShadow: "0 10px 25px -5px rgba(0,0,0,0.5)",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
         <span
           style={{
             fontSize: "0.85rem",
-            fontWeight: 600,
-            color: "var(--color-text-muted, #64748b)",
+            fontWeight: 700,
+            color: "#10b981",
             textTransform: "uppercase",
-            letterSpacing: "0.05em",
+            letterSpacing: "0.06em",
             marginRight: "0.25rem",
           }}
         >
@@ -107,12 +107,13 @@ export function DateRangeFilter({
                 padding: "0.35rem 0.75rem",
                 borderRadius: "var(--radius-md, 8px)",
                 fontSize: "0.85rem",
-                fontWeight: isActive ? 600 : 500,
+                fontWeight: isActive ? 700 : 500,
                 cursor: "pointer",
                 border: "1px solid",
-                borderColor: isActive ? "var(--color-primary, #2563eb)" : "var(--color-border, #e2e8f0)",
-                background: isActive ? "var(--color-primary, #2563eb)" : "transparent",
-                color: isActive ? "#ffffff" : "var(--color-text-secondary, #475569)",
+                borderColor: isActive ? "var(--color-primary, #10b981)" : "rgba(255, 255, 255, 0.1)",
+                background: isActive ? "var(--color-primary, #10b981)" : "rgba(16, 28, 20, 0.7)",
+                color: isActive ? "#05190f" : "#cbd5e1",
+                boxShadow: isActive ? "0 0 15px rgba(16, 185, 129, 0.4)" : "none",
                 transition: "all 0.15s ease",
               }}
             >
@@ -139,9 +140,10 @@ export function DateRangeFilter({
             style={{
               padding: "0.35rem 0.6rem",
               borderRadius: "var(--radius-md, 8px)",
-              border: "1px solid var(--color-border, #cbd5e1)",
+              border: "1px solid var(--color-border, rgba(16, 185, 129, 0.3))",
               fontSize: "0.85rem",
-              color: "var(--color-text-main, #1e293b)",
+              color: "var(--color-text-main, #f8fafc)",
+              background: "#09120e",
             }}
             required
           />
@@ -153,9 +155,10 @@ export function DateRangeFilter({
             style={{
               padding: "0.35rem 0.6rem",
               borderRadius: "var(--radius-md, 8px)",
-              border: "1px solid var(--color-border, #cbd5e1)",
+              border: "1px solid var(--color-border, rgba(16, 185, 129, 0.3))",
               fontSize: "0.85rem",
-              color: "var(--color-text-main, #1e293b)",
+              color: "var(--color-text-main, #f8fafc)",
+              background: "#09120e",
             }}
             required
           />
@@ -164,12 +167,13 @@ export function DateRangeFilter({
             style={{
               padding: "0.35rem 0.85rem",
               borderRadius: "var(--radius-md, 8px)",
-              background: "var(--color-primary, #2563eb)",
-              color: "#ffffff",
+              background: "var(--color-primary, #10b981)",
+              color: "#05190f",
               border: "none",
-              fontWeight: 600,
+              fontWeight: 700,
               fontSize: "0.85rem",
               cursor: "pointer",
+              boxShadow: "0 0 12px rgba(16, 185, 129, 0.3)",
             }}
           >
             Apply
@@ -178,7 +182,7 @@ export function DateRangeFilter({
       )}
 
       {from && to && !showCustom && (
-        <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #64748b)" }}>
+        <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #94a3b8)", fontFamily: "var(--font-mono, monospace)" }}>
           {from} — {to}
         </div>
       )}

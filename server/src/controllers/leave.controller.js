@@ -1,5 +1,6 @@
 const leaveService = require("../services/leave.service");
 const authorizationService = require("../services/authorization.service");
+const auditService = require("../services/audit.service");
 const { Company, LeaveRequest } = require("../models");
 
 // Employer Types
@@ -145,6 +146,18 @@ exports.getMyLeaveBalance = async (req, res, next) => {
 exports.createLeaveRequest = async (req, res, next) => {
   try {
     const request = await leaveService.createLeaveRequest(req.user.id, req.body);
+
+    auditService.recordAuditEvent({
+      companyId: request.company_id,
+      actorUserId: req.user?.id,
+      action: "LEAVE_CREATED",
+      entityType: "LeaveRequest",
+      entityId: request.id,
+      description: `Leave request submitted for ${request.days || 1} day(s)`,
+      metadata: { leave_type_id: request.leave_type_id, start_date: request.start_date, end_date: request.end_date },
+      req,
+    });
+
     res.status(201).json({
       success: true,
       message: "Leave request submitted successfully",
@@ -159,6 +172,17 @@ exports.cancelLeaveRequest = async (req, res, next) => {
   try {
     const { id } = req.params;
     const request = await leaveService.cancelLeaveRequest(id, req.user.id);
+
+    auditService.recordAuditEvent({
+      companyId: request.company_id,
+      actorUserId: req.user?.id,
+      action: "LEAVE_CANCELLED",
+      entityType: "LeaveRequest",
+      entityId: id,
+      description: `Leave request cancelled by user`,
+      req,
+    });
+
     res.json({
       success: true,
       message: "Leave request cancelled successfully",
@@ -216,6 +240,17 @@ exports.reviewLeaveRequest = async (req, res, next) => {
 
     const status = action === "approve" ? "APPROVED" : "REJECTED";
     const request = await leaveService.reviewLeaveRequest(id, companyId, req.user.id, status, review_note);
+
+    auditService.recordAuditEvent({
+      companyId,
+      actorUserId: req.user?.id,
+      action: status === "APPROVED" ? "LEAVE_APPROVED" : "LEAVE_REJECTED",
+      entityType: "LeaveRequest",
+      entityId: id,
+      description: `Leave request ${status.toLowerCase()} by reviewer`,
+      metadata: { review_note, status },
+      req,
+    });
 
     res.json({
       success: true,

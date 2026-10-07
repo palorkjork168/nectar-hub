@@ -19,8 +19,10 @@ import {
 } from "lucide-react";
 import BackButton from "../../components/common/BackButton";
 import { SkeletonTableRow } from "../../components/common/Skeleton";
+import { useToast } from "../../contexts/ToastContext";
 
 export default function MyJobs() {
+  const toast = useToast();
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const [skillsModalJobId, setSkillsModalJobId] = useState<{ id: string; title: string } | null>(null);
@@ -44,7 +46,7 @@ export default function MyJobs() {
       queryClient.invalidateQueries({ queryKey: ["employerDashboard"] });
     },
     onError: (err: any) => {
-      alert(err.response?.data?.message || "Failed to update job status");
+      toast.error(err.response?.data?.message || "Failed to update job status");
     },
   });
 

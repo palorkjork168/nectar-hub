@@ -1,8 +1,19 @@
 const authService = require("../services/auth.service");
+const auditService = require("../services/audit.service");
 
 const register = async (req, res) => {
   try {
     const user = await authService.register(req.body);
+
+    auditService.recordAuditEvent({
+      req,
+      actorUserId: user.id,
+      action: "USER_REGISTERED",
+      entityType: "USER",
+      entityId: user.id,
+      description: `User ${user.email} registered an account`,
+      metadata: { email: user.email },
+    });
 
     res.status(201).json({
       success: true,
@@ -30,6 +41,16 @@ const login = async (req, res) => {
   try {
     const result = await authService.login(req.body);
 
+    auditService.recordAuditEvent({
+      req,
+      actorUserId: result.user.id,
+      action: "LOGIN_SUCCESS",
+      entityType: "AUTH",
+      entityId: result.user.id,
+      description: `User ${result.user.email} logged in successfully`,
+      metadata: { email: result.user.email },
+    });
+
     res.status(200).json({
       success: true,
       message: "Login successful!",
@@ -47,6 +68,14 @@ const login = async (req, res) => {
       },
     });
   } catch (error) {
+    auditService.recordAuditEvent({
+      req,
+      action: "LOGIN_FAILED",
+      entityType: "AUTH",
+      description: `Failed login attempt for email ${req.body.email || "unknown"}`,
+      metadata: { email: req.body.email, reason: error.message },
+    });
+
     res.status(401).json({
       success: false,
       message: error.message,
@@ -96,6 +125,8 @@ const getMe = async (req, res) => {
       }
     });
 
+
+
     res.status(200).json({
       success: true,
       message: "Current user retrieved successfully!",
@@ -130,3 +161,4 @@ module.exports = {
   login,
   getMe,
 };
+

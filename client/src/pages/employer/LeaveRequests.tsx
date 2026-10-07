@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../services/api";
-import { Check, X, Loader2, MessageSquare } from "lucide-react";
+import { Check, X, Loader2, MessageSquare, Calendar } from "lucide-react";
+import EmptyState from "../../components/common/EmptyState";
 
 export default function LeaveRequests() {
   const queryClient = useQueryClient();
@@ -71,9 +72,11 @@ export default function LeaveRequests() {
       </div>
 
       {filteredRequests.length === 0 ? (
-        <div style={{ padding: "3rem", textAlign: "center", color: "var(--text-muted)", border: "1px dashed var(--border)", borderRadius: "var(--radius-md)" }}>
-          No leave requests found for this filter.
-        </div>
+        <EmptyState
+          icon={Calendar}
+          title="No leave requests found"
+          description={filter === "ALL" ? "Employees have not submitted any leave requests yet." : `No leave requests match the ${filter.toLowerCase()} filter.`}
+        />
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           {filteredRequests.map(req => {

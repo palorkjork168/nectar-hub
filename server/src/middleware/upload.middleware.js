@@ -1,25 +1,13 @@
+﻿const path = require("path");
 const multer = require("multer");
-const { CloudinaryStorage } = require(
-  "multer-storage-cloudinary"
-);
-
-const cloudinary = require(
-  "../config/cloudinary"
-);
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("../config/cloudinary");
 
 const avatarStorage = new CloudinaryStorage({
   cloudinary,
-
   params: {
     folder: "sakol-universe/avatars",
-
-    allowed_formats: [
-      "jpg",
-      "jpeg",
-      "png",
-      "webp",
-    ],
-
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
     transformation: [
       {
         width: 500,
@@ -32,64 +20,65 @@ const avatarStorage = new CloudinaryStorage({
 
 const resumeStorage = new CloudinaryStorage({
   cloudinary,
-
   params: {
     folder: "sakol-universe/resumes",
     resource_type: "raw",
   },
 });
 
-const avatarFileFilter = (
-  req,
-  file,
-  cb
-) => {
-  const allowedTypes = [
-    "image/jpeg",
-    "image/png",
-    "image/webp",
-  ];
+const DANGEROUS_EXTENSIONS = [
+  ".exe", ".bat", ".cmd", ".sh", ".bash", ".php", ".phtml", ".pl", ".py", ".js", ".vbs", ".jar", ".msi"
+];
 
-  if (
-    allowedTypes.includes(file.mimetype)
-  ) {
+function isSafeFilename(filename) {
+  if (!filename || typeof filename !== "string") return false;
+  // Reject null bytes, path traversal
+  if (filename.includes("\0") || filename.includes("..") || filename.includes("/") || filename.includes("\\")) {
+    return false;
+  }
+  const lower = filename.toLowerCase();
+  for (const dangerous of DANGEROUS_EXTENSIONS) {
+    if (lower.includes(dangerous)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+const avatarFileFilter = (req, file, cb) => {
+  if (!isSafeFilename(file.originalname)) {
+    return cb(new Error("Dangerous or invalid file name detected"));
+  }
+
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+  const allowedExts = [".jpg", ".jpeg", ".png", ".webp"];
+  const ext = path.extname(file.originalname).toLowerCase();
+
+  if (allowedTypes.includes(file.mimetype) && allowedExts.includes(ext)) {
     cb(null, true);
   } else {
-    cb(
-      new Error(
-        "Only JPG, PNG and WEBP images are allowed"
-      )
-    );
+    cb(new Error("Only JPG, PNG and WEBP images are allowed"));
   }
 };
 
-const resumeFileFilter = (
-  req,
-  file,
-  cb
-) => {
-  const allowedTypes = [
-    "application/pdf",
-  ];
+const resumeFileFilter = (req, file, cb) => {
+  if (!isSafeFilename(file.originalname)) {
+    return cb(new Error("Dangerous or invalid file name detected"));
+  }
 
-  if (
-    allowedTypes.includes(file.mimetype)
-  ) {
+  const allowedTypes = ["application/pdf"];
+  const ext = path.extname(file.originalname).toLowerCase();
+
+  if (allowedTypes.includes(file.mimetype) && ext === ".pdf") {
     cb(null, true);
   } else {
-    cb(
-      new Error(
-        "Only PDF files are allowed"
-      )
-    );
+    cb(new Error("Only PDF files are allowed"));
   }
 };
 
 const avatarUpload = multer({
   storage: avatarStorage,
-
   fileFilter: avatarFileFilter,
-
   limits: {
     fileSize: 5 * 1024 * 1024,
   },
@@ -97,9 +86,7 @@ const avatarUpload = multer({
 
 const resumeUpload = multer({
   storage: resumeStorage,
-
   fileFilter: resumeFileFilter,
-
   limits: {
     fileSize: 10 * 1024 * 1024,
   },
@@ -108,4 +95,5 @@ const resumeUpload = multer({
 module.exports = {
   avatarUpload,
   resumeUpload,
+  isSafeFilename,
 };

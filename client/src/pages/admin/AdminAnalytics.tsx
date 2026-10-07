@@ -48,7 +48,7 @@ export default function AdminAnalytics() {
             style={{
               fontSize: "1.75rem",
               fontWeight: 700,
-              color: "var(--color-text-main, #0f172a)",
+              color: "var(--color-text-main, #f8fafc)",
               margin: 0,
             }}
           >
@@ -57,7 +57,7 @@ export default function AdminAnalytics() {
           <p
             style={{
               margin: "0.25rem 0 0 0",
-              color: "var(--color-text-muted, #64748b)",
+              color: "var(--color-text-muted, #94a3b8)",
               fontSize: "0.95rem",
             }}
           >
@@ -131,57 +131,57 @@ export default function AdminAnalytics() {
             {/* Users Card */}
             <div
               style={{
-                background: "var(--color-bg-card, #ffffff)",
-                border: "1px solid var(--color-border, #e2e8f0)",
+                background: "var(--color-bg-card, #0e1712)",
+                border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
                 borderRadius: "var(--radius-lg, 12px)",
                 padding: "1.25rem",
                 display: "flex",
                 flexDirection: "column",
                 gap: "0.5rem",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                boxShadow: "0 10px 25px -5px rgba(0,0,0,0.5)",
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #64748b)" }}>
+                <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #94a3b8)" }}>
                   Total Users
                 </span>
-                <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(37, 99, 235, 0.1)", color: "#2563eb" }}>
+                <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(16, 185, 129, 0.15)", color: "#10b981" }}>
                   <Users size={18} />
                 </div>
               </div>
-              <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-text-main, #0f172a)" }}>
+              <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-text-main, #f8fafc)" }}>
                 {data?.overview.totalUsers || 0}
               </div>
-              <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #64748b)" }}>
-                <strong style={{ color: "#2563eb" }}>+{data?.overview.newUsersInPeriod || 0}</strong> in selected period
+              <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #94a3b8)" }}>
+                <strong style={{ color: "#34d399" }}>+{data?.overview.newUsersInPeriod || 0}</strong> in selected period
               </div>
             </div>
 
             {/* Companies Card */}
             <div
               style={{
-                background: "var(--color-bg-card, #ffffff)",
-                border: "1px solid var(--color-border, #e2e8f0)",
+                background: "var(--color-bg-card, #0e1712)",
+                border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
                 borderRadius: "var(--radius-lg, 12px)",
                 padding: "1.25rem",
                 display: "flex",
                 flexDirection: "column",
                 gap: "0.5rem",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                boxShadow: "0 10px 25px -5px rgba(0,0,0,0.5)",
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #64748b)" }}>
+                <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #94a3b8)" }}>
                   Companies
                 </span>
-                <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(16, 185, 129, 0.1)", color: "#10b981" }}>
+                <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(16, 185, 129, 0.15)", color: "#10b981" }}>
                   <Building2 size={18} />
                 </div>
               </div>
-              <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-text-main, #0f172a)" }}>
+              <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-text-main, #f8fafc)" }}>
                 {data?.overview.totalCompanies || 0}
               </div>
-              <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #64748b)" }}>
+              <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #94a3b8)" }}>
                 <strong style={{ color: "#10b981" }}>+{data?.overview.newCompaniesInPeriod || 0}</strong> in selected period
               </div>
             </div>
@@ -189,28 +189,28 @@ export default function AdminAnalytics() {
             {/* Jobs Card */}
             <div
               style={{
-                background: "var(--color-bg-card, #ffffff)",
-                border: "1px solid var(--color-border, #e2e8f0)",
+                background: "var(--color-bg-card, #0e1712)",
+                border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
                 borderRadius: "var(--radius-lg, 12px)",
                 padding: "1.25rem",
                 display: "flex",
                 flexDirection: "column",
                 gap: "0.5rem",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                boxShadow: "0 10px 25px -5px rgba(0,0,0,0.5)",
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #64748b)" }}>
+                <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #94a3b8)" }}>
                   Published Jobs
                 </span>
-                <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(139, 92, 246, 0.1)", color: "#8b5cf6" }}>
+                <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(139, 92, 246, 0.15)", color: "#a78bfa" }}>
                   <Briefcase size={18} />
                 </div>
               </div>
-              <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-text-main, #0f172a)" }}>
+              <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-text-main, #f8fafc)" }}>
                 {data?.overview.publishedJobs || 0}
               </div>
-              <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #64748b)" }}>
+              <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #94a3b8)" }}>
                 {data?.overview.totalJobs || 0} total listings ({data?.overview.newJobsInPeriod || 0} new)
               </div>
             </div>
@@ -218,57 +218,57 @@ export default function AdminAnalytics() {
             {/* Applications Card */}
             <div
               style={{
-                background: "var(--color-bg-card, #ffffff)",
-                border: "1px solid var(--color-border, #e2e8f0)",
+                background: "var(--color-bg-card, #0e1712)",
+                border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
                 borderRadius: "var(--radius-lg, 12px)",
                 padding: "1.25rem",
                 display: "flex",
                 flexDirection: "column",
                 gap: "0.5rem",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                boxShadow: "0 10px 25px -5px rgba(0,0,0,0.5)",
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #64748b)" }}>
+                <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #94a3b8)" }}>
                   Applications
                 </span>
-                <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(245, 158, 11, 0.1)", color: "#f59e0b" }}>
+                <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(245, 158, 11, 0.15)", color: "#fbbf24" }}>
                   <FileText size={18} />
                 </div>
               </div>
-              <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-text-main, #0f172a)" }}>
+              <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-text-main, #f8fafc)" }}>
                 {data?.overview.totalApplications || 0}
               </div>
-              <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #64748b)" }}>
-                <strong style={{ color: "#f59e0b" }}>+{data?.overview.applicationsInPeriod || 0}</strong> in selected period
+              <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #94a3b8)" }}>
+                <strong style={{ color: "#fbbf24" }}>+{data?.overview.applicationsInPeriod || 0}</strong> in selected period
               </div>
             </div>
 
             {/* Active Workforce */}
             <div
               style={{
-                background: "var(--color-bg-card, #ffffff)",
-                border: "1px solid var(--color-border, #e2e8f0)",
+                background: "var(--color-bg-card, #0e1712)",
+                border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
                 borderRadius: "var(--radius-lg, 12px)",
                 padding: "1.25rem",
                 display: "flex",
                 flexDirection: "column",
                 gap: "0.5rem",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                boxShadow: "0 10px 25px -5px rgba(0,0,0,0.5)",
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #64748b)" }}>
+                <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #94a3b8)" }}>
                   Active Employees
                 </span>
-                <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(6, 182, 212, 0.1)", color: "#06b6d4" }}>
+                <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(6, 182, 212, 0.15)", color: "#22d3ee" }}>
                   <UserCheck size={18} />
                 </div>
               </div>
-              <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-text-main, #0f172a)" }}>
+              <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-text-main, #f8fafc)" }}>
                 {data?.overview.activeEmployees || 0}
               </div>
-              <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #64748b)" }}>
+              <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #94a3b8)" }}>
                 Across all registered companies
               </div>
             </div>
@@ -276,29 +276,29 @@ export default function AdminAnalytics() {
             {/* Leave Requests Card */}
             <div
               style={{
-                background: "var(--color-bg-card, #ffffff)",
-                border: "1px solid var(--color-border, #e2e8f0)",
+                background: "var(--color-bg-card, #0e1712)",
+                border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
                 borderRadius: "var(--radius-lg, 12px)",
                 padding: "1.25rem",
                 display: "flex",
                 flexDirection: "column",
                 gap: "0.5rem",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                boxShadow: "0 10px 25px -5px rgba(0,0,0,0.5)",
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #64748b)" }}>
+                <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #94a3b8)" }}>
                   Leave Requests
                 </span>
-                <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(236, 72, 153, 0.1)", color: "#ec4899" }}>
+                <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(236, 72, 153, 0.15)", color: "#f472b6" }}>
                   <Calendar size={18} />
                 </div>
               </div>
-              <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-text-main, #0f172a)" }}>
+              <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-text-main, #f8fafc)" }}>
                 {data?.overview.totalLeaveRequests || 0}
               </div>
-              <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #64748b)" }}>
-                <strong style={{ color: "#ec4899" }}>{data?.overview.pendingLeaveRequests || 0}</strong> awaiting approval
+              <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #94a3b8)" }}>
+                <strong style={{ color: "#f472b6" }}>{data?.overview.pendingLeaveRequests || 0}</strong> awaiting approval
               </div>
             </div>
           </>
@@ -306,7 +306,7 @@ export default function AdminAnalytics() {
       </div>
 
       {/* Time-Series Growth Trends */}
-      <h2 style={{ fontSize: "1.15rem", fontWeight: 600, color: "var(--color-text-main, #0f172a)", marginBottom: "1rem" }}>
+      <h2 style={{ fontSize: "1.15rem", fontWeight: 600, color: "var(--color-text-main, #f8fafc)", marginBottom: "1rem" }}>
         Activity Trends Over Time
       </h2>
       <div
@@ -325,17 +325,17 @@ export default function AdminAnalytics() {
         <TrendChart
           title="User Registrations"
           data={data?.trends.userRegistrations || []}
-          color="#2563eb"
+          color="#10b981"
         />
         <TrendChart
           title="Jobs Posted"
           data={data?.trends.jobsCreated || []}
-          color="#10b981"
+          color="#34d399"
         />
       </div>
 
       {/* System Distributions */}
-      <h2 style={{ fontSize: "1.15rem", fontWeight: 600, color: "var(--color-text-main, #0f172a)", marginBottom: "1rem" }}>
+      <h2 style={{ fontSize: "1.15rem", fontWeight: 600, color: "var(--color-text-main, #f8fafc)", marginBottom: "1rem" }}>
         System Distributions
       </h2>
       <div

@@ -15,6 +15,10 @@ build/
 *.log
 npm-debug.log*
 
+# Test runtime flags & mock storage
+.mock_emails.json
+.mock_fail.flag
+
 # OS files
 .DS_Store
 Thumbs.db

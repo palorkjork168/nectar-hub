@@ -1,6 +1,7 @@
 const shiftService = require("../services/shift.service");
 const authorizationService = require("../services/authorization.service");
 const employmentService = require("../services/employment.service");
+const auditService = require("../services/audit.service");
 const { WorkSchedule, EmploymentRecord } = require("../models");
 
 /**
@@ -114,6 +115,17 @@ exports.createSchedule = async (req, res, next) => {
 
     const schedule = await shiftService.createSchedule(companyId, req.body);
 
+    auditService.recordAuditEvent({
+      companyId,
+      actorUserId: req.user?.id,
+      action: "SCHEDULE_CREATED",
+      entityType: "WorkSchedule",
+      entityId: schedule.id,
+      description: `Work schedule "${schedule.name}" created`,
+      metadata: { name: schedule.name, schedule_type: schedule.schedule_type },
+      req,
+    });
+
     res.status(201).json({
       success: true,
       message: "Work schedule created successfully",
@@ -157,6 +169,17 @@ exports.updateSchedule = async (req, res, next) => {
       existing.company_id,
       req.body
     );
+
+    auditService.recordAuditEvent({
+      companyId: existing.company_id,
+      actorUserId: req.user?.id,
+      action: "SCHEDULE_UPDATED",
+      entityType: "WorkSchedule",
+      entityId: id,
+      description: `Work schedule "${updated.name}" updated`,
+      metadata: { name: updated.name, schedule_type: updated.schedule_type },
+      req,
+    });
 
     res.json({
       success: true,
@@ -211,6 +234,17 @@ exports.setScheduleStatus = async (req, res, next) => {
       Boolean(activeValue)
     );
 
+    auditService.recordAuditEvent({
+      companyId: existing.company_id,
+      actorUserId: req.user?.id,
+      action: updated.is_active ? "SCHEDULE_ACTIVATED" : "SCHEDULE_DEACTIVATED",
+      entityType: "WorkSchedule",
+      entityId: id,
+      description: `Work schedule "${updated.name}" ${updated.is_active ? "activated" : "deactivated"}`,
+      metadata: { name: updated.name, is_active: updated.is_active },
+      req,
+    });
+
     res.json({
       success: true,
       message: `Work schedule ${updated.is_active ? "activated" : "deactivated"} successfully`,
@@ -250,6 +284,17 @@ exports.deleteSchedule = async (req, res, next) => {
     }
 
     const result = await shiftService.deleteSchedule(id, existing.company_id);
+
+    auditService.recordAuditEvent({
+      companyId: existing.company_id,
+      actorUserId: req.user?.id,
+      action: "SCHEDULE_DELETED",
+      entityType: "WorkSchedule",
+      entityId: id,
+      description: `Work schedule "${existing.name}" deleted or deactivated`,
+      metadata: { name: existing.name },
+      req,
+    });
 
     res.json({
       success: true,
@@ -299,6 +344,19 @@ exports.assignScheduleToEmployment = async (req, res, next) => {
       employment.company_id
     );
 
+    auditService.recordAuditEvent({
+      companyId: employment.company_id,
+      actorUserId: req.user?.id,
+      action: workScheduleId ? "SCHEDULE_ASSIGNED" : "SCHEDULE_UNASSIGNED",
+      entityType: "EmploymentRecord",
+      entityId: employmentRecordId,
+      description: workScheduleId
+        ? `Work schedule assigned to employee record ${employmentRecordId}`
+        : `Work schedule unassigned from employee record ${employmentRecordId}`,
+      metadata: { workScheduleId },
+      req,
+    });
+
     res.json({
       success: true,
       message: workScheduleId
@@ -345,6 +403,16 @@ exports.unassignScheduleFromEmployment = async (req, res, next) => {
       null,
       employment.company_id
     );
+
+    auditService.recordAuditEvent({
+      companyId: employment.company_id,
+      actorUserId: req.user?.id,
+      action: "SCHEDULE_UNASSIGNED",
+      entityType: "EmploymentRecord",
+      entityId: employmentRecordId,
+      description: `Work schedule unassigned from employee record ${employmentRecordId}`,
+      req,
+    });
 
     res.json({
       success: true,

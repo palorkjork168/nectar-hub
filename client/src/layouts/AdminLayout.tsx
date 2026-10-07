@@ -3,6 +3,7 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { LayoutDashboard, Users, LogOut, Menu, X, ShieldCheck, BarChart3 } from "lucide-react";
 import NotificationBell from "../components/notifications/NotificationBell";
+import PageTransition from "../components/common/PageTransition";
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
@@ -34,9 +35,10 @@ export default function AdminLayout() {
           position: "sticky",
           top: 0,
           zIndex: 100,
-          backgroundColor: "rgba(255, 255, 255, 0.95)",
-          backdropFilter: "blur(8px)",
-          borderBottom: "1px solid var(--color-border)",
+          backgroundColor: "rgba(13, 22, 17, 0.92)",
+          backdropFilter: "blur(16px)",
+          borderBottom: "1px solid rgba(16, 185, 129, 0.18)",
+          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.4)",
         }}
       >
         <div
@@ -66,11 +68,11 @@ export default function AdminLayout() {
                 height: "36px",
                 borderRadius: "var(--radius-md)",
                 backgroundColor: "var(--color-primary)",
-                color: "#ffffff",
+                color: "#000000",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                boxShadow: "0 2px 6px rgba(37, 99, 235, 0.2)",
+                boxShadow: "0 2px 10px rgba(16, 185, 129, 0.4)",
               }}
             >
               <ShieldCheck size={20} />
@@ -162,6 +164,7 @@ export default function AdminLayout() {
               onClick={logout}
               className="btn btn-sm btn-secondary"
               title="Sign Out"
+              aria-label="Sign Out"
             >
               <LogOut size={14} />
               <span className="signout-label">Sign Out</span>
@@ -228,7 +231,9 @@ export default function AdminLayout() {
 
       {/* Main Content Area */}
       <main style={{ flex: 1, backgroundColor: "var(--color-bg)" }}>
-        <Outlet />
+        <PageTransition>
+          <Outlet />
+        </PageTransition>
       </main>
     </div>
   );
