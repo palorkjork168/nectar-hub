@@ -176,9 +176,9 @@ export default function Interviews() {
               fontWeight: 600,
               padding: "0.2rem 0.55rem",
               borderRadius: "9999px",
-              backgroundColor: "rgba(16, 185, 129, 0.12)",
-              color: "#059669",
-              border: "1px solid rgba(16, 185, 129, 0.25)",
+              backgroundColor: "rgba(255, 225, 124, 0.12)",
+              color: "var(--color-primary-text)",
+              border: "1px solid rgba(255, 225, 124, 0.25)",
             }}
           >
             Completed
@@ -416,7 +416,7 @@ export default function Interviews() {
                     <td>
                       <div style={{ display: "flex", alignItems: "center", gap: "0.35rem", fontSize: "0.8125rem", fontWeight: 500 }}>
                         {iv.interview_type === "VIDEO" && <Video size={14} style={{ color: "var(--primary)" }} />}
-                        {iv.interview_type === "IN_PERSON" && <MapPin size={14} style={{ color: "#059669" }} />}
+                        {iv.interview_type === "IN_PERSON" && <MapPin size={14} style={{ color: "var(--color-primary-text)" }} />}
                         {iv.interview_type === "PHONE" && <Phone size={14} style={{ color: "#7c3aed" }} />}
                         <span>
                           {iv.interview_type === "VIDEO"

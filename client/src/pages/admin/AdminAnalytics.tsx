@@ -132,7 +132,7 @@ export default function AdminAnalytics() {
             <div
               style={{
                 background: "var(--color-bg-card, #0e1712)",
-                border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
+                border: "1px solid var(--color-border, rgba(255, 225, 124, 0.2))",
                 borderRadius: "var(--radius-lg, 12px)",
                 padding: "1.25rem",
                 display: "flex",
@@ -145,7 +145,7 @@ export default function AdminAnalytics() {
                 <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #94a3b8)" }}>
                   Total Users
                 </span>
-                <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(16, 185, 129, 0.15)", color: "#10b981" }}>
+                <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(255, 225, 124, 0.15)", color: "var(--color-primary-text)" }}>
                   <Users size={18} />
                 </div>
               </div>
@@ -153,7 +153,7 @@ export default function AdminAnalytics() {
                 {data?.overview.totalUsers || 0}
               </div>
               <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #94a3b8)" }}>
-                <strong style={{ color: "#34d399" }}>+{data?.overview.newUsersInPeriod || 0}</strong> in selected period
+                <strong style={{ color: "var(--color-primary-text)" }}>+{data?.overview.newUsersInPeriod || 0}</strong> in selected period
               </div>
             </div>
 
@@ -161,7 +161,7 @@ export default function AdminAnalytics() {
             <div
               style={{
                 background: "var(--color-bg-card, #0e1712)",
-                border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
+                border: "1px solid var(--color-border, rgba(255, 225, 124, 0.2))",
                 borderRadius: "var(--radius-lg, 12px)",
                 padding: "1.25rem",
                 display: "flex",
@@ -174,7 +174,7 @@ export default function AdminAnalytics() {
                 <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #94a3b8)" }}>
                   Companies
                 </span>
-                <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(16, 185, 129, 0.15)", color: "#10b981" }}>
+                <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(255, 225, 124, 0.15)", color: "var(--color-primary-text)" }}>
                   <Building2 size={18} />
                 </div>
               </div>
@@ -182,7 +182,7 @@ export default function AdminAnalytics() {
                 {data?.overview.totalCompanies || 0}
               </div>
               <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #94a3b8)" }}>
-                <strong style={{ color: "#10b981" }}>+{data?.overview.newCompaniesInPeriod || 0}</strong> in selected period
+                <strong style={{ color: "var(--color-primary-text)" }}>+{data?.overview.newCompaniesInPeriod || 0}</strong> in selected period
               </div>
             </div>
 
@@ -190,7 +190,7 @@ export default function AdminAnalytics() {
             <div
               style={{
                 background: "var(--color-bg-card, #0e1712)",
-                border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
+                border: "1px solid var(--color-border, rgba(255, 225, 124, 0.2))",
                 borderRadius: "var(--radius-lg, 12px)",
                 padding: "1.25rem",
                 display: "flex",
@@ -219,7 +219,7 @@ export default function AdminAnalytics() {
             <div
               style={{
                 background: "var(--color-bg-card, #0e1712)",
-                border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
+                border: "1px solid var(--color-border, rgba(255, 225, 124, 0.2))",
                 borderRadius: "var(--radius-lg, 12px)",
                 padding: "1.25rem",
                 display: "flex",
@@ -248,7 +248,7 @@ export default function AdminAnalytics() {
             <div
               style={{
                 background: "var(--color-bg-card, #0e1712)",
-                border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
+                border: "1px solid var(--color-border, rgba(255, 225, 124, 0.2))",
                 borderRadius: "var(--radius-lg, 12px)",
                 padding: "1.25rem",
                 display: "flex",
@@ -277,7 +277,7 @@ export default function AdminAnalytics() {
             <div
               style={{
                 background: "var(--color-bg-card, #0e1712)",
-                border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
+                border: "1px solid var(--color-border, rgba(255, 225, 124, 0.2))",
                 borderRadius: "var(--radius-lg, 12px)",
                 padding: "1.25rem",
                 display: "flex",
@@ -325,12 +325,12 @@ export default function AdminAnalytics() {
         <TrendChart
           title="User Registrations"
           data={data?.trends.userRegistrations || []}
-          color="#10b981"
+          color="#ffe17c"
         />
         <TrendChart
           title="Jobs Posted"
           data={data?.trends.jobsCreated || []}
-          color="#34d399"
+          color="#ffe17c"
         />
       </div>
 

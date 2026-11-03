@@ -175,8 +175,8 @@ export default function FeatureCarousel() {
         padding: "4rem 1.5rem 5rem",
         position: "relative",
         background: "linear-gradient(180deg, #070c09 0%, #0a130f 50%, #070c09 100%)",
-        borderTop: "1px solid rgba(16, 185, 129, 0.15)",
-        borderBottom: "1px solid rgba(16, 185, 129, 0.15)",
+        borderTop: "1px solid rgba(255, 225, 124, 0.15)",
+        borderBottom: "1px solid rgba(255, 225, 124, 0.15)",
         overflow: "hidden",
       }}
     >
@@ -189,7 +189,7 @@ export default function FeatureCarousel() {
           width: "700px",
           height: "400px",
           transform: "translate(-50%, -50%)",
-          background: "radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(255, 225, 124, 0.12) 0%, transparent 70%)",
           filter: "blur(60px)",
           pointerEvents: "none",
         }}
@@ -205,9 +205,9 @@ export default function FeatureCarousel() {
               gap: "0.5rem",
               padding: "0.35rem 1rem",
               borderRadius: "var(--radius-full)",
-              backgroundColor: "rgba(16, 185, 129, 0.12)",
-              border: "1px solid rgba(16, 185, 129, 0.3)",
-              color: "#34d399",
+              backgroundColor: "rgba(255, 225, 124, 0.12)",
+              border: "1px solid rgba(255, 225, 124, 0.3)",
+              color: "var(--color-primary-text)",
               fontSize: "0.8125rem",
               fontWeight: 700,
               marginBottom: "1rem",
@@ -266,14 +266,14 @@ export default function FeatureCarousel() {
                   borderRadius: "var(--radius-full)",
                   fontSize: "0.875rem",
                   fontWeight: isSelected ? 700 : 500,
-                  color: isSelected ? "#051a10" : "#94a3b8",
+                  color: isSelected ? "var(--color-primary-text)" : "#94a3b8",
                   background: isSelected
-                    ? "linear-gradient(135deg, #10b981 0%, #00e599 100%)"
-                    : "rgba(16, 28, 20, 0.65)",
+                    ? "linear-gradient(135deg, #ffe17c 0%, #ffe17c 100%)"
+                    : "rgba(17, 17, 17, 0.65)",
                   border: isSelected
-                    ? "1px solid rgba(16, 185, 129, 0.6)"
-                    : "1px solid rgba(16, 185, 129, 0.18)",
-                  boxShadow: isSelected ? "0 0 20px rgba(16, 185, 129, 0.4)" : "none",
+                    ? "1px solid rgba(255, 225, 124, 0.6)"
+                    : "1px solid rgba(255, 225, 124, 0.18)",
+                  boxShadow: isSelected ? "0 0 20px rgba(255, 225, 124, 0.4)" : "none",
                   cursor: "pointer",
                   transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
                   transform: isSelected ? "scale(1.02)" : "scale(1)",
@@ -289,10 +289,10 @@ export default function FeatureCarousel() {
         {/* Main Interactive Stage — Bento Glass Layout */}
         <div
           style={{
-            background: "linear-gradient(135deg, rgba(16, 28, 21, 0.95) 0%, rgba(10, 17, 13, 0.9) 100%)",
-            border: "1px solid rgba(16, 185, 129, 0.28)",
+            background: "linear-gradient(135deg, rgba(17, 17, 17, 0.95) 0%, rgba(10, 17, 13, 0.9) 100%)",
+            border: "1px solid rgba(255, 225, 124, 0.28)",
             borderRadius: "var(--radius-xl)",
-            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 0 35px rgba(16, 185, 129, 0.1)",
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 0 35px rgba(255, 225, 124, 0.1)",
             backdropFilter: "blur(20px)",
             padding: "2.5rem",
             display: "grid",
@@ -321,11 +321,11 @@ export default function FeatureCarousel() {
                   fontWeight: 700,
                   textTransform: "uppercase",
                   letterSpacing: "0.08em",
-                  color: "#34d399",
+                  color: "var(--color-primary-text)",
                   padding: "0.25rem 0.75rem",
                   borderRadius: "var(--radius-full)",
-                  backgroundColor: "rgba(16, 185, 129, 0.15)",
-                  border: "1px solid rgba(16, 185, 129, 0.3)",
+                  backgroundColor: "rgba(255, 225, 124, 0.15)",
+                  border: "1px solid rgba(255, 225, 124, 0.3)",
                 }}
               >
                 {activeSlide.tag}
@@ -386,9 +386,9 @@ export default function FeatureCarousel() {
                     style={{
                       fontSize: "1.375rem",
                       fontWeight: 800,
-                      color: "#34d399",
+                      color: "var(--color-primary-text)",
                       lineHeight: 1.1,
-                      textShadow: "0 0 15px rgba(16, 185, 129, 0.3)",
+                      textShadow: "0 0 15px rgba(255, 225, 124, 0.3)",
                     }}
                   >
                     {sm.value}
@@ -440,7 +440,7 @@ export default function FeatureCarousel() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    border: "1px solid rgba(16, 185, 129, 0.3)",
+                    border: "1px solid rgba(255, 225, 124, 0.3)",
                   }}
                   aria-label="Previous capability"
                 >
@@ -457,7 +457,7 @@ export default function FeatureCarousel() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    border: "1px solid rgba(16, 185, 129, 0.3)",
+                    border: "1px solid rgba(255, 225, 124, 0.3)",
                   }}
                   aria-label="Next capability"
                 >
@@ -484,7 +484,7 @@ export default function FeatureCarousel() {
                 width: "220px",
                 height: "220px",
                 borderRadius: "50%",
-                background: "linear-gradient(135deg, rgba(16, 185, 129, 0.4) 0%, rgba(0, 229, 153, 0.1) 100%)",
+                background: "linear-gradient(135deg, rgba(255, 225, 124, 0.4) 0%, rgba(255, 225, 124, 0.1) 100%)",
                 filter: "blur(40px)",
                 zIndex: 1,
               }}
@@ -497,11 +497,11 @@ export default function FeatureCarousel() {
                 zIndex: 2,
                 width: "100%",
                 maxWidth: "380px",
-                background: "linear-gradient(145deg, rgba(22, 38, 28, 0.95) 0%, rgba(12, 20, 15, 0.9) 100%)",
-                border: "1.5px solid rgba(16, 185, 129, 0.4)",
+                background: "linear-gradient(145deg, rgba(255, 225, 124, 0.95) 0%, rgba(12, 20, 15, 0.9) 100%)",
+                border: "1.5px solid rgba(255, 225, 124, 0.4)",
                 borderRadius: "24px",
                 padding: "1.75rem",
-                boxShadow: "0 25px 40px -15px rgba(0, 0, 0, 0.8), 0 0 30px rgba(16, 185, 129, 0.2)",
+                boxShadow: "0 25px 40px -15px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 225, 124, 0.2)",
                 backdropFilter: "blur(16px)",
                 transform: "perspective(1000px) rotateY(-4deg) rotateX(3deg)",
                 transition: "all 0.4s ease",
@@ -531,7 +531,7 @@ export default function FeatureCarousel() {
                     style={{
                       fontSize: "0.6875rem",
                       fontFamily: "var(--font-mono)",
-                      color: "#34d399",
+                      color: "var(--color-primary-text)",
                       letterSpacing: "0.1em",
                       fontWeight: 700,
                     }}
@@ -542,9 +542,9 @@ export default function FeatureCarousel() {
 
                 <div
                   style={{
-                    backgroundColor: "rgba(16, 185, 129, 0.2)",
-                    border: "1px solid rgba(16, 185, 129, 0.4)",
-                    color: "#34d399",
+                    backgroundColor: "rgba(255, 225, 124, 0.2)",
+                    border: "1px solid rgba(255, 225, 124, 0.4)",
+                    color: "var(--color-primary-text)",
                     padding: "0.2rem 0.625rem",
                     borderRadius: "var(--radius-full)",
                     fontSize: "0.6875rem",
@@ -587,9 +587,9 @@ export default function FeatureCarousel() {
                       fontWeight: 600,
                       padding: "0.2rem 0.55rem",
                       borderRadius: "var(--radius-full)",
-                      backgroundColor: "rgba(16, 185, 129, 0.12)",
-                      border: "1px solid rgba(16, 185, 129, 0.25)",
-                      color: "#34d399",
+                      backgroundColor: "rgba(255, 225, 124, 0.12)",
+                      border: "1px solid rgba(255, 225, 124, 0.25)",
+                      color: "var(--color-primary-text)",
                     }}
                   >
                     {skill}
@@ -621,12 +621,12 @@ export default function FeatureCarousel() {
                     width: "36px",
                     height: "36px",
                     borderRadius: "50%",
-                    backgroundColor: "rgba(16, 185, 129, 0.2)",
-                    border: "1.5px solid rgba(16, 185, 129, 0.4)",
+                    backgroundColor: "rgba(255, 225, 124, 0.2)",
+                    border: "1.5px solid rgba(255, 225, 124, 0.4)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "#34d399",
+                    color: "var(--color-primary-text)",
                     fontWeight: 800,
                     fontSize: "0.8125rem",
                   }}
@@ -659,8 +659,8 @@ export default function FeatureCarousel() {
                   height: "8px",
                   width: isCurrent ? "32px" : "8px",
                   borderRadius: "var(--radius-full)",
-                  backgroundColor: isCurrent ? "#10b981" : "rgba(255, 255, 255, 0.15)",
-                  boxShadow: isCurrent ? "0 0 12px rgba(16, 185, 129, 0.6)" : "none",
+                  backgroundColor: isCurrent ? "#ffe17c" : "rgba(255, 255, 255, 0.15)",
+                  boxShadow: isCurrent ? "0 0 12px rgba(255, 225, 124, 0.6)" : "none",
                   border: "none",
                   padding: 0,
                   cursor: "pointer",

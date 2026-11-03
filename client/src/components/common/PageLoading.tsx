@@ -41,7 +41,7 @@ export default function PageLoading({
         <Loader2
           size={24}
           style={{
-            color: "var(--color-primary, #2563eb)",
+            color: "var(--color-primary-text, #2563eb)",
             animation: "spin 1s linear infinite",
           }}
         />

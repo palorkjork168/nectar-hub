@@ -140,7 +140,7 @@ export function AttendanceReportPrintModal({
             padding: "2rem",
             overflowY: "auto",
             color: "#1e293b",
-            fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+            fontFamily: "var(--font-body, sans-serif)",
             lineHeight: 1.5,
           }}
         >
@@ -188,7 +188,7 @@ export function AttendanceReportPrintModal({
               </div>
               <div style={{ border: "1px solid #e2e8f0", padding: "0.75rem", borderRadius: "6px", background: "#f8fafc" }}>
                 <div style={{ fontSize: "0.75rem", color: "#64748b" }}>Completed Shifts</div>
-                <div style={{ fontSize: "1.25rem", fontWeight: 700, color: "#10b981" }}>{data.kpis.completedShifts}</div>
+                <div style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--color-primary-text)" }}>{data.kpis.completedShifts}</div>
               </div>
               <div style={{ border: "1px solid #e2e8f0", padding: "0.75rem", borderRadius: "6px", background: "#f8fafc" }}>
                 <div style={{ fontSize: "0.75rem", color: "#64748b" }}>On-Time Rate</div>
@@ -196,7 +196,7 @@ export function AttendanceReportPrintModal({
               </div>
               <div style={{ border: "1px solid #e2e8f0", padding: "0.75rem", borderRadius: "6px", background: "#f8fafc" }}>
                 <div style={{ fontSize: "0.75rem", color: "#64748b" }}>Avg Completion</div>
-                <div style={{ fontSize: "1.25rem", fontWeight: 700, color: "#059669" }}>{data.compliance.avgShiftCompletionPercentage}%</div>
+                <div style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--color-primary-text)" }}>{data.compliance.avgShiftCompletionPercentage}%</div>
               </div>
               <div style={{ border: "1px solid #e2e8f0", padding: "0.75rem", borderRadius: "6px", background: "#f8fafc" }}>
                 <div style={{ fontSize: "0.75rem", color: "#64748b" }}>Late Arrivals</div>
@@ -257,7 +257,7 @@ export function AttendanceReportPrintModal({
                     <tr key={d.id} style={{ borderBottom: "1px solid #e2e8f0" }}>
                       <td style={{ padding: "8px 10px", fontWeight: 600 }}>{d.name}</td>
                       <td style={{ padding: "8px 10px" }}>{d.attendanceCount}</td>
-                      <td style={{ padding: "8px 10px", color: d.onTimeRate >= 80 ? "#15803d" : "#b45309", fontWeight: 600 }}>
+                      <td style={{ padding: "8px 10px", color: d.onTimeRate >= 80 ? "var(--color-primary-text)" : "#b45309", fontWeight: 600 }}>
                         {d.onTimeRate}%
                       </td>
                       <td style={{ padding: "8px 10px", color: d.lateCount > 0 ? "#d97706" : "#64748b" }}>{d.lateCount}</td>
@@ -311,7 +311,7 @@ export function AttendanceReportPrintModal({
                       <td style={{ padding: "8px 10px", color: "#64748b" }}>{s.shiftType}</td>
                       <td style={{ padding: "8px 10px" }}>{s.assignedEmployees}</td>
                       <td style={{ padding: "8px 10px" }}>{s.attendanceCount}</td>
-                      <td style={{ padding: "8px 10px", color: s.onTimeRate >= 80 ? "#15803d" : "#b45309", fontWeight: 600 }}>
+                      <td style={{ padding: "8px 10px", color: s.onTimeRate >= 80 ? "var(--color-primary-text)" : "#b45309", fontWeight: 600 }}>
                         {s.onTimeRate}%
                       </td>
                       <td style={{ padding: "8px 10px" }}>{s.avgLateMinutes} min</td>

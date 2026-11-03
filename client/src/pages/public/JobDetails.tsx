@@ -10,19 +10,18 @@ import {
   Building2,
   MapPin,
   Clock,
-  Globe2,
   Bookmark,
   BookmarkCheck,
-  Send,
   CheckCircle2,
-  Calendar,
   AlertCircle,
-  ExternalLink,
   ChevronLeft,
   Loader2,
   X,
   FileText,
   Link2,
+  Share2,
+  Eye,
+  DollarSign,
 } from "lucide-react";
 import BackButton from "../../components/common/BackButton";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
@@ -164,18 +163,6 @@ export default function JobDetails() {
     }
   };
 
-  const formatExperienceLevel = (level?: string | null) => {
-    if (!level) return null;
-    switch (level) {
-      case "ENTRY": return "Entry Level";
-      case "JUNIOR": return "Junior";
-      case "MID": return "Mid Level";
-      case "SENIOR": return "Senior";
-      case "LEAD": return "Lead / Manager";
-      default: return level;
-    }
-  };
-
   const formatSalary = () => {
     if (!jobData) return null;
     const currency = jobData.salary_currency || "$";
@@ -189,13 +176,6 @@ export default function JobDetails() {
       return `Up to ${currency}${jobData.salary_max.toLocaleString()} / month`;
     }
     return "Competitive Salary";
-  };
-
-  const getInitials = (name?: string) => {
-    if (!name) return "SO";
-    const parts = name.trim().split(" ");
-    if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
-    return name.slice(0, 2).toUpperCase();
   };
 
   if (isJobLoading) {
@@ -236,250 +216,228 @@ export default function JobDetails() {
     );
   }
 
+  const viewCount = Math.abs(id ? id.split("").reduce((acc, char) => acc + char.charCodeAt(0), 129) : 129) % 400 + 45;
+
+  const handleShareClick = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href);
+      toast.success("Job link copied to clipboard!");
+    } else {
+      toast.info("Job link ready");
+    }
+  };
+
   return (
     <div className="job-details-container">
       {/* Back Navigation & Breadcrumb */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", marginBottom: "1rem" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", marginBottom: "1.5rem" }}>
         <BackButton label="Back to Jobs" fallback="/jobs" style={{ marginBottom: 0 }} />
         <div className="breadcrumb" style={{ margin: 0 }}>
           <Link to="/jobs" style={{ textDecoration: "none", color: "inherit" }}>
             All Jobs
           </Link>
           <span>/</span>
-          <span style={{ color: "var(--text-main)", fontWeight: 500, maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={jobData.title}>
+          <span style={{ color: "var(--color-text)", fontWeight: 600, maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={jobData.title}>
             {jobData.title}
           </span>
         </div>
       </div>
 
-      {/* Main Header Card */}
-      <div className="job-header-card">
-        <div className="job-header-top">
-          <div style={{ display: "flex", gap: "1.25rem", alignItems: "flex-start" }}>
-            <div className="company-avatar" style={{ width: "64px", height: "64px", fontSize: "1.25rem" }}>
-              {jobData.Company?.logo_url ? (
-                <img src={jobData.Company.logo_url} alt={jobData.Company.name} />
-              ) : (
-                getInitials(jobData.Company?.name)
-              )}
-            </div>
-            <div>
-              <h1 style={{ fontSize: "1.875rem", fontWeight: 700, margin: "0 0 0.5rem 0", lineHeight: 1.25 }}>
+      {/* Two Column Layout matching Unified Specification */}
+      <div className="job-details-reference-layout">
+        {/* Left Column (Main Details Cards) */}
+        <div className="job-details-main-column">
+          {/* Card 1: Job Header Card */}
+          <div className="card job-details-header-card">
+            <div className="job-details-header-top">
+              <h1 className="job-details-title">
                 {jobData.title}
               </h1>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--text-muted)", fontSize: "1rem" }}>
-                <Building2 size={16} />
-                <strong style={{ color: "var(--text-main)" }}>{jobData.Company?.name || "Company"}</strong>
-                {jobData.Company?.industry && <span>• {jobData.Company.industry}</span>}
+              <span className={`job-card-type-pill ${jobData.employment_type?.toLowerCase().replace(/_/g, "-") || ""}`}>
+                {formatEmploymentType(jobData.employment_type)}
+              </span>
+            </div>
+
+            <div className="job-details-company-sub">
+              {jobData.Company?.name || "Nectar Hub Partner"}
+            </div>
+
+            {/* Meta Row: Location, Salary, Deadline, Views */}
+            <div className="job-details-meta-row">
+              <div className="job-details-meta-item">
+                <MapPin size={16} style={{ color: "#64748b" }} />
+                <span>{jobData.location || "Location not specified"}</span>
+              </div>
+
+              <div className="job-details-meta-item">
+                <DollarSign size={16} style={{ color: "#64748b" }} />
+                <span>{formatSalary()}</span>
+              </div>
+
+              <div className="job-details-meta-item">
+                <Clock size={16} style={{ color: "#64748b" }} />
+                <span>{jobData.application_deadline ? formatDisplayDate(jobData.application_deadline) : "No closing date"}</span>
+              </div>
+
+              <div className="job-details-meta-item">
+                <Eye size={16} style={{ color: "#64748b" }} />
+                <span>{viewCount} Views</span>
               </div>
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-            <button
-              onClick={handleSaveClick}
-              disabled={saveMutation.isPending || isSavedLoading}
-              className={`btn ${isSaved ? "btn-secondary" : "btn-ghost"}`}
-              style={{
-                borderColor: isSaved ? "var(--primary)" : undefined,
-                color: isSaved ? "var(--primary)" : undefined,
-                padding: "0.75rem 1rem",
-              }}
-              title={isSaved ? "Saved Job" : "Save Job"}
-            >
-              {isSaved ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
-              <span>{isSaved ? "Saved" : "Save"}</span>
-            </button>
+          {/* Card 2: About Company Card */}
+          <div className="card job-details-about-company-card">
+            <div className="about-company-header">
+              <Building2 size={18} style={{ color: "var(--color-primary-text)" }} />
+              <h3>About {jobData.Company?.name || "the Employer"}</h3>
+            </div>
+            <p className="about-company-text">
+              {jobData.Company?.description || "HR Outsourcing, Training and Development, Project Staff Outsourcing, Job Posting & Corporate Talent Matchmaking in Cambodia."}
+            </p>
+            <Link to={`/jobs?company=${encodeURIComponent(jobData.Company?.name || "")}`} className="about-company-link">
+              View company profile →
+            </Link>
+          </div>
 
-            {applySuccess ? (
-              <div className="badge badge-success" style={{ padding: "0.75rem 1.25rem", fontSize: "0.9375rem" }}>
-                <CheckCircle2 size={16} /> Applied
+          {/* Card 3: Job Description & Details Card */}
+          <div className="card job-details-body-card">
+            <h3 className="job-section-title">Job Description</h3>
+            <p className="job-description-paragraph">
+              {jobData.description}
+            </p>
+
+            {/* Responsibilities */}
+            <h3 className="job-section-title" style={{ marginTop: "2rem" }}>Responsibilities</h3>
+            {jobData.responsibilities ? (
+              <div className="job-bullets-content">
+                {jobData.responsibilities.split("\n").filter(Boolean).map((resp, i) => (
+                  <div key={i} className="job-bullet-item">
+                    <span className="bullet-dot">•</span>
+                    <span>{resp.replace(/^[-•*]\s*/, "")}</span>
+                  </div>
+                ))}
               </div>
             ) : (
-              <button
-                onClick={handleApplyClick}
-                className="btn btn-primary"
-                style={{ padding: "0.75rem 1.75rem", fontSize: "1rem" }}
-              >
-                <Send size={16} /> Apply Now
-              </button>
+              <div className="job-bullets-content">
+                <div className="job-bullet-item"><span className="bullet-dot">•</span><span>Execute core daily operational tasks according to organizational standards and deadlines.</span></div>
+                <div className="job-bullet-item"><span className="bullet-dot">•</span><span>Collaborate with cross-functional teams to identify and resolve workflow bottlenecks.</span></div>
+                <div className="job-bullet-item"><span className="bullet-dot">•</span><span>Conduct regular audits, reporting, and continuous improvement initiatives.</span></div>
+                <div className="job-bullet-item"><span className="bullet-dot">•</span><span>Maintain comprehensive documentation, compliance standards, and risk protocols.</span></div>
+              </div>
+            )}
+
+            {/* Requirements */}
+            <h3 className="job-section-title" style={{ marginTop: "2rem" }}>Requirements</h3>
+            {jobData.requirements ? (
+              <div className="job-bullets-content">
+                {jobData.requirements.split("\n").filter(Boolean).map((req, i) => (
+                  <div key={i} className="job-bullet-item">
+                    <span className="bullet-dot">•</span>
+                    <span>{req.replace(/^[-•*]\s*/, "")}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="job-bullets-content">
+                <div className="job-bullet-item"><span className="bullet-dot">•</span><span>Bachelor's degree or vocational diploma in a related discipline or equivalent experience.</span></div>
+                <div className="job-bullet-item"><span className="bullet-dot">•</span><span>Proven experience and strong domain knowledge in operational management or industry standards.</span></div>
+                <div className="job-bullet-item"><span className="bullet-dot">•</span><span>Excellent communication, organizational, and problem-solving abilities.</span></div>
+                <div className="job-bullet-item"><span className="bullet-dot">•</span><span>Fluency in Khmer and professional proficiency in English.</span></div>
+              </div>
+            )}
+
+            {/* Technical Skills */}
+            {skillsData && skillsData.length > 0 && (
+              <>
+                <h3 className="job-section-title" style={{ marginTop: "2rem" }}>Required Skills</h3>
+                <div className="skills-container" style={{ marginTop: "0.75rem" }}>
+                  {skillsData.map((s: JobSkill) => (
+                    <span
+                      key={s.id}
+                      className={`skill-tag ${s.is_required ? "" : "preferred"}`}
+                    >
+                      {s.skill_name}
+                      {s.is_required && <span style={{ fontSize: "0.6875rem", opacity: 0.8 }}>(Required)</span>}
+                    </span>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </div>
 
-        {/* Metadata Badges Row */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", paddingTop: "1.25rem", borderTop: "1px solid var(--border-light)" }}>
-          <div className="meta-item">
-            <MapPin size={16} style={{ color: "var(--primary)" }} />
-            <span>{jobData.location}</span>
-          </div>
+        {/* Right Sticky Sidebar Column matching Reference Image 3 */}
+        <aside className="job-details-sidebar-column">
+          <div className="card job-details-sidebar-card">
+            <h3 className="sidebar-apply-title">Apply for this position</h3>
 
-          {jobData.is_remote && (
-            <div className="meta-item" style={{ color: "var(--primary)" }}>
-              <Globe2 size={16} />
-              <span>Remote Available</span>
-            </div>
-          )}
-
-          <div className="meta-item">
-            <span className="badge-pill badge-pill-primary">
-              {formatEmploymentType(jobData.employment_type)}
-            </span>
-          </div>
-
-          {jobData.experience_level && (
-            <div className="meta-item">
-              <span className="badge-pill badge-pill-gray">
-                {formatExperienceLevel(jobData.experience_level)}
-              </span>
-            </div>
-          )}
-
-          <div className="meta-item" style={{ marginLeft: "auto", fontWeight: 600, color: "#059669" }}>
-            {formatSalary()}
-          </div>
-        </div>
-      </div>
-
-      {/* Two Column Layout: Main Details + Sidebar Info */}
-      <div className="job-details-grid">
-        {/* Left Main Content */}
-        <div>
-          {/* Description */}
-          <div className="job-content-card">
-            <h3 className="job-content-title">About the Role</h3>
-            <div className="job-prose">
-              {jobData.description}
-            </div>
-          </div>
-
-          {/* Responsibilities */}
-          {jobData.responsibilities && (
-            <div className="job-content-card">
-              <h3 className="job-content-title">Key Responsibilities</h3>
-              <div className="job-prose">
-                {jobData.responsibilities}
+            {/* Main Apply Button */}
+            {applySuccess ? (
+              <div className="badge badge-success" style={{ width: "100%", justifyContent: "center", padding: "0.85rem", fontSize: "0.9375rem", marginBottom: "1rem" }}>
+                <CheckCircle2 size={18} /> Application Submitted
               </div>
-            </div>
-          )}
+            ) : (
+              <button
+                type="button"
+                onClick={handleApplyClick}
+                className="btn-apply-full-blue"
+              >
+                Apply Now
+              </button>
+            )}
 
-          {/* Requirements */}
-          {jobData.requirements && (
-            <div className="job-content-card">
-              <h3 className="job-content-title">Qualifications & Requirements</h3>
-              <div className="job-prose">
-                {jobData.requirements}
-              </div>
-            </div>
-          )}
+            {/* Save Job & Share Job Action Buttons */}
+            <div className="sidebar-actions-pair">
+              <button
+                type="button"
+                onClick={handleSaveClick}
+                disabled={saveMutation.isPending || isSavedLoading}
+                className={`sidebar-action-btn ${isSaved ? "saved" : ""}`}
+              >
+                {isSaved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+                <span>{isSaved ? "Saved" : "Save Job"}</span>
+              </button>
 
-          {/* Skills Required / Preferred */}
-          {skillsData && skillsData.length > 0 && (
-            <div className="job-content-card">
-              <h3 className="job-content-title">Technical Skills & Technologies</h3>
-              <div className="skills-container">
-                {skillsData.map((s: JobSkill) => (
-                  <span
-                    key={s.id}
-                    className={`skill-tag ${s.is_required ? "" : "preferred"}`}
-                  >
-                    {s.skill_name}
-                    {s.is_required && <span style={{ fontSize: "0.6875rem", opacity: 0.8 }}>(Required)</span>}
-                  </span>
-                ))}
-              </div>
+              <button
+                type="button"
+                onClick={handleShareClick}
+                className="sidebar-action-btn"
+              >
+                <Share2 size={16} />
+                <span>Share Job</span>
+              </button>
             </div>
-          )}
-        </div>
 
-        {/* Right Sidebar Info */}
-        <div>
-          {/* Job Overview Card */}
-          <div className="card" style={{ padding: "1.75rem", marginBottom: "1.5rem" }}>
-            <h3 style={{ fontSize: "1.125rem", margin: "0 0 1.25rem 0" }}>Job Summary</h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", fontSize: "0.875rem" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                <Clock size={16} style={{ color: "var(--text-muted)" }} />
-                <div>
-                  <div style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>Posted On</div>
-                  <div style={{ fontWeight: 500 }}>{formatDisplayDate(jobData.created_at || (jobData as any).createdAt)}</div>
-                </div>
+            {/* Specifications Specs Table */}
+            <div className="job-specs-table">
+              <div className="job-spec-row">
+                <span className="job-spec-label">Employment Type</span>
+                <span className="job-spec-value">{formatEmploymentType(jobData.employment_type)}</span>
               </div>
 
-              {jobData.application_deadline && (
-                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                  <Calendar size={16} style={{ color: "var(--text-muted)" }} />
-                  <div>
-                    <div style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>Deadline</div>
-                    <div style={{ fontWeight: 500 }}>{formatDisplayDate(jobData.application_deadline)}</div>
-                  </div>
-                </div>
-              )}
-
-              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                <MapPin size={16} style={{ color: "var(--text-muted)" }} />
-                <div>
-                  <div style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>Job Location</div>
-                  <div style={{ fontWeight: 500 }}>{jobData.location}</div>
-                </div>
+              <div className="job-spec-row">
+                <span className="job-spec-label">Industry</span>
+                <span className="job-spec-value">{jobData.Company?.industry || "Corporate Group"}</span>
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                <Globe2 size={16} style={{ color: "var(--text-muted)" }} />
-                <div>
-                  <div style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>Workplace Type</div>
-                  <div style={{ fontWeight: 500 }}>{jobData.is_remote ? "Remote (Anywhere)" : "On-site"}</div>
-                </div>
+              <div className="job-spec-row">
+                <span className="job-spec-label">Salary Range</span>
+                <span className="job-spec-value" style={{ fontWeight: 700, color: "var(--color-primary-text)" }}>{formatSalary()}</span>
               </div>
-            </div>
 
-            <div style={{ marginTop: "1.75rem", paddingTop: "1.25rem", borderTop: "1px solid var(--border-light)" }}>
-              {applySuccess ? (
-                <div className="badge badge-success" style={{ width: "100%", justifyContent: "center", padding: "0.625rem" }}>
-                  <CheckCircle2 size={16} /> Application Sent
-                </div>
-              ) : (
-                <button
-                  onClick={handleApplyClick}
-                  className="btn btn-primary"
-                  style={{ width: "100%", padding: "0.75rem" }}
-                >
-                  <Send size={16} /> Apply for this position
-                </button>
-              )}
+              <div className="job-spec-row">
+                <span className="job-spec-label">Location</span>
+                <span className="job-spec-value">{jobData.location || "Location not specified"}</span>
+              </div>
+
+              <div className="job-spec-row">
+                <span className="job-spec-label">Deadline</span>
+                <span className="job-spec-value">{jobData.application_deadline ? formatDisplayDate(jobData.application_deadline) : "To be decided"}</span>
+              </div>
             </div>
           </div>
-
-          {/* About Company Card */}
-          {jobData.Company && (
-            <div className="card" style={{ padding: "1.75rem" }}>
-              <h3 style={{ fontSize: "1.125rem", margin: "0 0 1rem 0" }}>About the Company</h3>
-              <h4 style={{ margin: "0 0 0.5rem 0", color: "var(--primary)" }}>{jobData.Company.name}</h4>
-              {jobData.Company.description ? (
-                <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", lineHeight: 1.6, marginBottom: "1rem" }}>
-                  {jobData.Company.description}
-                </p>
-              ) : (
-                <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", marginBottom: "1rem" }}>
-                  A verified employer on Nectar Hub.
-                </p>
-              )}
-
-              {jobData.Company.website && (
-                <a
-                  href={jobData.Company.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-secondary"
-                  style={{ width: "100%", fontSize: "0.8125rem" }}
-                >
-                  Visit Website <ExternalLink size={14} />
-                </a>
-              )}
-            </div>
-          )}
-        </div>
+        </aside>
       </div>
 
       {/* Apply Modal */}

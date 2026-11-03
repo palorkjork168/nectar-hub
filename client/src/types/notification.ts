@@ -8,7 +8,11 @@ export type NotificationType =
   | "LEAVE_REQUESTED"
   | "LEAVE_APPROVED"
   | "LEAVE_REJECTED"
-  | "LEAVE_CANCELLED";
+  | "LEAVE_CANCELLED"
+  | "ATTENDANCE_CORRECTION_REQUESTED"
+  | "ATTENDANCE_CORRECTION_APPROVED"
+  | "ATTENDANCE_CORRECTION_REJECTED";
+
 
 export interface Notification {
   id: string;

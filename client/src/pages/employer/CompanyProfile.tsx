@@ -282,9 +282,9 @@ export default function CompanyProfile() {
                             fontWeight: 600,
                             padding: "0.15rem 0.5rem",
                             borderRadius: "9999px",
-                            backgroundColor: comp.status === "ACTIVE" ? "rgba(16, 185, 129, 0.12)" : "rgba(245, 158, 11, 0.12)",
-                            color: comp.status === "ACTIVE" ? "#059669" : "#b45309",
-                            border: `1px solid ${comp.status === "ACTIVE" ? "rgba(16, 185, 129, 0.3)" : "rgba(245, 158, 11, 0.3)"}`,
+                            backgroundColor: comp.status === "ACTIVE" ? "rgba(255, 225, 124, 0.12)" : "rgba(245, 158, 11, 0.12)",
+                            color: comp.status === "ACTIVE" ? "var(--color-primary-text)" : "#b45309",
+                            border: `1px solid ${comp.status === "ACTIVE" ? "rgba(255, 225, 124, 0.3)" : "rgba(245, 158, 11, 0.3)"}`,
                           }}
                         >
                           {comp.status}
@@ -362,10 +362,10 @@ export default function CompanyProfile() {
         <div className="modal-overlay">
           <div className="modal-content" style={{ maxWidth: "600px" }}>
             <div className="modal-header">
-              <h3 style={{ margin: 0, fontSize: "1.125rem", fontWeight: 600 }}>
+              <h3 className="modal-title">
                 {editingCompany ? "Edit Company Profile" : "Register Company"}
               </h3>
-              <button onClick={resetForm} className="btn-icon">
+              <button onClick={resetForm} className="modal-close" aria-label="Close dialog">
                 <X size={18} />
               </button>
             </div>
@@ -377,12 +377,13 @@ export default function CompanyProfile() {
                       display: "flex",
                       alignItems: "center",
                       gap: "0.5rem",
-                      padding: "0.75rem",
-                      backgroundColor: "var(--danger-bg)",
-                      color: "var(--danger-text)",
+                      padding: "0.75rem 1rem",
+                      backgroundColor: "var(--color-danger-soft)",
+                      color: "var(--color-danger-text)",
                       borderRadius: "var(--radius-md)",
                       fontSize: "0.8125rem",
-                      marginBottom: "1rem",
+                      marginBottom: "1.25rem",
+                      border: "1px solid rgba(239, 68, 68, 0.2)",
                     }}
                   >
                     <AlertCircle size={16} />
@@ -422,7 +423,7 @@ export default function CompanyProfile() {
                     <select
                       value={companySize}
                       onChange={(e) => setCompanySize(e.target.value as CompanySize)}
-                      className="input-field"
+                      className="form-select"
                       style={{ width: "100%" }}
                     >
                       {COMPANY_SIZES.map((sz) => (

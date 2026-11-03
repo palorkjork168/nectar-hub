@@ -71,7 +71,7 @@ export default function WorkScheduleDetailsModal({
           <div className="modal-header">
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <Clock size={20} style={{ color: "var(--color-primary)" }} />
+                <Clock size={20} style={{ color: "var(--color-primary-text)" }} />
                 <h2 className="modal-title">{schedule.name}</h2>
                 <StatusBadge status={schedule.is_active ? "ACTIVE" : "INACTIVE"} />
               </div>
@@ -118,7 +118,7 @@ export default function WorkScheduleDetailsModal({
             </div>
             <div>
               <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>Assigned Workforce</div>
-              <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-primary)" }}>
+              <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--color-primary-text)" }}>
                 {employees.length} {employees.length === 1 ? "employee" : "employees"}
               </div>
             </div>

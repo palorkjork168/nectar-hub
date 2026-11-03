@@ -1,4 +1,4 @@
-﻿const express = require("express");
+const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
@@ -27,6 +27,8 @@ const analyticsRoutes = require("./routes/analytics.routes");
 const employmentRoutes = require("./routes/employment.routes");
 const shiftRoutes = require("./routes/shift.routes");
 const auditRoutes = require("./routes/audit.routes");
+const locationRoutes = require("./routes/location.routes");
+const rosterRoutes = require("./routes/roster.routes");
 
 const app = express();
 
@@ -132,6 +134,8 @@ app.use("/api/analytics", analyticsRoutes);
 
 // Security & Audit Logs
 app.use("/api/audit", auditRoutes);
+app.use("/api/locations", locationRoutes);
+app.use("/api/roster", rosterRoutes);
 
 // 404 Fallback for unhandled API routes (JSON response, never HTML)
 app.use((req, res) => {

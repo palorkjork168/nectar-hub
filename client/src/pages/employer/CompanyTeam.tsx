@@ -126,7 +126,7 @@ export default function CompanyTeam() {
       case "HR":
         return { bg: "rgba(37, 99, 235, 0.1)", text: "#2563eb", border: "rgba(37, 99, 235, 0.2)" };
       case "RECRUITER":
-        return { bg: "rgba(16, 185, 129, 0.1)", text: "#059669", border: "rgba(16, 185, 129, 0.2)" };
+        return { bg: "rgba(255, 225, 124, 0.1)", text: "#ffe17c", border: "rgba(255, 225, 124, 0.2)" };
       case "MANAGER":
         return { bg: "rgba(147, 51, 234, 0.1)", text: "#7c3aed", border: "rgba(147, 51, 234, 0.2)" };
       default:
@@ -180,7 +180,7 @@ export default function CompanyTeam() {
                 padding: "0.2rem 0.6rem",
                 borderRadius: "12px",
                 backgroundColor: "rgba(37, 99, 235, 0.1)",
-                color: "var(--color-primary)",
+                color: "var(--color-primary-text)",
               }}
             >
               {currentCompany.name}
@@ -277,7 +277,7 @@ export default function CompanyTeam() {
                               height: "40px",
                               borderRadius: "50%",
                               backgroundColor: "var(--color-primary-soft)",
-                              color: "var(--color-primary)",
+                              color: "var(--color-primary-text)",
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
@@ -403,9 +403,9 @@ export default function CompanyTeam() {
                             borderRadius: "12px",
                             backgroundColor:
                               member.status === "ACTIVE"
-                                ? "rgba(16, 185, 129, 0.1)"
+                                ? "rgba(255, 225, 124, 0.1)"
                                 : "rgba(239, 68, 68, 0.1)",
-                            color: member.status === "ACTIVE" ? "#059669" : "#dc2626",
+                            color: member.status === "ACTIVE" ? "var(--color-primary-text)" : "#dc2626",
                           }}
                         >
                           {member.status}

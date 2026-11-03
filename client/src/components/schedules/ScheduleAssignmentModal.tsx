@@ -73,7 +73,7 @@ export default function ScheduleAssignmentModal({
       <div className="modal-content" style={{ maxWidth: "480px" }}>
         <div className="modal-header">
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <Calendar size={20} style={{ color: "var(--color-primary)" }} />
+            <Calendar size={20} style={{ color: "var(--color-primary-text)" }} />
             <h2 className="modal-title">Assign Work Schedule</h2>
           </div>
           <button type="button" className="modal-close" onClick={onClose} disabled={isSaving} aria-label="Close modal">

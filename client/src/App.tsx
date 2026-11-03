@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ToastProvider } from "./contexts/ToastContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicLayout from "./layouts/PublicLayout";
 import PageLoading from "./components/common/PageLoading";
@@ -15,6 +16,12 @@ import Home from "./pages/public/Home";
 // Lazy-loaded Public Routes
 const JobList = lazy(() => import("./pages/public/JobList"));
 const JobDetails = lazy(() => import("./pages/public/JobDetails"));
+const AboutUs = lazy(() => import("./pages/public/AboutUs"));
+const Events = lazy(() => import("./pages/public/Events"));
+const Blogs = lazy(() => import("./pages/public/Blogs"));
+const Contact = lazy(() => import("./pages/public/Contact"));
+const Tools = lazy(() => import("./pages/public/Tools"));
+const ComingSoon = lazy(() => import("./pages/public/ComingSoon"));
 const NotFound = lazy(() => import("./pages/public/NotFound"));
 
 // Lazy-loaded Auth Routes
@@ -27,8 +34,10 @@ const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
 const EmployeeManagement = lazy(() => import("./pages/admin/EmployeeManagement"));
 const RoleManagement = lazy(() => import("./pages/admin/RoleManagement"));
+const AdminAttendanceControl = lazy(() => import("./pages/admin/AdminAttendanceControl"));
 
-// Lazy-loaded Employee Pages
+// Lazy-loaded Employee Layout & Pages
+const EmployeeLayout = lazy(() => import("./layouts/EmployeeLayout"));
 const EmployeeDashboard = lazy(() => import("./pages/employee/EmployeeDashboard"));
 const AttendanceHistory = lazy(() => import("./pages/employee/AttendanceHistory"));
 const Leave = lazy(() => import("./pages/employee/Leave"));
@@ -58,6 +67,9 @@ const CompanyTeam = lazy(() => import("./pages/employer/CompanyTeam"));
 const CompanyEmployees = lazy(() => import("./pages/employer/CompanyEmployees"));
 const WorkSchedules = lazy(() => import("./pages/employer/WorkSchedules"));
 const CompanyAttendance = lazy(() => import("./pages/employer/CompanyAttendance"));
+const AttendanceCorrections = lazy(() => import("./pages/employer/AttendanceCorrections"));
+const WeeklyRosterPlanner = lazy(() => import("./pages/employer/WeeklyRosterPlanner"));
+const GeoFenceSettings = lazy(() => import("./pages/employer/GeoFenceSettings"));
 const AuditLogs = lazy(() => import("./pages/employer/AuditLogs"));
 
 // Lazy-loaded Notifications
@@ -66,9 +78,10 @@ const Notifications = lazy(() => import("./pages/notifications/Notifications"));
 function App() {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <ToastProvider>
-          <BrowserRouter>
+      <ThemeProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <BrowserRouter>
             <ScrollToTop />
             <PageTitleSynchronizer />
             <Suspense fallback={<PageLoading />}>
@@ -76,8 +89,15 @@ function App() {
                 {/* Public Portal Routes with PublicLayout */}
                 <Route element={<PublicLayout />}>
                   <Route path="/" element={<Home />} />
+                  <Route path="/about" element={<AboutUs />} />
                   <Route path="/jobs" element={<JobList />} />
                   <Route path="/jobs/:id" element={<JobDetails />} />
+                  <Route path="/events" element={<Events />} />
+                  <Route path="/blogs" element={<Blogs />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/tools" element={<Tools />} />
+                  <Route path="/tools/:toolId" element={<Tools />} />
+                  <Route path="/coming-soon" element={<ComingSoon />} />
                 </Route>
 
                 {/* Authentication Pages */}
@@ -91,14 +111,17 @@ function App() {
                     <Route path="/admin/analytics" element={<AdminAnalytics />} />
                     <Route path="/admin/employees" element={<EmployeeManagement />} />
                     <Route path="/admin/roles" element={<RoleManagement />} />
+                    <Route path="/admin/attendance" element={<AdminAttendanceControl />} />
                   </Route>
                 </Route>
 
                 {/* Protected Employee Routes */}
                 <Route element={<ProtectedRoute requireAdmin={false} requireEmployee={true} />}>
-                  <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
-                  <Route path="/employee/attendance" element={<AttendanceHistory />} />
-                  <Route path="/employee/leave" element={<Leave />} />
+                  <Route element={<EmployeeLayout />}>
+                    <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
+                    <Route path="/employee/attendance" element={<AttendanceHistory />} />
+                    <Route path="/employee/leave" element={<Leave />} />
+                  </Route>
                 </Route>
 
                 {/* Protected Job Seeker Routes */}
@@ -123,6 +146,9 @@ function App() {
                     <Route path="/employer/employees" element={<CompanyEmployees />} />
                     <Route path="/employer/schedules" element={<WorkSchedules />} />
                     <Route path="/employer/attendance" element={<CompanyAttendance />} />
+                    <Route path="/employer/attendance/corrections" element={<AttendanceCorrections />} />
+                    <Route path="/employer/attendance/roster" element={<WeeklyRosterPlanner />} />
+                    <Route path="/employer/attendance/locations" element={<GeoFenceSettings />} />
                     <Route path="/employer/jobs" element={<MyJobs />} />
                     <Route path="/employer/jobs/new" element={<CreateJob />} />
                     <Route path="/employer/jobs/:id/edit" element={<EditJob />} />
@@ -149,7 +175,8 @@ function App() {
           </BrowserRouter>
         </ToastProvider>
       </AuthProvider>
-    </ErrorBoundary>
+    </ThemeProvider>
+  </ErrorBoundary>
   );
 }
 

@@ -22,7 +22,7 @@ const createCompany = async (req, res, next) => {
 const getMyCompanies = async (req, res, next) => {
   try {
     const companies = await companyService.getMyCompanies(
-      req.user.id
+      req.user
     );
 
     res.status(200).json({

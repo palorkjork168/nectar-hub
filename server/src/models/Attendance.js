@@ -21,11 +21,11 @@ const Attendance = sequelize.define(
     },
     check_in_lat: {
       type: DataTypes.DECIMAL(10, 8),
-      allowNull: false,
+      allowNull: true,
     },
     check_in_long: {
       type: DataTypes.DECIMAL(11, 8),
-      allowNull: false,
+      allowNull: true,
     },
     check_out_time: {
       type: DataTypes.DATE,
@@ -39,7 +39,29 @@ const Attendance = sequelize.define(
       type: DataTypes.DECIMAL(11, 8),
       allowNull: true,
     },
+    is_corrected: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    location_status: {
+      type: DataTypes.STRING(40),
+      allowNull: true,
+      defaultValue: "VERIFIED_GPS",
+    },
+    original_check_in_time: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    original_check_out_time: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
     work_schedule_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
+    location_id: {
       type: DataTypes.UUID,
       allowNull: true,
     },

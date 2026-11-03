@@ -112,12 +112,12 @@ export default function Register() {
                 width: "44px",
                 height: "44px",
                 borderRadius: "12px",
-                backgroundColor: "rgba(16, 185, 129, 0.12)",
-                border: "1px solid rgba(16, 185, 129, 0.25)",
+                backgroundColor: "rgba(255, 225, 124, 0.12)",
+                border: "1px solid rgba(255, 225, 124, 0.25)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                boxShadow: "0 2px 12px rgba(16, 185, 129, 0.2)",
+                boxShadow: "0 2px 12px rgba(255, 225, 124, 0.2)",
               }}
             >
               <NectarIcon size={24} />
@@ -126,7 +126,7 @@ export default function Register() {
               <span style={{ fontSize: "1.375rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em", display: "block", lineHeight: 1.15 }}>
                 Nectar Hub
               </span>
-              <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--color-primary)", letterSpacing: "0.02em" }}>
+              <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--color-primary-text)", letterSpacing: "0.02em" }}>
                 Your Workplace, Connected.
               </span>
             </div>
@@ -344,7 +344,7 @@ export default function Register() {
           Already have an account?{" "}
           <Link
             to={redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : "/login"}
-            style={{ color: "var(--color-primary)", fontWeight: 600 }}
+            style={{ color: "var(--color-primary-text)", fontWeight: 600 }}
           >
             Sign in
           </Link>

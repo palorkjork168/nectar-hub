@@ -4,6 +4,7 @@ import App from './App.tsx'
 import './index.css'
 import './styles/dashboard.css'
 import './styles/public.css'
+import './styles/flux-brutalist.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const queryClient = new QueryClient({

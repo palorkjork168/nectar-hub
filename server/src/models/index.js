@@ -24,6 +24,9 @@ const LeaveRequest = require("./LeaveRequest");
 const Notification = require("./Notification");
 const WorkSchedule = require("./WorkSchedule");
 const AuditLog = require("./AuditLog");
+const AttendanceCorrectionRequest = require("./AttendanceCorrectionRequest");
+const CompanyLocation = require("./CompanyLocation");
+const ShiftAssignment = require("./ShiftAssignment");
 
 // User Role Many-to-Many
 User.belongsToMany(Role, {
@@ -211,6 +214,25 @@ EmploymentRecord.hasMany(Attendance, { foreignKey: "employment_record_id", as: "
 Attendance.belongsTo(EmploymentRecord, { foreignKey: "employment_record_id", as: "employmentRecord" });
 WorkSchedule.hasMany(Attendance, { foreignKey: "work_schedule_id", as: "attendances" });
 Attendance.belongsTo(WorkSchedule, { foreignKey: "work_schedule_id", as: "schedule" });
+
+// Attendance Correction Request
+Attendance.hasMany(AttendanceCorrectionRequest, { foreignKey: "attendance_id", as: "correctionRequests" });
+AttendanceCorrectionRequest.belongsTo(Attendance, { foreignKey: "attendance_id", as: "attendance" });
+
+User.hasMany(AttendanceCorrectionRequest, { foreignKey: "user_id", as: "attendanceCorrections" });
+AttendanceCorrectionRequest.belongsTo(User, { foreignKey: "user_id", as: "user" });
+
+Company.hasMany(AttendanceCorrectionRequest, { foreignKey: "company_id", as: "attendanceCorrections" });
+AttendanceCorrectionRequest.belongsTo(Company, { foreignKey: "company_id", as: "company" });
+
+EmploymentRecord.hasMany(AttendanceCorrectionRequest, { foreignKey: "employment_record_id", as: "attendanceCorrections" });
+AttendanceCorrectionRequest.belongsTo(EmploymentRecord, { foreignKey: "employment_record_id", as: "employmentRecord" });
+
+WorkSchedule.hasMany(AttendanceCorrectionRequest, { foreignKey: "work_schedule_id", as: "attendanceCorrections" });
+AttendanceCorrectionRequest.belongsTo(WorkSchedule, { foreignKey: "work_schedule_id", as: "workSchedule" });
+
+AttendanceCorrectionRequest.belongsTo(User, { foreignKey: "reviewed_by", as: "reviewer" });
+User.hasMany(AttendanceCorrectionRequest, { foreignKey: "reviewed_by", as: "reviewedAttendanceCorrections" });
 
 // Interview
 Application.hasMany(Interview, {
@@ -411,6 +433,78 @@ User.hasMany(AuditLog, {
   as: "auditLogs",
 });
 
+// CompanyLocation
+Company.hasMany(CompanyLocation, {
+  foreignKey: "company_id",
+  as: "locations",
+});
+
+CompanyLocation.belongsTo(Company, {
+  foreignKey: "company_id",
+  as: "company",
+});
+
+CompanyLocation.hasMany(EmploymentRecord, {
+  foreignKey: "location_id",
+  as: "employmentRecords",
+});
+
+EmploymentRecord.belongsTo(CompanyLocation, {
+  foreignKey: "location_id",
+  as: "location",
+});
+
+CompanyLocation.hasMany(Attendance, {
+  foreignKey: "location_id",
+  as: "attendances",
+});
+
+Attendance.belongsTo(CompanyLocation, {
+  foreignKey: "location_id",
+  as: "location",
+});
+
+// ShiftAssignment
+Company.hasMany(ShiftAssignment, {
+  foreignKey: "company_id",
+  as: "shiftAssignments",
+});
+
+ShiftAssignment.belongsTo(Company, {
+  foreignKey: "company_id",
+  as: "company",
+});
+
+EmploymentRecord.hasMany(ShiftAssignment, {
+  foreignKey: "employment_record_id",
+  as: "shiftAssignments",
+});
+
+ShiftAssignment.belongsTo(EmploymentRecord, {
+  foreignKey: "employment_record_id",
+  as: "employmentRecord",
+});
+
+User.hasMany(ShiftAssignment, {
+  foreignKey: "user_id",
+  as: "shiftAssignments",
+});
+
+ShiftAssignment.belongsTo(User, {
+  foreignKey: "user_id",
+  as: "user",
+});
+
+WorkSchedule.hasMany(ShiftAssignment, {
+  foreignKey: "work_schedule_id",
+  as: "shiftAssignments",
+});
+
+ShiftAssignment.belongsTo(WorkSchedule, {
+  foreignKey: "work_schedule_id",
+  as: "workSchedule",
+});
+
 module.exports = {
   User,
   Role,
@@ -438,5 +532,8 @@ module.exports = {
   Notification,
   WorkSchedule,
   AuditLog,
+  AttendanceCorrectionRequest,
+  CompanyLocation,
+  ShiftAssignment,
 };
 

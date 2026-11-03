@@ -88,9 +88,9 @@ export default function DepartmentManager({ companyId }: DepartmentManagerProps)
       </div>
 
       {(isAdding || editingId) && (
-        <div style={{ background: "var(--bg-secondary)", padding: "1.5rem", borderRadius: "var(--radius-md)", marginBottom: "2rem", border: "1px solid var(--border)" }}>
-          <h3 style={{ fontSize: "1rem", marginBottom: "1rem" }}>{editingId ? "Edit Department" : "New Department"}</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <div style={{ background: "var(--color-surface)", padding: "1.5rem", borderRadius: "var(--radius-lg)", marginBottom: "2rem", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-sm)" }}>
+          <h3 style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: "1.25rem", color: "var(--color-text)" }}>{editingId ? "Edit Department" : "New Department"}</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", maxWidth: "600px" }}>
             <div>
               <label className="form-label">Name *</label>
               <input type="text" className="form-control" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="e.g. Engineering" />

@@ -23,12 +23,12 @@ export function NectarIcon({ size = 24 }: { size?: number }) {
       <defs>
         <linearGradient id="nectarGrad" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#f59e0b" />
-          <stop offset="50%" stopColor="#10b981" />
-          <stop offset="100%" stopColor="#059669" />
+          <stop offset="50%" stopColor="#ffe17c" />
+          <stop offset="100%" stopColor="#ffe17c" />
         </linearGradient>
         <linearGradient id="nectarCore" x1="12" y1="10" x2="20" y2="22" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#fbbf24" />
-          <stop offset="100%" stopColor="#10b981" />
+          <stop offset="100%" stopColor="#ffe17c" />
         </linearGradient>
       </defs>
       
@@ -39,7 +39,7 @@ export function NectarIcon({ size = 24 }: { size?: number }) {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        fill="rgba(16, 185, 129, 0.08)"
+        fill="rgba(255, 225, 124, 0.08)"
       />
 
       {/* Internal Connection Bridges (Workplace Network) */}
@@ -56,10 +56,10 @@ export function NectarIcon({ size = 24 }: { size?: number }) {
       
       {/* Network Nodes */}
       <circle cx="16" cy="5.5" r="1.5" fill="#f59e0b" />
-      <circle cx="25.5" cy="11" r="1.5" fill="#10b981" />
-      <circle cx="25.5" cy="21" r="1.5" fill="#10b981" />
-      <circle cx="16" cy="26.5" r="1.5" fill="#059669" />
-      <circle cx="6.5" cy="21" r="1.5" fill="#10b981" />
+      <circle cx="25.5" cy="11" r="1.5" fill="#ffe17c" />
+      <circle cx="25.5" cy="21" r="1.5" fill="#ffe17c" />
+      <circle cx="16" cy="26.5" r="1.5" fill="#ffe17c" />
+      <circle cx="6.5" cy="21" r="1.5" fill="#ffe17c" />
       <circle cx="6.5" cy="11" r="1.5" fill="#f59e0b" />
     </svg>
   );
@@ -90,12 +90,12 @@ export default function NectarLogo({
           width: `${size + 10}px`,
           height: `${size + 10}px`,
           borderRadius: "10px",
-          backgroundColor: "rgba(16, 185, 129, 0.12)",
-          border: "1px solid rgba(16, 185, 129, 0.25)",
+          backgroundColor: "rgba(255, 225, 124, 0.12)",
+          border: "1px solid rgba(255, 225, 124, 0.25)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          boxShadow: "0 2px 10px rgba(16, 185, 129, 0.15)",
+          boxShadow: "0 2px 10px rgba(255, 225, 124, 0.15)",
           flexShrink: 0,
         }}
       >
@@ -124,7 +124,7 @@ export default function NectarLogo({
                 fontWeight: 700,
                 textTransform: "uppercase",
                 letterSpacing: "0.06em",
-                color: "var(--color-primary, #10b981)",
+                color: "var(--color-primary-text)",
                 marginTop: "1px",
               }}
             >

@@ -1,4 +1,4 @@
-﻿const { Op } = require("sequelize");
+const { Op } = require("sequelize");
 const { AuditLog, User } = require("../models");
 
 const SENSITIVE_KEYS = new Set([
@@ -190,6 +190,7 @@ async function getCompanyAuditLogs(companyId, options = {}) {
 
 module.exports = {
   recordAuditEvent,
+  logAuditEvent: recordAuditEvent,
   getCompanyAuditLogs,
   sanitizeMetadata,
 };

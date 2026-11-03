@@ -96,8 +96,8 @@ export default function HireCandidateModal({
                 width: "32px",
                 height: "32px",
                 borderRadius: "8px",
-                backgroundColor: "rgba(16, 185, 129, 0.12)",
-                color: "var(--success)",
+                backgroundColor: "rgba(255, 225, 124, 0.12)",
+                color: "var(--color-success-text)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -106,15 +106,15 @@ export default function HireCandidateModal({
               <UserCheck size={18} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: "1.0625rem", fontWeight: 700 }}>
+              <h3 className="modal-title">
                 Hire Candidate
               </h3>
-              <p style={{ margin: "0.15rem 0 0 0", fontSize: "0.8125rem", color: "var(--text-muted)" }}>
+              <p style={{ margin: "0.15rem 0 0 0", fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
                 Convert accepted candidate to an employee
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="btn-icon" disabled={hireMutation.isPending}>
+          <button onClick={onClose} className="modal-close" aria-label="Close dialog" disabled={hireMutation.isPending}>
             <X size={18} />
           </button>
         </div>
@@ -128,11 +128,12 @@ export default function HireCandidateModal({
                   display: "flex",
                   alignItems: "center",
                   gap: "0.5rem",
-                  padding: "0.75rem",
-                  backgroundColor: "rgba(239, 68, 68, 0.1)",
+                  padding: "0.75rem 1rem",
+                  backgroundColor: "var(--color-danger-soft)",
                   borderRadius: "var(--radius-sm)",
-                  color: "var(--danger)",
+                  color: "var(--color-danger-text)",
                   fontSize: "0.8125rem",
+                  border: "1px solid rgba(239, 68, 68, 0.2)",
                 }}
               >
                 <AlertCircle size={16} style={{ flexShrink: 0 }} />
@@ -144,9 +145,9 @@ export default function HireCandidateModal({
             <div
               style={{
                 padding: "1rem",
-                backgroundColor: "var(--bg-color)",
+                backgroundColor: "var(--color-surface-muted)",
                 borderRadius: "var(--radius-md)",
-                border: "1px solid var(--border-color)",
+                border: "1px solid var(--color-border)",
                 display: "flex",
                 flexDirection: "column",
                 gap: "0.6rem",
@@ -162,7 +163,7 @@ export default function HireCandidateModal({
                     fontWeight: 600,
                     padding: "0.15rem 0.5rem",
                     borderRadius: "9999px",
-                    backgroundColor: "rgba(16, 185, 129, 0.12)",
+                    backgroundColor: "rgba(255, 225, 124, 0.12)",
                     color: "var(--success)",
                   }}
                 >
@@ -232,7 +233,7 @@ export default function HireCandidateModal({
               </label>
               <select
                 id="department"
-                className="form-input"
+                className="form-select"
                 value={departmentId}
                 onChange={(e) => {
                   setDepartmentId(e.target.value);
@@ -243,13 +244,13 @@ export default function HireCandidateModal({
                 <option value="">{departmentsLoading ? "Loading departments..." : "No department"}</option>
                 {activeDepartments.map((department) => <option key={department.id} value={department.id}>{department.name}</option>)}
               </select>
-              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.25rem", display: "block" }}>
+              <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginTop: "0.25rem", display: "block" }}>
                 Stored on the company employment record; legacy profile text is mirrored only for compatibility.
               </span>
             </div>
             <div className="form-group" style={{ margin: 0 }}>
               <label className="form-label" htmlFor="position" style={{ fontSize: "0.8125rem" }}>Position (Optional)</label>
-              <select id="position" className="form-input" value={positionId} disabled={hireMutation.isPending || positionsLoading || !companyId} onChange={(e) => {
+              <select id="position" className="form-select" value={positionId} disabled={hireMutation.isPending || positionsLoading || !companyId} onChange={(e) => {
                 const selected = activePositions.find((position) => position.id === e.target.value);
                 setPositionId(e.target.value);
                 if (selected?.department_id) setDepartmentId(selected.department_id);

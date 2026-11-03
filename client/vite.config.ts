@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
+// Trigger Vite dev server reload - 1792166700
 export default defineConfig({
   plugins: [react()],
   build: {

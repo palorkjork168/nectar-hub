@@ -6,6 +6,9 @@ import { calculateProfileCompletion } from "../../utils/profileCompletion";
 import SkillsSection from "../../components/job-seeker/SkillsSection";
 import EducationSection from "../../components/job-seeker/EducationSection";
 import ExperienceSection from "../../components/job-seeker/ExperienceSection";
+import { useAuth } from "../../contexts/AuthContext";
+import { useToast } from "../../contexts/ToastContext";
+import Modal from "../../components/common/Modal";
 import {
   Mail,
   Phone,
@@ -19,20 +22,57 @@ import {
   Sparkles,
   Camera,
   Loader2,
+  Key,
+  Eye,
+  EyeOff,
 } from "lucide-react";
+
+const RECOMMENDED_TITLES = [
+  "Full Stack Developer",
+  "Frontend Engineer",
+  "Backend Developer",
+  "DevOps Engineer",
+  "UI/UX Designer",
+  "Product Manager",
+  "Data Scientist",
+  "Mobile Developer",
+  "QA Engineer",
+];
+
+const RECOMMENDED_CITIES = [
+  "Phnom Penh",
+  "Siem Reap",
+  "Battambang",
+  "Singapore",
+  "Remote",
+];
+
+const RECOMMENDED_COUNTRIES = [
+  "Cambodia",
+  "Singapore",
+  "United States",
+  "Thailand",
+  "Remote",
+];
 
 export default function Profile() {
   const queryClient = useQueryClient();
+  const { refreshUser } = useAuth();
+  const toast = useToast();
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const resumeInputRef = useRef<HTMLInputElement>(null);
 
   const [editInfoModalOpen, setEditInfoModalOpen] = useState(false);
+  const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
+
   const [avatarError, setAvatarError] = useState("");
   const [avatarSuccess, setAvatarSuccess] = useState("");
   const [resumeError, setResumeError] = useState("");
   const [resumeSuccess, setResumeSuccess] = useState("");
 
   // Edit Personal/Professional Info form states
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [profTitle, setProfTitle] = useState("");
   const [bio, setBio] = useState("");
   const [phone, setPhone] = useState("");
@@ -40,6 +80,14 @@ export default function Profile() {
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [infoError, setInfoError] = useState("");
+
+  // Change Password form states
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
 
   // Query profile
   const { data: profile, isLoading, error } = useQuery<FullProfile>({
@@ -54,6 +102,8 @@ export default function Profile() {
   const openEditInfoModal = () => {
     if (!profile) return;
     const up = profile.UserProfile;
+    setFirstName(profile.first_name || "");
+    setLastName(profile.last_name || "");
     setProfTitle(up?.professional_title || "");
     setBio(up?.bio || "");
     setPhone(up?.phone || "");
@@ -64,18 +114,50 @@ export default function Profile() {
     setEditInfoModalOpen(true);
   };
 
+  // Open Change Password Modal
+  const openChangePasswordModal = () => {
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setPasswordError("");
+    setShowCurrentPassword(false);
+    setShowNewPassword(false);
+    setChangePasswordModalOpen(true);
+  };
+
   // Update Profile Info Mutation
   const updateInfoMutation = useMutation({
     mutationFn: async (payload: any) => {
       const res = await api.put("/profile/me", payload);
       return res.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await refreshUser();
       queryClient.invalidateQueries({ queryKey: ["profile"] });
       setEditInfoModalOpen(false);
+      toast.success("Profile information updated successfully!");
     },
     onError: (err: any) => {
       setInfoError(err.response?.data?.message || "Failed to update profile information");
+    },
+  });
+
+  // Change Password Mutation
+  const changePasswordMutation = useMutation({
+    mutationFn: async (payload: { current_password: string; new_password: string }) => {
+      const res = await api.put("/auth/change-password", payload);
+      return res.data;
+    },
+    onSuccess: () => {
+      setChangePasswordModalOpen(false);
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setPasswordError("");
+      toast.success("Password changed successfully!");
+    },
+    onError: (err: any) => {
+      setPasswordError(err.response?.data?.message || "Failed to change password");
     },
   });
 
@@ -89,10 +171,12 @@ export default function Profile() {
       });
       return res.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await refreshUser();
       queryClient.invalidateQueries({ queryKey: ["profile"] });
       setAvatarSuccess("Avatar updated successfully!");
       setAvatarError("");
+      toast.success("Profile photo updated!");
       setTimeout(() => setAvatarSuccess(""), 3500);
     },
     onError: (err: any) => {
@@ -115,6 +199,7 @@ export default function Profile() {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
       setResumeSuccess("Resume uploaded successfully!");
       setResumeError("");
+      toast.success("Resume updated!");
       setTimeout(() => setResumeSuccess(""), 3500);
     },
     onError: (err: any) => {
@@ -164,7 +249,18 @@ export default function Profile() {
 
   const handleInfoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!firstName.trim()) {
+      setInfoError("First name is required");
+      return;
+    }
+    if (!lastName.trim()) {
+      setInfoError("Last name is required");
+      return;
+    }
+
     updateInfoMutation.mutate({
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
       professional_title: profTitle.trim(),
       bio: bio.trim(),
       phone: phone.trim(),
@@ -174,10 +270,31 @@ export default function Profile() {
     });
   };
 
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentPassword) {
+      setPasswordError("Current password is required");
+      return;
+    }
+    if (newPassword.length < 6) {
+      setPasswordError("New password must be at least 6 characters");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError("New passwords do not match");
+      return;
+    }
+
+    changePasswordMutation.mutate({
+      current_password: currentPassword,
+      new_password: newPassword,
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="dashboard-container" style={{ padding: "3rem 1.5rem", textAlign: "center" }}>
-        <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", color: "var(--text-muted)" }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", color: "var(--color-text-secondary)" }}>
           <Loader2 className="animate-spin" size={20} />
           <span>Loading your profile...</span>
         </div>
@@ -191,9 +308,9 @@ export default function Profile() {
         <div
           style={{
             padding: "1.5rem",
-            backgroundColor: "var(--danger-bg)",
-            color: "var(--danger-text)",
-            borderRadius: "var(--radius-lg)",
+            backgroundColor: "var(--color-danger-bg, #fee2e2)",
+            color: "var(--color-danger-text, #b91c1c)",
+            borderRadius: "var(--radius-lg, 12px)",
             display: "flex",
             alignItems: "center",
             gap: "0.75rem",
@@ -224,18 +341,18 @@ export default function Profile() {
         className="card"
         style={{
           marginBottom: "1.5rem",
-          background: "linear-gradient(135deg, #2563eb0a 0%, #3b82f615 100%)",
+          background: "linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(59, 130, 246, 0.1) 100%)",
           borderColor: "rgba(37, 99, 235, 0.2)",
         }}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "0.75rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-            <Sparkles size={20} style={{ color: "var(--primary)" }} />
-            <h3 style={{ margin: 0, fontSize: "1.0625rem", fontWeight: 600, color: "var(--text-main)" }}>
+            <Sparkles size={20} style={{ color: "var(--color-primary-text, #2563eb)" }} />
+            <h3 style={{ margin: 0, fontSize: "1.0625rem", fontWeight: 600, color: "var(--color-text)" }}>
               Profile Strength: {completion.percentage}%
             </h3>
           </div>
-          <span style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>
+          <span style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)" }}>
             {completion.completedCount} of {completion.totalCount} sections complete
           </span>
         </div>
@@ -254,57 +371,61 @@ export default function Profile() {
             style={{
               height: "100%",
               width: `${completion.percentage}%`,
-              backgroundColor: completion.percentage >= 80 ? "#10b981" : "var(--primary)",
+              backgroundColor:
+                completion.percentage === 100
+                  ? "var(--color-success, #ffe17c)"
+                  : completion.percentage >= 60
+                  ? "var(--color-primary, #2563eb)"
+                  : "var(--color-warning, #f59e0b)",
               borderRadius: "9999px",
               transition: "width 0.4s ease",
             }}
           />
         </div>
 
+        {/* Missing Suggestions */}
         {completion.missingItems.length > 0 && (
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", fontSize: "0.8125rem" }}>
-            <span style={{ color: "var(--text-muted)", fontWeight: 500 }}>Next steps:</span>
-            {completion.missingItems.slice(0, 3).map((item) => (
+          <div style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)", display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" }}>
+            <span style={{ fontWeight: 500 }}>Next steps to reach 100%:</span>
+            {completion.missingItems.map((item, idx) => (
               <span
-                key={item.key}
+                key={idx}
                 style={{
-                  backgroundColor: "var(--surface)",
-                  padding: "0.2rem 0.6rem",
-                  borderRadius: "var(--radius-sm)",
-                  border: "1px solid var(--border-color)",
-                  color: "var(--text-main)",
+                  padding: "0.15rem 0.5rem",
+                  backgroundColor: "var(--color-surface, #fff)",
+                  borderRadius: "9999px",
+                  border: "1px solid var(--color-border)",
                   fontSize: "0.75rem",
                 }}
               >
-                + {item.action}
+                + {typeof item === "string" ? item : (item as any)?.label || (item as any)?.key || ""}
               </span>
             ))}
           </div>
         )}
       </div>
 
-      {/* Main Profile Header Card */}
+      {/* Profile Header Info Card */}
       <div className="card" style={{ marginBottom: "1.5rem" }}>
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "1.5rem" }}>
-          {/* Avatar and Info */}
-          <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", flexWrap: "wrap" }}>
-            {/* Avatar with upload trigger */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1.25rem" }}>
+          <div style={{ display: "flex", gap: "1.5rem", alignItems: "center", flexWrap: "wrap" }}>
+            {/* Avatar with Camera upload trigger */}
             <div style={{ position: "relative" }}>
               <div
                 style={{
-                  width: "90px",
-                  height: "90px",
+                  width: "88px",
+                  height: "88px",
                   borderRadius: "50%",
-                  backgroundColor: "var(--primary-bg)",
-                  color: "var(--primary)",
+                  backgroundColor: "var(--color-primary-light, #eff6ff)",
+                  color: "var(--color-primary-text, #2563eb)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   fontSize: "2rem",
                   fontWeight: 700,
                   overflow: "hidden",
-                  border: "3px solid var(--surface)",
-                  boxShadow: "var(--shadow-md)",
+                  border: "3px solid var(--color-surface, #fff)",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
                 }}
               >
                 {up?.avatar_url ? (
@@ -327,9 +448,9 @@ export default function Profile() {
                   position: "absolute",
                   bottom: 0,
                   right: 0,
-                  backgroundColor: "var(--primary)",
+                  backgroundColor: "var(--color-primary, #2563eb)",
                   color: "white",
-                  border: "2px solid var(--surface)",
+                  border: "2px solid var(--color-surface, #fff)",
                   borderRadius: "50%",
                   width: "30px",
                   height: "30px",
@@ -337,7 +458,7 @@ export default function Profile() {
                   alignItems: "center",
                   justifyContent: "center",
                   cursor: "pointer",
-                  boxShadow: "var(--shadow-sm)",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
                 }}
                 title="Change profile photo"
               >
@@ -355,16 +476,16 @@ export default function Profile() {
             {/* Name, Title, and Contact */}
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <h2 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 700, color: "var(--text-main)" }}>
+                <h2 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 700, color: "var(--color-text)" }}>
                   {profile.first_name} {profile.last_name}
                 </h2>
               </div>
 
-              <div style={{ fontSize: "1rem", color: "var(--primary)", fontWeight: 500, marginTop: "0.25rem" }}>
-                {up?.professional_title || "Job Seeker"}
+              <div style={{ fontSize: "1rem", color: "var(--color-primary-text, #2563eb)", fontWeight: 500, marginTop: "0.25rem" }}>
+                {up?.professional_title || "Job Seeker / Specialist"}
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", flexWrap: "wrap", marginTop: "0.625rem", fontSize: "0.8125rem", color: "var(--text-muted)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", flexWrap: "wrap", marginTop: "0.625rem", fontSize: "0.8125rem", color: "var(--color-text-secondary)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.375rem" }}>
                   <Mail size={14} />
                   <span>{profile.email}</span>
@@ -385,31 +506,48 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Edit Details button */}
-          <button onClick={openEditInfoModal} className="btn btn-secondary" style={{ fontSize: "0.8125rem" }}>
-            <Edit3 size={15} /> Edit Details
-          </button>
+          {/* Action buttons: Edit Info & Change Password */}
+          <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap" }}>
+            <button
+              type="button"
+              onClick={openEditInfoModal}
+              className="btn btn-secondary"
+              style={{ fontSize: "0.8125rem", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
+            >
+              <Edit3 size={15} />
+              <span>Edit Profile</span>
+            </button>
+            <button
+              type="button"
+              onClick={openChangePasswordModal}
+              className="btn btn-outline"
+              style={{ fontSize: "0.8125rem", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
+            >
+              <Key size={15} />
+              <span>Security & Password</span>
+            </button>
+          </div>
         </div>
 
         {/* Feedback alerts for avatar upload */}
         {avatarSuccess && (
-          <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--success)", fontSize: "0.8125rem" }}>
+          <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--color-success-text)", fontSize: "0.8125rem" }}>
             <CheckCircle2 size={15} /> {avatarSuccess}
           </div>
         )}
         {avatarError && (
-          <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--danger)", fontSize: "0.8125rem" }}>
+          <div style={{ marginTop: "1rem", display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--color-danger)", fontSize: "0.8125rem" }}>
             <AlertCircle size={15} /> {avatarError}
           </div>
         )}
 
         {/* Bio / Summary */}
         {up?.bio && (
-          <div style={{ marginTop: "1.25rem", paddingTop: "1.25rem", borderTop: "1px solid var(--border-color)" }}>
-            <h4 style={{ margin: "0 0 0.5rem 0", fontSize: "0.875rem", fontWeight: 600, color: "var(--text-muted)" }}>
+          <div style={{ marginTop: "1.25rem", paddingTop: "1.25rem", borderTop: "1px solid var(--color-border)" }}>
+            <h4 style={{ margin: "0 0 0.5rem 0", fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text-secondary)" }}>
               ABOUT ME
             </h4>
-            <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--text-main)", lineHeight: 1.6, whiteSpace: "pre-line" }}>
+            <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--color-text)", lineHeight: 1.6, whiteSpace: "pre-line" }}>
               {up.bio}
             </p>
           </div>
@@ -418,29 +556,32 @@ export default function Profile() {
 
       {/* Resume Section Card */}
       <div className="card" style={{ marginBottom: "1.5rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
           <div>
-            <h3 style={{ fontSize: "1.125rem", fontWeight: 600, margin: 0, color: "var(--text-main)" }}>
-              CV / Resume
-            </h3>
-            <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)", margin: "0.25rem 0 0 0" }}>
-              PDF format only. Maximum file size 10MB.
+            <h3 style={{ margin: 0, fontSize: "1.125rem", fontWeight: 600 }}>Resume / CV</h3>
+            <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.8125rem", color: "var(--color-text-secondary)" }}>
+              Upload your latest resume (PDF format, up to 10MB).
             </p>
           </div>
 
-          <div>
-            <input
-              type="file"
-              ref={resumeInputRef}
-              onChange={handleResumeChange}
-              accept="application/pdf"
-              style={{ display: "none" }}
-            />
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            {up?.resume_url && (
+              <a
+                href={up.resume_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline"
+                style={{ fontSize: "0.8125rem", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
+              >
+                <FileText size={15} /> View Resume <ExternalLink size={13} />
+              </a>
+            )}
             <button
+              type="button"
               onClick={() => resumeInputRef.current?.click()}
               disabled={resumeMutation.isPending}
-              className="btn btn-secondary"
-              style={{ fontSize: "0.8125rem", padding: "0.4rem 0.75rem" }}
+              className="btn btn-primary"
+              style={{ fontSize: "0.8125rem", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
             >
               {resumeMutation.isPending ? (
                 <>
@@ -448,95 +589,33 @@ export default function Profile() {
                 </>
               ) : (
                 <>
-                  <Upload size={15} /> {up?.resume_url ? "Replace Resume" : "Upload Resume (PDF)"}
+                  <Upload size={15} /> {up?.resume_url ? "Update Resume" : "Upload Resume"}
                 </>
               )}
             </button>
+            <input
+              type="file"
+              ref={resumeInputRef}
+              onChange={handleResumeChange}
+              accept="application/pdf"
+              style={{ display: "none" }}
+            />
           </div>
         </div>
 
-        {/* Feedback alerts */}
         {resumeSuccess && (
-          <div style={{ marginTop: "0.75rem", display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--success)", fontSize: "0.8125rem" }}>
+          <div style={{ marginTop: "0.75rem", display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--color-success-text)", fontSize: "0.8125rem" }}>
             <CheckCircle2 size={15} /> {resumeSuccess}
           </div>
         )}
         {resumeError && (
-          <div style={{ marginTop: "0.75rem", display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--danger)", fontSize: "0.8125rem" }}>
+          <div style={{ marginTop: "0.75rem", display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--color-danger)", fontSize: "0.8125rem" }}>
             <AlertCircle size={15} /> {resumeError}
           </div>
         )}
-
-        {/* Resume status display */}
-        <div style={{ marginTop: "1rem" }}>
-          {up?.resume_url ? (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "0.875rem 1rem",
-                backgroundColor: "var(--bg-color)",
-                borderRadius: "var(--radius-md)",
-                border: "1px solid var(--border-color)",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                <div
-                  style={{
-                    width: "36px",
-                    height: "36px",
-                    borderRadius: "var(--radius-md)",
-                    backgroundColor: "rgba(239, 68, 68, 0.1)",
-                    color: "#dc2626",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <FileText size={20} />
-                </div>
-                <div>
-                  <div style={{ fontWeight: 500, fontSize: "0.875rem", color: "var(--text-main)" }}>
-                    Uploaded Resume (PDF)
-                  </div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
-                    Ready for job applications
-                  </div>
-                </div>
-              </div>
-
-              <a
-                href={up.resume_url}
-                target="_blank"
-                rel="noreferrer"
-                className="btn btn-ghost"
-                style={{ fontSize: "0.8125rem", gap: "0.375rem" }}
-              >
-                <span>View / Download</span>
-                <ExternalLink size={13} />
-              </a>
-            </div>
-          ) : (
-            <div
-              style={{
-                textAlign: "center",
-                padding: "1.5rem",
-                backgroundColor: "var(--bg-color)",
-                borderRadius: "var(--radius-md)",
-                border: "1px dashed var(--border-color)",
-              }}
-            >
-              <FileText size={28} style={{ color: "var(--text-light)", marginBottom: "0.25rem" }} />
-              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--text-muted)" }}>
-                No resume uploaded yet. Having a resume allows 1-click applications!
-              </p>
-            </div>
-          )}
-        </div>
       </div>
 
-      {/* Skills Section */}
+      {/* Skills Section with Combobox & Recommendations */}
       <SkillsSection skills={skills} />
 
       {/* Education Section */}
@@ -546,132 +625,366 @@ export default function Profile() {
       <ExperienceSection experiences={experiences} />
 
       {/* Edit Personal & Professional Info Modal */}
-      {editInfoModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h3 style={{ margin: 0, fontSize: "1.125rem", fontWeight: 600 }}>
-                Edit Personal & Professional Information
-              </h3>
-              <button onClick={() => setEditInfoModalOpen(false)} className="btn-icon">
-                ✕
-              </button>
+      <Modal
+        isOpen={editInfoModalOpen}
+        onClose={() => setEditInfoModalOpen(false)}
+        title="Edit Personal & Professional Profile"
+        description="Update your contact information, name, professional title, and bio."
+        maxWidth="640px"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setEditInfoModalOpen(false)}
+              className="btn btn-secondary"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleInfoSubmit}
+              disabled={updateInfoMutation.isPending}
+              className="btn btn-primary"
+            >
+              {updateInfoMutation.isPending ? "Saving..." : "Save Changes"}
+            </button>
+          </>
+        }
+      >
+        <form onSubmit={handleInfoSubmit}>
+          {infoError && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                padding: "0.75rem",
+                backgroundColor: "var(--color-danger-bg, #fee2e2)",
+                color: "var(--color-danger-text, #b91c1c)",
+                borderRadius: "8px",
+                fontSize: "0.8125rem",
+                marginBottom: "1.25rem",
+              }}
+            >
+              <AlertCircle size={16} />
+              <span>{infoError}</span>
             </div>
-            <form onSubmit={handleInfoSubmit}>
-              <div className="modal-body">
-                {infoError && (
-                  <div
+          )}
+
+          {/* Name fields (First Name & Last Name) */}
+          <div className="form-grid two-cols" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.25rem" }}>
+            <div className="form-group">
+              <label className="form-label" style={{ fontWeight: 600 }}>
+                First Name <span className="required" style={{ color: "var(--color-danger)" }}>*</span>
+              </label>
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="e.g. John"
+                className="input-field"
+                style={{ width: "100%" }}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label" style={{ fontWeight: 600 }}>
+                Last Name <span className="required" style={{ color: "var(--color-danger)" }}>*</span>
+              </label>
+              <input
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="e.g. Doe"
+                className="input-field"
+                style={{ width: "100%" }}
+                required
+              />
+            </div>
+          </div>
+
+          {/* Professional Title with Recommendation Chips */}
+          <div className="form-group" style={{ marginBottom: "1.25rem" }}>
+            <label className="form-label" style={{ fontWeight: 600, display: "flex", justifyContent: "space-between" }}>
+              <span>Professional Title</span>
+              <span style={{ fontSize: "0.75rem", color: "var(--color-text-secondary)" }}>Choose or type custom</span>
+            </label>
+            <input
+              type="text"
+              value={profTitle}
+              onChange={(e) => setProfTitle(e.target.value)}
+              placeholder="e.g. Full Stack Developer, Systems Architect"
+              className="input-field"
+              style={{ width: "100%" }}
+            />
+            {/* Recommendation chips */}
+            <div style={{ marginTop: "0.5rem" }}>
+              <span style={{ fontSize: "0.72rem", color: "var(--color-text-secondary)", display: "block", marginBottom: "0.25rem" }}>
+                Recommended titles:
+              </span>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
+                {RECOMMENDED_TITLES.map((title) => (
+                  <button
+                    key={title}
+                    type="button"
+                    onClick={() => setProfTitle(title)}
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      padding: "0.75rem",
-                      backgroundColor: "var(--danger-bg)",
-                      color: "var(--danger-text)",
-                      borderRadius: "var(--radius-md)",
-                      fontSize: "0.8125rem",
-                      marginBottom: "1rem",
+                      padding: "0.2rem 0.5rem",
+                      fontSize: "0.72rem",
+                      borderRadius: "6px",
+                      background: profTitle === title ? "var(--color-primary)" : "var(--color-surface-muted, #f1f5f9)",
+                      color: profTitle === title ? "#fff" : "var(--color-text)",
+                      border: "1px solid var(--color-border)",
+                      cursor: "pointer",
                     }}
                   >
-                    <AlertCircle size={16} />
-                    <span>{infoError}</span>
-                  </div>
-                )}
-
-                <div className="form-group" style={{ marginBottom: "1rem" }}>
-                  <label className="form-label">Professional Title</label>
-                  <input
-                    type="text"
-                    value={profTitle}
-                    onChange={(e) => setProfTitle(e.target.value)}
-                    placeholder="e.g. Full Stack Developer, Marketing Specialist"
-                    className="input-field"
-                    style={{ width: "100%" }}
-                  />
-                </div>
-
-                <div className="form-group" style={{ marginBottom: "1rem" }}>
-                  <label className="form-label">Phone Number</label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="e.g. +855 12 345 678"
-                    className="input-field"
-                    style={{ width: "100%" }}
-                  />
-                </div>
-
-                <div className="form-grid two-cols" style={{ marginBottom: "1rem" }}>
-                  <div className="form-group">
-                    <label className="form-label">City</label>
-                    <input
-                      type="text"
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      placeholder="e.g. Phnom Penh"
-                      className="input-field"
-                      style={{ width: "100%" }}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Country</label>
-                    <input
-                      type="text"
-                      value={country}
-                      onChange={(e) => setCountry(e.target.value)}
-                      placeholder="e.g. Cambodia"
-                      className="input-field"
-                      style={{ width: "100%" }}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group" style={{ marginBottom: "1rem" }}>
-                  <label className="form-label">Street Address</label>
-                  <input
-                    type="text"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    placeholder="e.g. Street 2004, Sen Sok"
-                    className="input-field"
-                    style={{ width: "100%" }}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Bio / Professional Summary</label>
-                  <textarea
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    placeholder="Share a brief overview of your background, strengths, and what you are looking for..."
-                    className="input-field"
-                    rows={4}
-                    style={{ width: "100%", resize: "vertical" }}
-                  />
-                </div>
+                    {title}
+                  </button>
+                ))}
               </div>
-
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  onClick={() => setEditInfoModalOpen(false)}
-                  className="btn btn-secondary"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={updateInfoMutation.isPending}
-                  className="btn btn-primary"
-                >
-                  {updateInfoMutation.isPending ? "Saving..." : "Save Information"}
-                </button>
-              </div>
-            </form>
+            </div>
           </div>
-        </div>
-      )}
+
+          {/* Phone Number */}
+          <div className="form-group" style={{ marginBottom: "1.25rem" }}>
+            <label className="form-label" style={{ fontWeight: 600 }}>Phone Number</label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="e.g. +855 12 345 678"
+              className="input-field"
+              style={{ width: "100%" }}
+            />
+          </div>
+
+          {/* Location: City and Country with Recommendations */}
+          <div className="form-grid two-cols" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.25rem" }}>
+            <div className="form-group">
+              <label className="form-label" style={{ fontWeight: 600 }}>City</label>
+              <input
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="e.g. Phnom Penh"
+                className="input-field"
+                style={{ width: "100%" }}
+              />
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem", marginTop: "0.35rem" }}>
+                {RECOMMENDED_CITIES.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setCity(c)}
+                    style={{
+                      padding: "0.15rem 0.4rem",
+                      fontSize: "0.68rem",
+                      borderRadius: "4px",
+                      background: city === c ? "var(--color-primary)" : "var(--color-surface-muted, #f1f5f9)",
+                      color: city === c ? "#fff" : "var(--color-text)",
+                      border: "1px solid var(--color-border)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" style={{ fontWeight: 600 }}>Country</label>
+              <input
+                type="text"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                placeholder="e.g. Cambodia"
+                className="input-field"
+                style={{ width: "100%" }}
+              />
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem", marginTop: "0.35rem" }}>
+                {RECOMMENDED_COUNTRIES.map((ct) => (
+                  <button
+                    key={ct}
+                    type="button"
+                    onClick={() => setCountry(ct)}
+                    style={{
+                      padding: "0.15rem 0.4rem",
+                      fontSize: "0.68rem",
+                      borderRadius: "4px",
+                      background: country === ct ? "var(--color-primary)" : "var(--color-surface-muted, #f1f5f9)",
+                      color: country === ct ? "#fff" : "var(--color-text)",
+                      border: "1px solid var(--color-border)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {ct}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Street Address */}
+          <div className="form-group" style={{ marginBottom: "1.25rem" }}>
+            <label className="form-label" style={{ fontWeight: 600 }}>Street Address</label>
+            <input
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="e.g. Street 2004, Sen Sok"
+              className="input-field"
+              style={{ width: "100%" }}
+            />
+          </div>
+
+          {/* Bio / Professional Summary */}
+          <div className="form-group">
+            <label className="form-label" style={{ fontWeight: 600 }}>Bio / Professional Summary</label>
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="Highlight your background, core strengths, and goals..."
+              className="input-field"
+              rows={4}
+              style={{ width: "100%", resize: "vertical" }}
+            />
+          </div>
+        </form>
+      </Modal>
+
+      {/* Change Password Modal */}
+      <Modal
+        isOpen={changePasswordModalOpen}
+        onClose={() => setChangePasswordModalOpen(false)}
+        title="Security & Change Password"
+        description="Enter your current password and set a new secure password for your account."
+        maxWidth="460px"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setChangePasswordModalOpen(false)}
+              className="btn btn-secondary"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handlePasswordSubmit}
+              disabled={changePasswordMutation.isPending}
+              className="btn btn-primary"
+            >
+              {changePasswordMutation.isPending ? "Updating Password..." : "Update Password"}
+            </button>
+          </>
+        }
+      >
+        <form onSubmit={handlePasswordSubmit}>
+          {passwordError && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                padding: "0.75rem",
+                backgroundColor: "var(--color-danger-bg, #fee2e2)",
+                color: "var(--color-danger-text, #b91c1c)",
+                borderRadius: "8px",
+                fontSize: "0.85rem",
+                marginBottom: "1.25rem",
+              }}
+            >
+              <AlertCircle size={16} />
+              <span>{passwordError}</span>
+            </div>
+          )}
+
+          {/* Current Password */}
+          <div className="form-group" style={{ marginBottom: "1.25rem" }}>
+            <label className="form-label" style={{ fontWeight: 600 }}>
+              Current Password <span className="required" style={{ color: "var(--color-danger)" }}>*</span>
+            </label>
+            <div style={{ position: "relative" }}>
+              <input
+                type={showCurrentPassword ? "text" : "password"}
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="Enter your current password"
+                className="input-field"
+                style={{ width: "100%", paddingRight: "2.5rem" }}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                style={{
+                  position: "absolute",
+                  right: "0.75rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "transparent",
+                  border: "none",
+                  color: "var(--color-text-secondary)",
+                  cursor: "pointer",
+                }}
+              >
+                {showCurrentPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          {/* New Password */}
+          <div className="form-group" style={{ marginBottom: "1.25rem" }}>
+            <label className="form-label" style={{ fontWeight: 600 }}>
+              New Password <span className="required" style={{ color: "var(--color-danger)" }}>*</span>
+            </label>
+            <div style={{ position: "relative" }}>
+              <input
+                type={showNewPassword ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="At least 6 characters"
+                className="input-field"
+                style={{ width: "100%", paddingRight: "2.5rem" }}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                style={{
+                  position: "absolute",
+                  right: "0.75rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "transparent",
+                  border: "none",
+                  color: "var(--color-text-secondary)",
+                  cursor: "pointer",
+                }}
+              >
+                {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          {/* Confirm New Password */}
+          <div className="form-group" style={{ marginBottom: "0.5rem" }}>
+            <label className="form-label" style={{ fontWeight: 600 }}>
+              Confirm New Password <span className="required" style={{ color: "var(--color-danger)" }}>*</span>
+            </label>
+            <input
+              type={showNewPassword ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Re-enter your new password"
+              className="input-field"
+              style={{ width: "100%" }}
+              required
+            />
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

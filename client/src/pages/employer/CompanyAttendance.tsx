@@ -233,7 +233,7 @@ export default function CompanyAttendance() {
                 width: "40px",
                 height: "40px",
                 borderRadius: "var(--radius)",
-                backgroundColor: "rgba(16, 185, 129, 0.15)",
+                backgroundColor: "rgba(255, 225, 124, 0.15)",
                 color: "var(--success)",
                 display: "flex",
                 alignItems: "center",

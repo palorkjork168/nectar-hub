@@ -2,17 +2,22 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../services/api";
+import { useAuth } from "../../contexts/AuthContext";
 import type { Company, GetMyCompaniesResponse, EmploymentType, ExperienceLevel } from "../../types/job";
 import {
   Building2,
   AlertCircle,
   Loader2,
+  ShieldCheck,
+  RefreshCw,
+  CheckCircle2,
 } from "lucide-react";
 import BackButton from "../../components/common/BackButton";
 
 export default function CreateJob() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { isAdmin } = useAuth();
 
   const [companyId, setCompanyId] = useState("");
   const [title, setTitle] = useState("");
@@ -31,7 +36,13 @@ export default function CreateJob() {
 
   const [formError, setFormError] = useState("");
 
-  const { data: companies, isLoading: loadingCompanies } = useQuery<Company[]>({
+  const {
+    data: companies,
+    isLoading: loadingCompanies,
+    isError: errorCompanies,
+    error: companiesError,
+    refetch: refetchCompanies,
+  } = useQuery<Company[]>({
     queryKey: ["myCompanies"],
     queryFn: async () => {
       const res = await api.get<GetMyCompaniesResponse>("/companies/my");
@@ -39,15 +50,27 @@ export default function CreateJob() {
     },
   });
 
-  // Auto-select company if only one exists
+  // Auto-select company ONLY for non-admin employers with a single company.
+  // Platform administrators must explicitly select the target company context.
   useEffect(() => {
-    if (companies && companies.length === 1 && !companyId) {
+    if (!isAdmin && companies && companies.length === 1 && !companyId) {
       setCompanyId(companies[0].id);
       if (companies[0].city) {
         setLocation(companies[0].city);
       }
     }
-  }, [companies, companyId]);
+  }, [companies, companyId, isAdmin]);
+
+  const handleCompanyChange = (selectedId: string) => {
+    setCompanyId(selectedId);
+    setFormError("");
+    const selected = companies?.find((c) => c.id === selectedId);
+    if (selected?.city && !location) {
+      setLocation(selected.city);
+    }
+  };
+
+  const selectedCompany = companies?.find((c) => c.id === companyId);
 
   const createMutation = useMutation({
     mutationFn: async (payload: any) => {
@@ -57,11 +80,12 @@ export default function CreateJob() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["myJobs"] });
       queryClient.invalidateQueries({ queryKey: ["employerDashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["adminPlatformOverview"] });
       const createdJobId = data.data?.job?.id;
       if (createdJobId) {
         navigate(`/employer/jobs/${createdJobId}/edit?created=true`);
       } else {
-        navigate("/employer/jobs");
+        navigate(isAdmin ? "/employer/jobs" : "/employer/jobs");
       }
     },
     onError: (err: any) => {
@@ -74,7 +98,11 @@ export default function CreateJob() {
     setFormError("");
 
     if (!companyId) {
-      setFormError("Please select an employer company for this job.");
+      setFormError(
+        isAdmin
+          ? "Administrator action required: Please explicitly select a target company to publish this job under."
+          : "Please select an employer company for this job."
+      );
       return;
     }
 
@@ -116,9 +144,33 @@ export default function CreateJob() {
   if (loadingCompanies) {
     return (
       <div className="dashboard-container" style={{ textAlign: "center", padding: "4rem 1.5rem" }}>
-        <Loader2 className="animate-spin" size={24} style={{ color: "var(--primary)" }} />
-        <div style={{ marginTop: "0.5rem", color: "var(--text-muted)", fontSize: "0.875rem" }}>
-          Loading company details...
+        <Loader2 className="animate-spin" size={28} style={{ color: "var(--color-primary-text)", margin: "0 auto" }} />
+        <div style={{ marginTop: "0.75rem", color: "var(--color-text-secondary)", fontSize: "0.875rem" }}>
+          {isAdmin ? "Loading authorized platform companies..." : "Loading company details..."}
+        </div>
+      </div>
+    );
+  }
+
+  if (errorCompanies) {
+    return (
+      <div className="dashboard-container">
+        <BackButton label={isAdmin ? "Back to Admin Dashboard" : "Back to My Jobs"} fallback={isAdmin ? "/admin/dashboard" : "/employer/jobs"} />
+        <div className="card" style={{ maxWidth: "560px", margin: "2rem auto", textAlign: "center", padding: "2.5rem 1.5rem" }}>
+          <AlertCircle size={36} style={{ color: "var(--color-danger, #ef4444)", margin: "0 auto 1rem auto" }} />
+          <h3 style={{ margin: "0 0 0.5rem 0", fontSize: "1.125rem" }}>Unable to Load Companies</h3>
+          <p style={{ margin: "0 0 1.5rem 0", color: "var(--color-text-secondary)", fontSize: "0.875rem" }}>
+            {(companiesError as any)?.response?.data?.message || "A network or server error occurred while retrieving companies."}
+          </p>
+          <button
+            type="button"
+            onClick={() => refetchCompanies()}
+            className="btn btn-primary"
+            style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", margin: "0 auto" }}
+          >
+            <RefreshCw size={15} />
+            <span>Retry Loading Companies</span>
+          </button>
         </div>
       </div>
     );
@@ -128,20 +180,35 @@ export default function CreateJob() {
     <div className="dashboard-container">
       {/* Header */}
       <div style={{ marginBottom: "1.5rem" }}>
-        <BackButton label="Back to My Jobs" fallback="/employer/jobs" />
-        <h1 className="dashboard-title">Post a New Job</h1>
-        <p className="dashboard-subtitle">
-          Define candidate criteria, compensation, and responsibilities for your opening
-        </p>
+        <BackButton label={isAdmin ? "Back to Admin Dashboard" : "Back to My Jobs"} fallback={isAdmin ? "/admin/dashboard" : "/employer/jobs"} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.75rem", marginTop: "0.5rem" }}>
+          <div>
+            <h1 className="dashboard-title">Post a New Job</h1>
+            <p className="dashboard-subtitle">
+              {isAdmin
+                ? "Platform Administrator Console • Publish verified vacancies across managed client companies"
+                : "Define candidate criteria, compensation, and responsibilities for your opening"}
+            </p>
+          </div>
+          {isAdmin && (
+            <span className="floating-glass-pill" style={{ color: "var(--color-primary-text)" }}>
+              <ShieldCheck size={14} /> Global Admin Access
+            </span>
+          )}
+        </div>
       </div>
 
       {/* No Company Warning */}
       {!companies || companies.length === 0 ? (
         <div className="card" style={{ textAlign: "center", padding: "3rem 1.5rem" }}>
-          <Building2 size={36} style={{ color: "var(--text-light)", marginBottom: "0.5rem" }} />
-          <h3 style={{ margin: "0 0 0.5rem 0", fontSize: "1.125rem" }}>No Registered Company Found</h3>
-          <p style={{ margin: "0 0 1.25rem 0", color: "var(--text-muted)", maxWidth: "420px", fontSize: "0.875rem" }}>
-            You must register your company profile before publishing jobs on the platform.
+          <Building2 size={36} style={{ color: "var(--color-nectar-gold, #f59e0b)", marginBottom: "0.5rem" }} />
+          <h3 style={{ margin: "0 0 0.5rem 0", fontSize: "1.125rem" }}>
+            {isAdmin ? "No Enterprise Companies Registered" : "No Registered Company Found"}
+          </h3>
+          <p style={{ margin: "0 0 1.25rem 0", color: "var(--color-text-secondary)", maxWidth: "440px", fontSize: "0.875rem", marginInline: "auto" }}>
+            {isAdmin
+              ? "There are currently no employer companies registered on the platform. Register a company first before creating vacancies."
+              : "You must register your company profile before publishing jobs on the platform."}
           </p>
           <Link to="/employer/company" className="btn btn-primary">
             Register Company Profile
@@ -149,6 +216,37 @@ export default function CreateJob() {
         </div>
       ) : (
         <div className="card" style={{ maxWidth: "860px" }}>
+          {/* Administrator Context Banner */}
+          {isAdmin && (
+            <div className="admin-context-banner">
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
+                <div
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "var(--radius-md)",
+                    backgroundColor: "rgba(255, 225, 124, 0.2)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--color-primary-text)",
+                    flexShrink: 0,
+                  }}
+                >
+                  <ShieldCheck size={20} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <h4 style={{ margin: "0 0 0.25rem 0", fontSize: "0.9375rem", fontWeight: 700, color: "var(--color-primary-text)" }}>
+                    Platform Administrator Mode • Cross-Tenant Vacancy Creation
+                  </h4>
+                  <p style={{ margin: 0, fontSize: "0.8125rem", color: "var(--color-text-secondary)", lineHeight: 1.5 }}>
+                    You have system-wide privileges to publish jobs on behalf of any enterprise employer. Explicit company selection is required below.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {formError && (
             <div
               style={{
@@ -156,38 +254,99 @@ export default function CreateJob() {
                 alignItems: "center",
                 gap: "0.5rem",
                 padding: "0.875rem 1rem",
-                backgroundColor: "var(--danger-bg)",
-                color: "var(--danger-text)",
+                backgroundColor: "var(--color-danger-soft, rgba(239, 68, 68, 0.12))",
+                color: "var(--color-danger-text, #f87171)",
+                border: "1px solid var(--color-danger-border, rgba(239, 68, 68, 0.3))",
                 borderRadius: "var(--radius-md)",
                 fontSize: "0.875rem",
                 marginBottom: "1.5rem",
               }}
             >
-              <AlertCircle size={18} />
+              <AlertCircle size={18} style={{ flexShrink: 0 }} />
               <span>{formError}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit}>
             {/* Company Selection */}
-            <div className="form-group" style={{ marginBottom: "1.25rem" }}>
-              <label className="form-label">
-                Hiring Company <span className="required">*</span>
-              </label>
+            <div className="form-group" style={{ marginBottom: "1.5rem" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.375rem" }}>
+                <label className="form-label" style={{ margin: 0 }}>
+                  Hiring Company <span className="required">*</span>
+                </label>
+                {isAdmin && (
+                  <span style={{ fontSize: "0.75rem", color: "var(--color-nectar-gold)", fontWeight: 600 }}>
+                    Explicit Selection Required
+                  </span>
+                )}
+              </div>
               <select
                 value={companyId}
-                onChange={(e) => setCompanyId(e.target.value)}
+                onChange={(e) => handleCompanyChange(e.target.value)}
                 className="input-field"
-                style={{ width: "100%" }}
+                style={{
+                  width: "100%",
+                  borderColor: !companyId && formError ? "var(--color-danger)" : undefined,
+                }}
                 required
               >
-                <option value="">-- Select Company --</option>
+                <option value="">-- {isAdmin ? "Choose target company for vacancy" : "Select Company"} --</option>
                 {companies.map((comp) => (
                   <option key={comp.id} value={comp.id}>
-                    {comp.name} {comp.industry ? `(${comp.industry})` : ""}
+                    {comp.name} {comp.city ? `• ${comp.city}` : ""} {comp.industry ? `(${comp.industry})` : ""}
                   </option>
                 ))}
               </select>
+
+              {/* Selected Company Preview Card */}
+              {selectedCompany && (
+                <div
+                  style={{
+                    marginTop: "0.75rem",
+                    padding: "0.875rem 1rem",
+                    backgroundColor: "rgba(255, 225, 124, 0.08)",
+                    border: "1px solid rgba(255, 225, 124, 0.25)",
+                    borderRadius: "var(--radius-md)",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: "0.75rem",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+                    <div
+                      style={{
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "var(--radius-sm)",
+                        backgroundColor: "rgba(255, 225, 124, 0.2)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "var(--color-primary-text)",
+                        fontWeight: 700,
+                        fontSize: "0.875rem",
+                      }}
+                    >
+                      {selectedCompany.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text)" }}>
+                        {selectedCompany.name}
+                      </div>
+                      <div style={{ fontSize: "0.75rem", color: "var(--color-text-secondary)" }}>
+                        {selectedCompany.industry || "General Enterprise"} • {selectedCompany.city || "Headquarters"}
+                        {selectedCompany.website ? ` • ${selectedCompany.website}` : ""}
+                      </div>
+                    </div>
+                  </div>
+
+                  <span className="badge badge-success" style={{ fontSize: "0.6875rem", display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
+                    <CheckCircle2 size={12} /> Confirmed Tenant
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Job Title */}

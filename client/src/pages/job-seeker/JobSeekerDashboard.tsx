@@ -1,37 +1,33 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../services/api";
-import { useAuth } from "../../contexts/AuthContext";
-import type {
-  FullProfile,
-  GetProfileResponse,
-  JobApplicationItem,
-  GetMyApplicationsResponse,
-  SavedJobRecord,
-  GetSavedJobsResponse,
-  RecommendedJobItem,
-  GetRecommendedJobsResponse,
-} from "../../types/profile";
-import { calculateProfileCompletion } from "../../utils/profileCompletion";
-import JobCard from "../../components/public/JobCard";
-import StatusBadge from "../../components/common/StatusBadge";
+import type { FullProfile, GetProfileResponse, JobApplicationItem, GetMyApplicationsResponse, SavedJobRecord, GetSavedJobsResponse } from "../../types/profile";
+import type { Interview } from "../../types/interview";
 import {
+  Search,
+  User,
+  Award,
+  Calendar,
   FileText,
   Bookmark,
-  Sparkles,
-  ArrowRight,
   CheckCircle2,
-  PlusCircle,
-  Calendar,
-  Video,
   Clock,
+  ArrowRight,
+  ShieldCheck,
+  Building2,
+  Briefcase,
+  AlertCircle,
+  ExternalLink,
+  Sparkles,
 } from "lucide-react";
 import { Skeleton, SkeletonStatCard } from "../../components/common/Skeleton";
 
 export default function JobSeekerDashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
-  // Queries
   const profileQuery = useQuery<FullProfile>({
     queryKey: ["profile"],
     queryFn: async () => {
@@ -59,16 +55,7 @@ export default function JobSeekerDashboard() {
     staleTime: 60 * 1000,
   });
 
-  const recommendedQuery = useQuery<RecommendedJobItem[]>({
-    queryKey: ["recommendedJobs"],
-    queryFn: async () => {
-      const res = await api.get<GetRecommendedJobsResponse>("/jobs/recommended");
-      return res.data.data.recommendations;
-    },
-    staleTime: 60 * 1000,
-  });
-
-  const interviewsQuery = useQuery<any[]>({
+  const interviewsQuery = useQuery<Interview[]>({
     queryKey: ["myInterviews"],
     queryFn: async () => {
       const res = await api.get("/interviews/my");
@@ -77,408 +64,445 @@ export default function JobSeekerDashboard() {
     staleTime: 60 * 1000,
   });
 
+  const applications = applicationsQuery.data || [];
+  const savedJobs = savedJobsQuery.data || [];
+  const interviews = interviewsQuery.data || [];
+  const profile = profileQuery.data;
+
   const now = new Date();
-  const upcomingInterviews = (interviewsQuery.data || []).filter(
+  const upcomingInterviews = interviews.filter(
     (iv) => iv.status === "SCHEDULED" && new Date(iv.scheduled_at) >= now
   );
 
-  const profile = profileQuery.data;
-  const applications = applicationsQuery.data || [];
-  const savedJobs = savedJobsQuery.data || [];
-  const recommendations = recommendedQuery.data || [];
+  const skillsCount = profile?.UserSkills?.length || 0;
+  const profileScore = Math.min(100, 50 + skillsCount * 10 + ((profile as any)?.resume_url || (profile as any)?.UserProfile?.resume_url ? 20 : 0));
 
-  const completion = calculateProfileCompletion(profile);
-
-  const getStatusBadge = (status: string) => {
-    return <StatusBadge status={status} />;
+  const getApplicationStatusBadge = (status: string) => {
+    switch (status) {
+      case "PENDING":
+        return (
+          <span style={{ fontSize: "0.75rem", fontWeight: 700, padding: "0.25rem 0.65rem", borderRadius: "9999px", backgroundColor: "rgba(245, 158, 11, 0.12)", color: "#b45309", border: "1px solid rgba(245, 158, 11, 0.3)" }}>
+            Pending Review
+          </span>
+        );
+      case "REVIEWING":
+        return (
+          <span style={{ fontSize: "0.75rem", fontWeight: 700, padding: "0.25rem 0.65rem", borderRadius: "9999px", backgroundColor: "rgba(59, 130, 246, 0.12)", color: "#2563eb", border: "1px solid rgba(59, 130, 246, 0.3)" }}>
+            Reviewing
+          </span>
+        );
+      case "INTERVIEW":
+        return (
+          <span style={{ fontSize: "0.75rem", fontWeight: 700, padding: "0.25rem 0.65rem", borderRadius: "9999px", backgroundColor: "rgba(139, 92, 246, 0.12)", color: "#7c3aed", border: "1px solid rgba(139, 92, 246, 0.3)" }}>
+            Interview Stage
+          </span>
+        );
+      case "ACCEPTED":
+        return (
+          <span style={{ fontSize: "0.75rem", fontWeight: 700, padding: "0.25rem 0.65rem", borderRadius: "9999px", backgroundColor: "rgba(255, 225, 124, 0.12)", color: "var(--color-primary-text)", border: "1px solid rgba(255, 225, 124, 0.3)" }}>
+            Accepted Offer
+          </span>
+        );
+      case "REJECTED":
+        return (
+          <span style={{ fontSize: "0.75rem", fontWeight: 700, padding: "0.25rem 0.65rem", borderRadius: "9999px", backgroundColor: "rgba(239, 68, 68, 0.12)", color: "#dc2626", border: "1px solid rgba(239, 68, 68, 0.3)" }}>
+            Not Selected
+          </span>
+        );
+      default:
+        return <span className="badge badge-gray">{status}</span>;
+    }
   };
 
-  const isInitialLoading = profileQuery.isLoading && applicationsQuery.isLoading;
+  const isInitialLoading = applicationsQuery.isLoading && profileQuery.isLoading;
 
   return (
-    <div className="dashboard-container">
-      {/* Welcome Banner */}
-      <div style={{ marginBottom: "2rem" }}>
-        <h1 className="dashboard-title">
-          Welcome back, {user?.first_name || "Job Seeker"}! 👋
-        </h1>
-        <p className="dashboard-subtitle">
-          Here is an overview of your job search progress, active applications, and recommended matches.
-        </p>
+    <div className="dashboard-content-wrap fade-in">
+      {/* Header Block */}
+      <div className="dashboard-header-block">
+        <div>
+          <div className="dashboard-pill-badge">
+            <span className="dashboard-yellow-dot" />
+            <span>TALENT LAUNCHPAD</span>
+          </div>
+          <h1 className="dashboard-title">
+            Welcome back, {user?.first_name || "Job Seeker"}! 🚀
+          </h1>
+          <p className="dashboard-subtitle">
+            Track your job applications, interview schedules, and explore matching positions.
+          </p>
+        </div>
+        <div className="dashboard-actions-cluster">
+          <Link to="/jobs" className="btn btn-primary">
+            <Search size={16} />
+            <span>Browse All Jobs</span>
+          </Link>
+          <Link to="/job-seeker/profile" className="btn btn-secondary">
+            <User size={16} />
+            <span>Edit Profile</span>
+          </Link>
+        </div>
       </div>
 
-      {/* Summary Cards */}
+      {/* Metrics Stat Grid */}
       {isInitialLoading ? (
-        <div className="summary-cards">
+        <div className="nectar-stat-grid">
           <SkeletonStatCard />
           <SkeletonStatCard />
           <SkeletonStatCard />
           <SkeletonStatCard />
         </div>
       ) : (
-        <div className="summary-cards">
+        <div className="nectar-stat-grid">
           {/* Applications */}
-          <Link to="/job-seeker/applications" className="card" style={{ textDecoration: "none", transition: "transform 0.2s, box-shadow 0.2s" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span className="card-title">My Applications</span>
-              <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "rgba(37, 99, 235, 0.1)", color: "var(--primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <FileText size={18} />
+          <Link to="/job-seeker/applications" className="nectar-stat-card">
+            <div className="nectar-stat-top">
+              <span className="nectar-stat-label">Active Applications</span>
+              <div
+                className="nectar-stat-icon-wrap"
+                style={{ backgroundColor: "rgba(37, 99, 235, 0.1)", color: "#2563eb", border: "1px solid rgba(37, 99, 235, 0.2)" }}
+              >
+                <FileText size={20} />
               </div>
             </div>
-            <p className="card-value">{applications.length}</p>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", fontSize: "0.8125rem", color: "var(--primary)", marginTop: "0.5rem", fontWeight: 500 }}>
-              <span>View all applications</span>
+            <div className="nectar-stat-val">{applications.length}</div>
+            <div className="nectar-stat-meta" style={{ color: "#2563eb" }}>
+              <span>Track progress</span>
               <ArrowRight size={13} />
             </div>
           </Link>
 
-        {/* Saved Jobs */}
-        <Link to="/job-seeker/saved" className="card" style={{ textDecoration: "none", transition: "transform 0.2s, box-shadow 0.2s" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span className="card-title">Saved Jobs</span>
-            <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "rgba(245, 158, 11, 0.1)", color: "#b45309", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Bookmark size={18} />
-            </div>
-          </div>
-          <p className="card-value">{savedJobs.length}</p>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", fontSize: "0.8125rem", color: "#b45309", marginTop: "0.5rem", fontWeight: 500 }}>
-            <span>View saved bookmarks</span>
-            <ArrowRight size={13} />
-          </div>
-        </Link>
-
-        {/* Recommended Jobs */}
-        <Link to="/job-seeker/recommended" className="card" style={{ textDecoration: "none", transition: "transform 0.2s, box-shadow 0.2s" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span className="card-title">Recommended Jobs</span>
-            <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.1)", color: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Sparkles size={18} />
-            </div>
-          </div>
-          <p className="card-value">{recommendations.length}</p>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", fontSize: "0.8125rem", color: "#7c3aed", marginTop: "0.5rem", fontWeight: 500 }}>
-            <span>Explore job matches</span>
-            <ArrowRight size={13} />
-          </div>
-        </Link>
-
-        {/* Profile Strength */}
-        <Link to="/job-seeker/profile" className="card" style={{ textDecoration: "none", transition: "transform 0.2s, box-shadow 0.2s" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span className="card-title">Profile Strength</span>
-            <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "rgba(16, 185, 129, 0.1)", color: "#059669", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <CheckCircle2 size={18} />
-            </div>
-          </div>
-          <p className="card-value">{completion.percentage}%</p>
-          <div style={{ height: "6px", backgroundColor: "rgba(0, 0, 0, 0.06)", borderRadius: "9999px", overflow: "hidden", marginTop: "0.75rem" }}>
-            <div
-              style={{
-                height: "100%",
-                width: `${completion.percentage}%`,
-                backgroundColor: completion.percentage >= 80 ? "#10b981" : "var(--primary)",
-                borderRadius: "9999px",
-              }}
-            />
-          </div>
-        </Link>
-      </div>
-      )}
-
-      {/* Upcoming Interviews Alert/Banner */}
-      {upcomingInterviews.length > 0 && (
-        <div
-          className="card"
-          style={{
-            marginBottom: "2rem",
-            borderLeft: "4px solid var(--primary)",
-            padding: "1.25rem 1.5rem",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <Calendar size={18} style={{ color: "var(--primary)" }} />
-              <h3 style={{ margin: 0, fontSize: "1.0625rem", fontWeight: 600, color: "var(--text-main)" }}>
-                Upcoming Interview ({upcomingInterviews.length})
-              </h3>
-            </div>
-            <Link to="/job-seeker/interviews" className="btn btn-secondary" style={{ fontSize: "0.75rem", padding: "0.25rem 0.5rem" }}>
-              View All
-            </Link>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "0.75rem" }}>
-            {upcomingInterviews.slice(0, 2).map((iv: any) => {
-              const job = iv.application?.Job;
-              const company = job?.Company;
-              const date = new Date(iv.scheduled_at);
-
-              return (
-                <div
-                  key={iv.id}
-                  style={{
-                    padding: "0.85rem 1rem",
-                    backgroundColor: "var(--bg-color)",
-                    borderRadius: "var(--radius-md)",
-                    border: "1px solid var(--border-color)",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    flexWrap: "wrap",
-                    gap: "0.75rem",
-                  }}
-                >
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: "0.9375rem", color: "var(--text-main)" }}>
-                      {job?.title}
-                    </div>
-                    <div style={{ fontSize: "0.8125rem", color: "var(--text-muted)", marginTop: "0.15rem" }}>
-                      {company?.name} • <span style={{ color: "var(--primary)", fontWeight: 500 }}>{iv.interview_type}</span>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", marginTop: "0.5rem", fontSize: "0.8125rem", color: "var(--text-main)", fontWeight: 500 }}>
-                      <Clock size={13} style={{ color: "var(--primary)" }} />
-                      <span>
-                        {date.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })},{" "}
-                        {date.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
-                      </span>
-                    </div>
-                  </div>
-
-                  {iv.interview_type === "VIDEO" && iv.meeting_link && (
-                    <a
-                      href={iv.meeting_link}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="btn btn-primary"
-                      style={{ fontSize: "0.8125rem", padding: "0.35rem 0.75rem", display: "inline-flex", alignItems: "center", gap: "0.35rem" }}
-                    >
-                      <Video size={14} />
-                      <span>Join</span>
-                    </a>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Profile Completion Actions (if incomplete) */}
-      {completion.missingItems.length > 0 && (
-        <div
-          className="card"
-          style={{
-            marginBottom: "2rem",
-            background: "linear-gradient(135deg, rgba(37, 99, 235, 0.04) 0%, rgba(37, 99, 235, 0.09) 100%)",
-            borderColor: "rgba(37, 99, 235, 0.2)",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
-            <div>
-              <h3 style={{ margin: "0 0 0.25rem 0", fontSize: "1rem", fontWeight: 600, color: "var(--text-main)" }}>
-                Complete your profile to increase your visibility to employers
-              </h3>
-              <p style={{ margin: 0, fontSize: "0.8125rem", color: "var(--text-muted)" }}>
-                Candidates with completed profiles receive up to 3x more recruiter interactions.
-              </p>
-            </div>
-            <Link to="/job-seeker/profile" className="btn btn-primary" style={{ fontSize: "0.8125rem", padding: "0.4rem 0.8rem" }}>
-              <PlusCircle size={15} /> Complete Profile
-            </Link>
-          </div>
-
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "1rem" }}>
-            {completion.missingItems.map((item) => (
-              <Link
-                key={item.key}
-                to="/job-seeker/profile"
-                style={{
-                  fontSize: "0.75rem",
-                  padding: "0.25rem 0.6rem",
-                  backgroundColor: "var(--surface)",
-                  borderRadius: "var(--radius-sm)",
-                  border: "1px solid var(--border-color)",
-                  color: "var(--primary)",
-                  textDecoration: "none",
-                  fontWeight: 500,
-                }}
+          {/* Saved Positions */}
+          <Link to="/job-seeker/saved" className="nectar-stat-card">
+            <div className="nectar-stat-top">
+              <span className="nectar-stat-label">Saved Jobs</span>
+              <div
+                className="nectar-stat-icon-wrap"
+                style={{ backgroundColor: "rgba(217, 119, 6, 0.1)", color: "#d97706", border: "1px solid rgba(217, 119, 6, 0.2)" }}
               >
-                + {item.action}
-              </Link>
-            ))}
-          </div>
+                <Bookmark size={20} />
+              </div>
+            </div>
+            <div className="nectar-stat-val">{savedJobs.length}</div>
+            <div className="nectar-stat-meta" style={{ color: "#d97706" }}>
+              <span>Review bookmarks</span>
+              <ArrowRight size={13} />
+            </div>
+          </Link>
+
+          {/* Upcoming Interviews */}
+          <Link to="/job-seeker/interviews" className="nectar-stat-card">
+            <div className="nectar-stat-top">
+              <span className="nectar-stat-label">Interviews</span>
+              <div
+                className="nectar-stat-icon-wrap"
+                style={{ backgroundColor: "rgba(124, 58, 237, 0.1)", color: "#7c3aed", border: "1px solid rgba(124, 58, 237, 0.2)" }}
+              >
+                <Calendar size={20} />
+              </div>
+            </div>
+            <div className="nectar-stat-val">{upcomingInterviews.length}</div>
+            <div className="nectar-stat-meta" style={{ color: "#7c3aed" }}>
+              <span>Scheduled meetings</span>
+              <ArrowRight size={13} />
+            </div>
+          </Link>
+
+          {/* Profile Strength */}
+          <Link to="/job-seeker/profile" className="nectar-stat-card">
+            <div className="nectar-stat-top">
+              <span className="nectar-stat-label">Profile Strength</span>
+              <div
+                className="nectar-stat-icon-wrap"
+                style={{ backgroundColor: "rgba(255, 225, 124, 0.1)", color: "var(--color-primary-text)", border: "1px solid rgba(255, 225, 124, 0.2)" }}
+              >
+                <Award size={20} />
+              </div>
+            </div>
+            <div className="nectar-stat-val">
+              {profileScore}%
+            </div>
+            <div className="nectar-stat-meta" style={{ color: "var(--color-primary-text)" }}>
+              <span>{skillsCount} verified skills</span>
+              <ArrowRight size={13} />
+            </div>
+          </Link>
         </div>
       )}
 
-      {/* Recommended Jobs Preview */}
-      <div style={{ marginBottom: "2.5rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-          <div>
-            <h2 style={{ fontSize: "1.25rem", fontWeight: 700, margin: 0, color: "var(--text-main)" }}>
-              Recommended for You
-            </h2>
-            <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)", margin: "0.25rem 0 0 0" }}>
-              Positions matched to your profile skills
-            </p>
-          </div>
-          {recommendations.length > 0 && (
-            <Link to="/job-seeker/recommended" className="btn btn-ghost" style={{ fontSize: "0.8125rem", gap: "0.25rem" }}>
-              <span>View All ({recommendations.length})</span>
-              <ArrowRight size={14} />
-            </Link>
-          )}
-        </div>
-
-        {recommendations.length === 0 ? (
-          <div className="card" style={{ textAlign: "center", padding: "2.5rem 1rem" }}>
-            <Sparkles size={28} style={{ color: "var(--text-light)", marginBottom: "0.5rem" }} />
-            <p style={{ margin: "0 0 0.75rem 0", fontSize: "0.875rem", color: "var(--text-muted)" }}>
-              No job recommendations yet. Add technical skills to your profile to get matches.
-            </p>
-            <Link to="/job-seeker/profile" className="btn btn-secondary" style={{ fontSize: "0.8125rem", margin: "0 auto" }}>
-              Add Skills to Profile
-            </Link>
-          </div>
-        ) : (
-          <div className="job-grid" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))" }}>
-            {recommendations.slice(0, 3).map((item) => (
-              <JobCard
-                key={item.job.id}
-                job={item.job}
-                matchPercentage={item.match_percentage}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Grid: Recent Applications & Saved Jobs */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))", gap: "1.5rem" }}>
-        {/* Recent Applications */}
-        <div className="card">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
-            <h3 style={{ fontSize: "1.0625rem", fontWeight: 600, margin: 0, color: "var(--text-main)" }}>
-              Recent Applications
-            </h3>
-            <Link to="/job-seeker/applications" className="btn btn-ghost" style={{ fontSize: "0.75rem", padding: "0.25rem 0.5rem" }}>
-              View All
-            </Link>
-          </div>
-
-          {applicationsQuery.isLoading ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              <Skeleton height="52px" borderRadius="var(--radius-md)" />
-              <Skeleton height="52px" borderRadius="var(--radius-md)" />
-              <Skeleton height="52px" borderRadius="var(--radius-md)" />
+      {/* Main 2-Column Responsive Workspace */}
+      <div className="nectar-dashboard-grid-2">
+        {/* Left Column: Recent Applications & Skills */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          {/* Applications Status Card */}
+          <div className="nectar-card">
+            <div className="nectar-card-header">
+              <h3 className="nectar-card-title">
+                <FileText size={18} style={{ color: "var(--color-primary-text)" }} />
+                Recent Applications
+              </h3>
+              <Link to="/job-seeker/applications" className="btn btn-ghost" style={{ fontSize: "0.8125rem", padding: "0.35rem 0.75rem" }}>
+                <span>View All ({applications.length})</span>
+                <ArrowRight size={13} />
+              </Link>
             </div>
-          ) : applications.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "2rem 1rem", backgroundColor: "var(--bg-color)", borderRadius: "var(--radius-md)" }}>
-              <FileText size={24} style={{ color: "var(--text-light)", marginBottom: "0.5rem" }} />
-              <p style={{ margin: 0, fontSize: "0.8125rem", color: "var(--text-muted)" }}>
-                No applications submitted yet.
-              </p>
-            </div>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              {applications.slice(0, 4).map((app) => (
-                <div
-                  key={app.id}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: "0.75rem",
-                    backgroundColor: "var(--bg-color)",
-                    borderRadius: "var(--radius-md)",
-                    border: "1px solid var(--border-color)",
-                  }}
-                >
-                  <div>
-                    <Link
-                      to={`/jobs/${app.job_id}`}
-                      style={{
-                        fontWeight: 600,
-                        fontSize: "0.875rem",
-                        color: "var(--text-main)",
-                        textDecoration: "none",
-                      }}
-                    >
-                      {app.Job?.title || "Job Position"}
-                    </Link>
-                    <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.2rem" }}>
-                      {app.Job?.Company?.name || "Company"}
-                    </div>
-                  </div>
-                  <div>{getStatusBadge(app.status)}</div>
+
+            <div className="nectar-card-body">
+              {applicationsQuery.isLoading ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                  <Skeleton height="60px" borderRadius="10px" />
+                  <Skeleton height="60px" borderRadius="10px" />
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Saved Jobs Preview */}
-        <div className="card">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
-            <h3 style={{ fontSize: "1.0625rem", fontWeight: 600, margin: 0, color: "var(--text-main)" }}>
-              Saved Jobs Preview
-            </h3>
-            <Link to="/job-seeker/saved" className="btn btn-ghost" style={{ fontSize: "0.75rem", padding: "0.25rem 0.5rem" }}>
-              View All
-            </Link>
-          </div>
-
-          {savedJobs.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "2rem 1rem", backgroundColor: "var(--bg-color)", borderRadius: "var(--radius-md)" }}>
-              <Bookmark size={24} style={{ color: "var(--text-light)", marginBottom: "0.5rem" }} />
-              <p style={{ margin: 0, fontSize: "0.8125rem", color: "var(--text-muted)" }}>
-                No saved jobs. Bookmark jobs while browsing to review later.
-              </p>
-            </div>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              {savedJobs.slice(0, 4).map((record) => {
-                if (!record.job) return null;
-                return (
-                  <div
-                    key={record.id}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: "0.75rem",
-                      backgroundColor: "var(--bg-color)",
-                      borderRadius: "var(--radius-md)",
-                      border: "1px solid var(--border-color)",
-                    }}
-                  >
-                    <div>
-                      <Link
-                        to={`/jobs/${record.job_id}`}
-                        style={{
-                          fontWeight: 600,
-                          fontSize: "0.875rem",
-                          color: "var(--text-main)",
-                          textDecoration: "none",
-                        }}
-                      >
-                        {record.job.title}
-                      </Link>
-                      <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.2rem" }}>
-                        {record.job.Company?.name || "Company"} • {record.job.location}
+              ) : applications.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "3rem 1.5rem", backgroundColor: "var(--color-surface-muted)", borderRadius: "10px" }}>
+                  <Briefcase size={32} style={{ color: "var(--color-text-muted)", margin: "0 auto 0.75rem" }} />
+                  <p style={{ margin: "0 0 1rem", fontSize: "0.9375rem", color: "var(--color-text-secondary)" }}>
+                    You haven't applied to any job positions yet.
+                  </p>
+                  <Link to="/jobs" className="btn btn-primary">
+                    <Search size={15} />
+                    <span>Explore Verified Positions</span>
+                  </Link>
+                </div>
+              ) : (
+                <div className="nectar-list-group">
+                  {applications.slice(0, 4).map((app) => (
+                    <div key={app.id} className="nectar-list-row">
+                      <div>
+                        <Link
+                          to={`/jobs/${app.job_id}`}
+                          style={{
+                            fontWeight: 700,
+                            fontSize: "0.9375rem",
+                            color: "var(--color-text)",
+                            textDecoration: "none",
+                          }}
+                        >
+                          {app.Job?.title || "Job Position"}
+                        </Link>
+                        <div style={{ fontSize: "0.78125rem", color: "var(--color-text-muted)", marginTop: "0.2rem" }}>
+                          {app.Job?.Company?.name || "Company Partner"}
+                          {(() => {
+                            const raw = (app as any).createdAt || app.created_at || (app as any).applied_at;
+                            if (!raw) return null;
+                            const d = new Date(raw);
+                            return isNaN(d.getTime()) ? null : ` • Applied ${d.toLocaleDateString()}`;
+                          })()}
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                        {getApplicationStatusBadge(app.status)}
+                        <Link
+                          to={`/jobs/${app.job_id}`}
+                          className="btn btn-secondary"
+                          style={{ fontSize: "0.75rem", padding: "0.3rem 0.65rem" }}
+                        >
+                          Details
+                        </Link>
                       </div>
                     </div>
-                    <Link
-                      to={`/jobs/${record.job_id}`}
-                      className="btn btn-secondary"
-                      style={{ fontSize: "0.75rem", padding: "0.25rem 0.5rem" }}
-                    >
-                      View
-                    </Link>
-                  </div>
-                );
-              })}
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+          </div>
+
+          {/* Profile Skills & Verification */}
+          <div className="nectar-card">
+            <div className="nectar-card-header">
+              <h3 className="nectar-card-title">
+                <ShieldCheck size={18} style={{ color: "var(--color-primary-text)" }} />
+                Your Verified Skills & Strengths
+              </h3>
+              <Link to="/job-seeker/profile" className="btn btn-ghost" style={{ fontSize: "0.8125rem", padding: "0.35rem 0.75rem" }}>
+                <span>Manage Profile</span>
+                <ArrowRight size={13} />
+              </Link>
+            </div>
+
+            <div className="nectar-card-body">
+              {profile?.UserSkills && profile.UserSkills.length > 0 ? (
+                <div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1.25rem" }}>
+                    {profile.UserSkills.map((us) => (
+                      <span
+                        key={us.id}
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.4rem",
+                          padding: "0.4rem 0.85rem",
+                          borderRadius: "9999px",
+                          backgroundColor: "var(--color-surface-muted)",
+                          border: "1px solid var(--color-border)",
+                          fontSize: "0.8125rem",
+                          fontWeight: 600,
+                          color: "var(--color-text)",
+                        }}
+                      >
+                        <CheckCircle2 size={13} style={{ color: "var(--color-primary-text)" }} />
+                        <span>{us.skill_name || "Skill"}</span>
+                        {us.level && (
+                          <span style={{ fontSize: "0.6875rem", color: "var(--color-text-muted)", marginLeft: "2px" }}>
+                            • {us.level}
+                          </span>
+                        )}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div style={{ padding: "1rem 1.25rem", backgroundColor: "var(--color-surface-muted)", borderRadius: "10px", border: "1px solid var(--color-border)" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
+                      <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--color-text)" }}>
+                        Profile Completeness
+                      </span>
+                      <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--color-primary-text)" }}>
+                        {profileScore}%
+                      </span>
+                    </div>
+                    <div style={{ width: "100%", height: "8px", backgroundColor: "var(--color-border)", borderRadius: "9999px", overflow: "hidden" }}>
+                      <div
+                        style={{
+                          width: `${profileScore}%`,
+                          height: "100%",
+                          backgroundColor: "var(--color-primary)",
+                          borderRadius: "9999px",
+                          transition: "width 0.4s ease",
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ textAlign: "center", padding: "2rem 1rem", backgroundColor: "var(--color-surface-muted)", borderRadius: "10px" }}>
+                  <Award size={32} style={{ color: "var(--color-text-muted)", margin: "0 auto 0.5rem" }} />
+                  <p style={{ margin: "0 0 0.85rem", fontSize: "0.875rem", color: "var(--color-text-secondary)" }}>
+                    Highlight your skills to get matched with top opportunities.
+                  </p>
+                  <Link to="/job-seeker/profile" className="btn btn-secondary">
+                    <span>Add Skills & Certifications</span>
+                    <ArrowRight size={13} />
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Upcoming Interviews & Shortcuts */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          {/* Upcoming Interviews Card */}
+          <div className="nectar-card">
+            <div className="nectar-card-header">
+              <h3 className="nectar-card-title">
+                <Calendar size={18} style={{ color: "#7c3aed" }} />
+                Scheduled Interviews
+              </h3>
+              <Link to="/job-seeker/interviews" className="btn btn-ghost" style={{ fontSize: "0.8125rem", padding: "0.35rem 0.75rem" }}>
+                <span>Calendar</span>
+                <ArrowRight size={13} />
+              </Link>
+            </div>
+
+            <div className="nectar-card-body">
+              {upcomingInterviews.length > 0 ? (
+                <div className="nectar-list-group">
+                  {upcomingInterviews.slice(0, 3).map((iv) => {
+                    const date = new Date(iv.scheduled_at);
+                    return (
+                      <div key={iv.id} className="nectar-list-row">
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--color-text)" }}>
+                            {iv.application?.Job?.title || "Job Interview"}
+                          </div>
+                          <div style={{ fontSize: "0.78125rem", color: "var(--color-text-muted)", marginTop: "0.2rem" }}>
+                            {iv.application?.Job?.Company?.name || "Company"} • {iv.interview_type}
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginTop: "0.4rem", color: "var(--color-primary-text)", fontSize: "0.78125rem", fontWeight: 600 }}>
+                            <Clock size={12} />
+                            <span>
+                              {date.toLocaleDateString(undefined, { month: "short", day: "numeric" })},{" "}
+                              {date.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
+                            </span>
+                          </div>
+                        </div>
+                        <Link
+                          to="/job-seeker/interviews"
+                          className="btn btn-secondary"
+                          style={{ fontSize: "0.75rem", padding: "0.35rem 0.75rem" }}
+                        >
+                          View
+                        </Link>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div style={{ textAlign: "center", padding: "2.5rem 1rem", backgroundColor: "var(--color-surface-muted)", borderRadius: "10px" }}>
+                  <Calendar size={28} style={{ color: "var(--color-text-muted)", margin: "0 auto 0.5rem" }} />
+                  <p style={{ margin: "0 0 0.25rem", fontSize: "0.9375rem", fontWeight: 600, color: "var(--color-text)" }}>
+                    No pending interviews
+                  </p>
+                  <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
+                    Once an employer schedules an interview with you, it will appear here.
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Career Toolkit & Quick Shortcuts */}
+          <div className="nectar-card">
+            <div className="nectar-card-header">
+              <h3 className="nectar-card-title">
+                <Sparkles size={18} style={{ color: "#d97706" }} />
+                Career Toolkit Shortcuts
+              </h3>
+            </div>
+
+            <div className="nectar-card-body">
+              <div className="nectar-list-group">
+                <Link to="/coming-soon?feature=AI%20Resume%20Builder&category=Career%20Toolkit&eta=v1.1%20Release" className="nectar-list-row">
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                      <h4 style={{ fontSize: "0.9375rem", margin: "0 0 2px", color: "var(--color-text)" }}>
+                        AI Resume Builder
+                      </h4>
+                      <span style={{ fontSize: "0.6875rem", fontWeight: 700, padding: "0.1rem 0.45rem", borderRadius: "4px", background: "rgba(245, 158, 11, 0.15)", color: "#d97706" }}>SOON</span>
+                    </div>
+                    <span style={{ fontSize: "0.78125rem", color: "var(--color-text-muted)" }}>
+                      Craft ATS-friendly professional resumes in minutes
+                    </span>
+                  </div>
+                  <ArrowRight size={16} style={{ color: "var(--color-text-muted)" }} />
+                </Link>
+
+                <Link to="/tools" className="nectar-list-row">
+                  <div>
+                    <h4 style={{ fontSize: "0.9375rem", margin: "0 0 2px", color: "var(--color-text)" }}>
+                      Compensation Calculator
+                    </h4>
+                    <span style={{ fontSize: "0.78125rem", color: "var(--color-text-muted)" }}>
+                      Benchmark market rates across industries
+                    </span>
+                  </div>
+                  <ArrowRight size={16} style={{ color: "var(--color-text-muted)" }} />
+                </Link>
+
+                <Link to="/job-seeker/recommended" className="nectar-list-row">
+                  <div>
+                    <h4 style={{ fontSize: "0.9375rem", margin: "0 0 2px", color: "var(--color-text)" }}>
+                      Smart Job Recommendations
+                    </h4>
+                    <span style={{ fontSize: "0.78125rem", color: "var(--color-text-muted)" }}>
+                      Positions matched with your verified capabilities
+                    </span>
+                  </div>
+                  <ArrowRight size={16} style={{ color: "var(--color-text-muted)" }} />
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

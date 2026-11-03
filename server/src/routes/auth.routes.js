@@ -6,6 +6,7 @@ const authenticate = require("../middleware/auth.middleware");
 const {
   registerSchema,
   loginSchema,
+  changePasswordSchema,
 } = require("../validators/auth.validator");
 
 const router = express.Router();
@@ -26,6 +27,13 @@ router.get(
   "/me",
   authenticate,
   authController.getMe
+);
+
+router.put(
+  "/change-password",
+  authenticate,
+  validate(changePasswordSchema),
+  authController.changePassword
 );
 
 module.exports = router;

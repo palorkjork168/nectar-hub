@@ -109,7 +109,7 @@ export default function Applicants() {
         );
       case "ACCEPTED":
         return (
-          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontSize: "0.75rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: "9999px", backgroundColor: "rgba(16, 185, 129, 0.12)", color: "#059669", border: "1px solid rgba(16, 185, 129, 0.3)" }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontSize: "0.75rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: "9999px", backgroundColor: "rgba(255, 225, 124, 0.12)", color: "var(--color-primary-text)", border: "1px solid rgba(255, 225, 124, 0.3)" }}>
             <CheckCircle2 size={12} /> Accepted
           </span>
         );
@@ -362,7 +362,7 @@ export default function Applicants() {
                               alignItems: "center",
                               gap: "0.25rem",
                               padding: "0.1rem 0.4rem",
-                              backgroundColor: "rgba(16, 185, 129, 0.1)",
+                              backgroundColor: "rgba(255, 225, 124, 0.1)",
                               borderRadius: "4px",
                             }}
                           >

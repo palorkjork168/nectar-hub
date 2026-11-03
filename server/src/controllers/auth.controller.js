@@ -156,9 +156,37 @@ const getMe = async (req, res) => {
 };
 
 
+
+const changePassword = async (req, res) => {
+  try {
+    await authService.changePassword(req.user.id, req.body);
+
+    auditService.recordAuditEvent({
+      req,
+      actorUserId: req.user.id,
+      action: "PASSWORD_CHANGED",
+      entityType: "USER",
+      entityId: req.user.id,
+      description: `User ${req.user.email} changed their password`,
+      metadata: { email: req.user.email },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Password changed successfully!",
+    });
+  } catch (error) {
+    res.status(error.statusCode || 400).json({
+      success: false,
+      message: error.message || "Failed to change password",
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
   getMe,
+  changePassword,
 };
 

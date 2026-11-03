@@ -62,7 +62,7 @@ export default function Notifications() {
               margin: "0 0 0.375rem 0",
             }}
           >
-            <Bell size={26} style={{ color: "var(--color-primary, #2563eb)" }} />
+            <Bell size={26} style={{ color: "var(--color-primary-text, #2563eb)" }} />
             <span>Notification Center</span>
           </h1>
           <p
@@ -159,7 +159,7 @@ export default function Notifications() {
       >
         {isLoading ? (
           <div style={{ padding: "4rem 2rem", textAlign: "center", color: "var(--color-text-secondary, #64748b)" }}>
-            <Loader2 size={32} className="animate-spin" style={{ margin: "0 auto 1rem auto", color: "var(--color-primary, #2563eb)" }} />
+            <Loader2 size={32} className="animate-spin" style={{ margin: "0 auto 1rem auto", color: "var(--color-primary-text, #2563eb)" }} />
             <p style={{ margin: 0, fontSize: "0.9375rem" }}>Loading notification feed...</p>
           </div>
         ) : notifications.length === 0 ? (

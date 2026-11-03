@@ -19,7 +19,12 @@ const testSuites = [
   "test_security_audit_flow.js",
   "test_email_flow.js",
   "test_v1_production_readiness.js",
+  "test_admin_job_management.js",
+  "test_attendance_correction_flow.js",
+  "test_attendance_phase2_control_center.js",
+  "test_attendance_phase3_roster_geofence.js",
 ];
+
 
 console.log("==================================================");
 console.log(`RUNNING FULL REGRESSION SUITE (${testSuites.length} SUITES)`);

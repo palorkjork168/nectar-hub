@@ -1,4 +1,6 @@
-const { Company } = require("../models");
+const { Op } = require("sequelize");
+const { Company, CompanyUserRole } = require("../models");
+const authorizationService = require("./authorization.service");
 
 const createCompany = async (userId, companyData) => {
   const company = await Company.create({
@@ -10,11 +12,34 @@ const createCompany = async (userId, companyData) => {
   return company;
 };
 
-const getMyCompanies = async (userId) => {
+const getMyCompanies = async (userOrId) => {
+  const isUserObj = typeof userOrId === "object" && userOrId !== null;
+  const userId = isUserObj ? userOrId.id : userOrId;
+  const isAdmin = isUserObj ? authorizationService.isAdmin(userOrId) : false;
+
+  let whereClause;
+  if (isAdmin) {
+    whereClause = undefined;
+  } else {
+    const assignedRoles = userId
+      ? await CompanyUserRole.findAll({
+          where: { user_id: userId },
+          attributes: ["company_id"],
+        })
+      : [];
+    const companyIds = assignedRoles.map((r) => r.company_id).filter(Boolean);
+
+    if (companyIds.length > 0) {
+      whereClause = {
+        [Op.or]: [{ owner_id: userId }, { id: companyIds }],
+      };
+    } else {
+      whereClause = { owner_id: userId };
+    }
+  }
+
   const companies = await Company.findAll({
-    where: {
-      owner_id: userId,
-    },
+    where: whereClause,
     order: [["created_at", "DESC"]],
   });
 

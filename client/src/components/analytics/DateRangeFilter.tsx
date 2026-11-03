@@ -67,11 +67,11 @@ export function DateRangeFilter({
         alignItems: "center",
         justifyContent: "space-between",
         gap: "0.75rem",
-        background: "var(--color-bg-card, #0e1712)",
+        background: "var(--color-surface, #ffffff)",
         padding: "0.75rem 1rem",
         borderRadius: "var(--radius-lg, 12px)",
-        border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
-        boxShadow: "0 10px 25px -5px rgba(0,0,0,0.5)",
+        border: "1px solid var(--color-border)",
+        boxShadow: "var(--shadow-sm)",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
@@ -79,7 +79,7 @@ export function DateRangeFilter({
           style={{
             fontSize: "0.85rem",
             fontWeight: 700,
-            color: "#10b981",
+            color: "var(--color-primary-text)",
             textTransform: "uppercase",
             letterSpacing: "0.06em",
             marginRight: "0.25rem",
@@ -110,10 +110,10 @@ export function DateRangeFilter({
                 fontWeight: isActive ? 700 : 500,
                 cursor: "pointer",
                 border: "1px solid",
-                borderColor: isActive ? "var(--color-primary, #10b981)" : "rgba(255, 255, 255, 0.1)",
-                background: isActive ? "var(--color-primary, #10b981)" : "rgba(16, 28, 20, 0.7)",
-                color: isActive ? "#05190f" : "#cbd5e1",
-                boxShadow: isActive ? "0 0 15px rgba(16, 185, 129, 0.4)" : "none",
+                borderColor: isActive ? "var(--color-primary, #ffe17c)" : "var(--color-border)",
+                background: isActive ? "var(--color-primary, #ffe17c)" : "var(--color-surface-hover, #f1f5f9)",
+                color: isActive ? "#ffffff" : "var(--color-text-secondary, #475569)",
+                boxShadow: isActive ? "0 2px 10px rgba(255, 225, 124, 0.35)" : "none",
                 transition: "all 0.15s ease",
               }}
             >
@@ -137,13 +137,14 @@ export function DateRangeFilter({
             type="date"
             value={customFrom}
             onChange={(e) => setCustomFrom(e.target.value)}
+            className="form-control"
             style={{
               padding: "0.35rem 0.6rem",
               borderRadius: "var(--radius-md, 8px)",
-              border: "1px solid var(--color-border, rgba(16, 185, 129, 0.3))",
+              border: "1px solid var(--color-border)",
               fontSize: "0.85rem",
-              color: "var(--color-text-main, #f8fafc)",
-              background: "#09120e",
+              color: "var(--color-text)",
+              background: "var(--color-surface)",
             }}
             required
           />
@@ -152,13 +153,14 @@ export function DateRangeFilter({
             type="date"
             value={customTo}
             onChange={(e) => setCustomTo(e.target.value)}
+            className="form-control"
             style={{
               padding: "0.35rem 0.6rem",
               borderRadius: "var(--radius-md, 8px)",
-              border: "1px solid var(--color-border, rgba(16, 185, 129, 0.3))",
+              border: "1px solid var(--color-border)",
               fontSize: "0.85rem",
-              color: "var(--color-text-main, #f8fafc)",
-              background: "#09120e",
+              color: "var(--color-text)",
+              background: "var(--color-surface)",
             }}
             required
           />
@@ -167,13 +169,13 @@ export function DateRangeFilter({
             style={{
               padding: "0.35rem 0.85rem",
               borderRadius: "var(--radius-md, 8px)",
-              background: "var(--color-primary, #10b981)",
-              color: "#05190f",
+              background: "var(--color-primary, #ffe17c)",
+              color: "#ffffff",
               border: "none",
               fontWeight: 700,
               fontSize: "0.85rem",
               cursor: "pointer",
-              boxShadow: "0 0 12px rgba(16, 185, 129, 0.3)",
+              boxShadow: "0 2px 10px rgba(255, 225, 124, 0.35)",
             }}
           >
             Apply

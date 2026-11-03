@@ -88,9 +88,9 @@ export default function PositionManager({ companyId }: PositionManagerProps) {
       </div>
 
       {(isAdding || editingId) && (
-        <div style={{ background: "var(--bg-secondary)", padding: "1.5rem", borderRadius: "var(--radius-md)", marginBottom: "2rem", border: "1px solid var(--border)" }}>
-          <h3 style={{ fontSize: "1rem", marginBottom: "1rem" }}>{editingId ? "Edit Position" : "New Position"}</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <div style={{ background: "var(--color-surface)", padding: "1.5rem", borderRadius: "var(--radius-lg)", marginBottom: "2rem", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-sm)" }}>
+          <h3 style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: "1.25rem", color: "var(--color-text)" }}>{editingId ? "Edit Position" : "New Position"}</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", maxWidth: "600px" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
               <div>
                 <label className="form-label">Job Title *</label>

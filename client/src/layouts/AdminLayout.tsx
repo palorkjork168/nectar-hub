@@ -1,21 +1,52 @@
 import { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { LayoutDashboard, Users, LogOut, Menu, X, ShieldCheck, BarChart3 } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  LogOut,
+  Menu,
+  X,
+  ShieldCheck,
+  BarChart3,
+  Briefcase,
+  PlusCircle,
+  ChevronRight,
+  CalendarCheck,
+} from "lucide-react";
 import NotificationBell from "../components/notifications/NotificationBell";
 import PageTransition from "../components/common/PageTransition";
+import ThemeToggle from "../components/common/ThemeToggle";
 import { NectarIcon } from "../components/brand/NectarLogo";
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
   const location = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const navItems = [
-    { label: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
-    { label: "Analytics", path: "/admin/analytics", icon: BarChart3 },
-    { label: "Users", path: "/admin/employees", icon: Users },
-    { label: "Roles & Permissions", path: "/admin/roles", icon: ShieldCheck },
+  const navGroups = [
+    {
+      title: "Overview",
+      items: [
+        { label: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
+        { label: "Platform Analytics", path: "/admin/analytics", icon: BarChart3 },
+      ],
+    },
+    {
+      title: "Jobs & Vacancies",
+      items: [
+        { label: "Manage All Jobs", path: "/employer/jobs", icon: Briefcase },
+        { label: "Post a Job", path: "/employer/jobs/new", icon: PlusCircle },
+      ],
+    },
+    {
+      title: "Platform Governance",
+      items: [
+        { label: "Staff & Users", path: "/admin/employees", icon: Users },
+        { label: "Roles & Permissions", path: "/admin/roles", icon: ShieldCheck },
+        { label: "Attendance Control", path: "/admin/attendance", icon: CalendarCheck },
+      ],
+    },
   ];
 
 
@@ -29,213 +60,151 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="public-layout" style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      {/* Top Navigation */}
-      <header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
-          backgroundColor: "rgba(13, 22, 17, 0.92)",
-          backdropFilter: "blur(16px)",
-          borderBottom: "1px solid rgba(16, 185, 129, 0.18)",
-          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.4)",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "var(--max-width-page)",
-            margin: "0 auto",
-            padding: "0.75rem 1.5rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          {/* Brand */}
+    <div className="dashboard-layout">
+      {/* Mobile Backdrop */}
+      <div
+        className={`sidebar-backdrop ${sidebarOpen ? "open" : ""}`}
+        onClick={() => setSidebarOpen(false)}
+        aria-hidden="true"
+      />
+
+      {/* Left Sidebar */}
+      <aside className={`dashboard-sidebar ${sidebarOpen ? "open" : ""}`}>
+        {/* Brand Header */}
+        <div className="sidebar-header">
           <Link
             to="/admin/dashboard"
-            onClick={() => setMobileMenuOpen(false)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              textDecoration: "none",
-            }}
+            onClick={() => setSidebarOpen(false)}
+            style={{ display: "flex", alignItems: "center", gap: "0.75rem", textDecoration: "none" }}
           >
+            <div className="brand-icon" style={{ width: "36px", height: "36px" }}>
+              <NectarIcon size={20} />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <span style={{ fontSize: "1.0625rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em", lineHeight: 1.15 }}>
+                Nectar Hub
+              </span>
+              <span style={{ fontSize: "0.6875rem", fontWeight: 700, color: "var(--color-primary-text)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                Admin Console
+              </span>
+            </div>
+          </Link>
+          <button
+            type="button"
+            className="btn-icon mobile-menu-toggle"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close Sidebar"
+            style={{ display: "none" }}
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Grouped Navigation Links */}
+        <nav className="sidebar-nav">
+          {navGroups.map((group, gIdx) => (
+            <div key={gIdx} className="sidebar-group">
+              <h4 className="sidebar-group-title">{group.title}</h4>
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.path);
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`sidebar-link ${active ? "active" : ""}`}
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <Icon size={18} strokeWidth={active ? 2.5 : 2} style={{ color: active ? "var(--color-primary)" : "var(--color-text-muted)", flexShrink: 0 }} />
+                    <span style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.label}</span>
+                    {active && <ChevronRight size={14} style={{ color: "var(--color-primary-text)", opacity: 0.8 }} />}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
+        </nav>
+
+        {/* Sidebar Footer with User Profile */}
+        <div className="sidebar-footer">
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", minWidth: 0 }}>
             <div
               style={{
                 width: "36px",
                 height: "36px",
-                borderRadius: "var(--radius-md)",
-                backgroundColor: "rgba(16, 185, 129, 0.15)",
-                border: "1px solid rgba(16, 185, 129, 0.35)",
+                borderRadius: "var(--radius-full)",
+                backgroundColor: "var(--color-primary-soft)",
+                color: "var(--color-primary-text)",
+                border: "1px solid var(--color-primary-border)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                boxShadow: "0 2px 10px rgba(16, 185, 129, 0.25)",
+                fontWeight: 700,
+                fontSize: "0.8125rem",
+                flexShrink: 0,
               }}
             >
-              <NectarIcon size={22} />
+              {getInitials(user?.first_name, user?.last_name)}
             </div>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <span style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--color-text)", lineHeight: 1.1, letterSpacing: "-0.01em" }}>
-                NECTAR HUB
-              </span>
-              <span style={{ fontSize: "0.6875rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary)" }}>
-                ADMIN PORTAL
-              </span>
-            </div>
-          </Link>
-
-          {/* Desktop Nav Items */}
-          <nav style={{ display: "none" }} className="desktop-nav">
-            <style>{`
-              @media (min-width: 768px) {
-                .desktop-nav { display: flex !important; align-items: center; gap: 0.5rem; }
-                .mobile-menu-toggle { display: none !important; }
-              }
-            `}</style>
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.path);
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "0.45rem",
-                    padding: "0.5rem 0.875rem",
-                    fontSize: "0.875rem",
-                    fontWeight: active ? 600 : 500,
-                    borderRadius: "var(--radius-md)",
-                    textDecoration: "none",
-                    color: active ? "var(--color-primary)" : "var(--color-text-secondary)",
-                    backgroundColor: active ? "var(--color-primary-soft)" : "transparent",
-                    transition: "all var(--transition-fast)",
-                  }}
-                >
-                  <Icon size={16} />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* User Controls & Mobile Toggle */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}>
-            <NotificationBell />
-            <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-              <div
-                style={{
-                  width: "34px",
-                  height: "34px",
-                  borderRadius: "50%",
-                  backgroundColor: "var(--color-surface-muted)",
-                  border: "1px solid var(--color-border)",
-                  color: "var(--color-text)",
-                  fontWeight: 700,
-                  fontSize: "0.8125rem",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {getInitials(user?.first_name, user?.last_name)}
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--color-text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {user?.first_name} {user?.last_name}
               </div>
-              <div style={{ display: "none" }} className="user-text-meta">
-                <style>{`
-                  @media (min-width: 640px) {
-                    .user-text-meta { display: flex !important; flex-direction: column; }
-                  }
-                `}</style>
-                <span style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-text)", lineHeight: 1.2 }}>
-                  {user?.first_name} {user?.last_name}
-                </span>
-                <span style={{ fontSize: "0.6875rem", color: "var(--color-text-muted)" }}>
-                  Administrator
-                </span>
+              <div style={{ fontSize: "0.6875rem", color: "var(--color-primary-text)", textTransform: "uppercase", letterSpacing: "0.04em", fontWeight: 700 }}>
+                Administrator
               </div>
             </div>
-
-            <button
-              type="button"
-              onClick={logout}
-              className="btn btn-sm btn-secondary"
-              title="Sign Out"
-              aria-label="Sign Out"
-            >
-              <LogOut size={14} />
-              <span className="signout-label">Sign Out</span>
-              <style>{`
-                @media (max-width: 640px) {
-                  .signout-label { display: none; }
-                }
-              `}</style>
-            </button>
-
-            {/* Mobile Menu Toggle */}
-            <button
-              type="button"
-              className="mobile-menu-toggle btn btn-sm btn-ghost btn-icon-only"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle Navigation Menu"
-            >
-              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
           </div>
-        </div>
-
-        {/* Mobile Dropdown */}
-        {mobileMenuOpen && (
-          <div
-            style={{
-              padding: "0.75rem 1.5rem 1rem",
-              borderTop: "1px solid var(--color-border)",
-              backgroundColor: "var(--color-surface)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.375rem",
-            }}
+          <button
+            onClick={logout}
+            className="btn-icon"
+            title="Sign Out"
+            aria-label="Sign Out"
+            style={{ flexShrink: 0 }}
           >
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.path);
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    padding: "0.625rem 0.75rem",
-                    fontSize: "0.9375rem",
-                    fontWeight: active ? 600 : 500,
-                    borderRadius: "var(--radius-md)",
-                    textDecoration: "none",
-                    color: active ? "var(--color-primary)" : "var(--color-text-secondary)",
-                    backgroundColor: active ? "var(--color-primary-soft)" : "transparent",
-                  }}
-                >
-                  <Icon size={18} />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </div>
-        )}
-      </header>
+            <LogOut size={16} />
+          </button>
+        </div>
+      </aside>
 
-      {/* Main Content Area */}
-      <main style={{ flex: 1, backgroundColor: "var(--color-bg)" }}>
-        <PageTransition>
-          <Outlet />
-        </PageTransition>
-      </main>
+      {/* Main Content Viewport */}
+      <div className="dashboard-main">
+        {/* Sticky Topbar Header */}
+        <header className="dashboard-topbar">
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <button
+              type="button"
+              className="btn-icon"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              aria-label="Toggle Sidebar Navigation"
+              style={{ padding: "0.4rem" }}
+            >
+              <Menu size={22} />
+            </button>
+            <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text-secondary)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span>Admin Console</span>
+              <span style={{ color: "var(--color-text-muted)" }}>/</span>
+              <span style={{ color: "var(--color-primary-text)", fontWeight: 700 }}>Governance</span>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <Link to="/employer/jobs/new" className="btn btn-primary" style={{ padding: "0.5rem 1rem", fontSize: "0.8125rem", display: "inline-flex", alignItems: "center", gap: "0.375rem" }}>
+              <PlusCircle size={15} />
+              <span>Post a Job</span>
+            </Link>
+            <ThemeToggle />
+            <NotificationBell />
+          </div>
+        </header>
+
+        {/* Content Area */}
+        <main style={{ flex: 1, padding: "0" }}>
+          <PageTransition>
+            <Outlet />
+          </PageTransition>
+        </main>
+      </div>
     </div>
   );
 }

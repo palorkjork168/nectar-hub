@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type ReactNode, type KeyboardEvent } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
@@ -30,18 +30,8 @@ interface ModalProps {
   ariaDescribedBy?: string;
 }
 
-let modalCount = 0; // track nesting for body scroll lock
+let activeModalCount = 0;
 
-/**
- * Modal — Accessible, animated dialog with:
- *  - Body scroll lock
- *  - ESC to close (unless dangerous)
- *  - Click outside to close (unless dangerous)
- *  - Focus trap (first focusable element inside)
- *  - Focus restoration after close
- *  - Animated open/close via CSS (modalFadeIn / modalSlideUp in index.css)
- *  - Respects prefers-reduced-motion
- */
 export default function Modal({
   isOpen,
   onClose,
@@ -49,7 +39,7 @@ export default function Modal({
   description,
   children,
   footer,
-  maxWidth = "540px",
+  maxWidth = "560px",
   dangerous = false,
   className = "",
   ariaDescribedBy,
@@ -59,16 +49,26 @@ export default function Modal({
   const overlayRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<Element | null>(null);
+  const [modalIndex, setModalIndex] = useState(0);
+
+  useEffect(() => {
+    if (isOpen) {
+      activeModalCount++;
+      setModalIndex(activeModalCount);
+      return () => {
+        activeModalCount = Math.max(0, activeModalCount - 1);
+      };
+    }
+  }, [isOpen]);
 
   // Save the element that opened the modal so we can restore focus on close
   useEffect(() => {
     if (isOpen) {
       triggerRef.current = document.activeElement;
-      // Focus the first focusable element inside the dialog
       const frame = requestAnimationFrame(() => {
         if (!dialogRef.current) return;
         const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
         );
         if (focusable.length > 0) {
           focusable[0].focus();
@@ -78,7 +78,6 @@ export default function Modal({
       });
       return () => cancelAnimationFrame(frame);
     } else {
-      // Restore focus to the element that triggered the modal
       requestAnimationFrame(() => {
         if (triggerRef.current instanceof HTMLElement) {
           triggerRef.current.focus();
@@ -127,7 +126,7 @@ export default function Modal({
       role="presentation"
       onClick={handleOverlayClick}
       onKeyDown={handleKeyDown}
-      style={{ zIndex: 1000 + modalCount * 10 }}
+      style={{ zIndex: 10000 + modalIndex * 10 }}
       aria-hidden={!isOpen}
     >
       <div

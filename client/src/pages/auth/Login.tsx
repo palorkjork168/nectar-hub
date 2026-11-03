@@ -46,22 +46,9 @@ export default function Login() {
         return;
       }
 
-      // Default role-based redirection
-      const roles = user.roles || [];
-      const hasRole = (roleName: string) =>
-        roles.some((r: any) => (typeof r === "string" ? r === roleName : r?.name === roleName));
-
-      if (hasRole("ADMIN")) {
-        navigate("/admin/dashboard");
-      } else if (hasRole("EMPLOYER")) {
-        navigate("/employer/dashboard");
-      } else if (hasRole("EMPLOYEE")) {
-        navigate("/employee/dashboard");
-      } else if (hasRole("JOB_SEEKER")) {
-        navigate("/job-seeker/dashboard");
-      } else {
-        navigate("/jobs");
-      }
+      // Default redirection: Everyone lands on the Home page ('/') first as requested,
+      // and can then access their respective portals (Admin, Employer, Employee, Job Seeker) from the navigation bar
+      navigate("/");
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || "Invalid email or password");
     } finally {
@@ -107,12 +94,12 @@ export default function Login() {
                 width: "44px",
                 height: "44px",
                 borderRadius: "12px",
-                backgroundColor: "rgba(16, 185, 129, 0.12)",
-                border: "1px solid rgba(16, 185, 129, 0.25)",
+                backgroundColor: "rgba(255, 225, 124, 0.12)",
+                border: "1px solid rgba(255, 225, 124, 0.25)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                boxShadow: "0 2px 12px rgba(16, 185, 129, 0.2)",
+                boxShadow: "0 2px 12px rgba(255, 225, 124, 0.2)",
               }}
             >
               <NectarIcon size={24} />
@@ -121,7 +108,7 @@ export default function Login() {
               <span style={{ fontSize: "1.375rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em", display: "block", lineHeight: 1.15 }}>
                 Nectar Hub
               </span>
-              <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--color-primary)", letterSpacing: "0.02em" }}>
+              <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--color-primary-text)", letterSpacing: "0.02em" }}>
                 Your Workplace, Connected.
               </span>
             </div>
@@ -278,7 +265,7 @@ export default function Login() {
           Don't have an account?{" "}
           <Link
             to={redirect ? `/register?redirect=${encodeURIComponent(redirect)}` : "/register"}
-            style={{ color: "var(--color-primary)", fontWeight: 600 }}
+            style={{ color: "var(--color-primary-text)", fontWeight: 600 }}
           >
             Create an account
           </Link>

@@ -122,15 +122,15 @@ export default function ScheduleInterviewModal({
         {/* Header */}
         <div className="modal-header">
           <div>
-            <h3 style={{ margin: 0, fontSize: "1.125rem", fontWeight: 700 }}>
+            <h3 className="modal-title">
               Schedule Candidate Interview
             </h3>
-            <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.8125rem", color: "var(--text-muted)" }}>
+            <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
               {candidateName ? <strong>{candidateName}</strong> : "Candidate"}
               {jobTitle && <span> • {jobTitle}</span>}
             </p>
           </div>
-          <button onClick={onClose} className="btn-icon">
+          <button onClick={onClose} className="modal-close" aria-label="Close dialog">
             <X size={18} />
           </button>
         </div>
@@ -145,11 +145,12 @@ export default function ScheduleInterviewModal({
                   alignItems: "center",
                   gap: "0.5rem",
                   padding: "0.75rem 1rem",
-                  backgroundColor: "var(--success-bg)",
-                  color: "var(--success-text)",
+                  backgroundColor: "var(--color-success-soft)",
+                  color: "var(--color-success-text)",
                   borderRadius: "var(--radius-md)",
                   fontSize: "0.875rem",
                   marginBottom: "1.25rem",
+                  border: "1px solid rgba(255, 225, 124, 0.2)",
                 }}
               >
                 <CheckCircle2 size={16} />
@@ -164,11 +165,12 @@ export default function ScheduleInterviewModal({
                   alignItems: "center",
                   gap: "0.5rem",
                   padding: "0.75rem 1rem",
-                  backgroundColor: "var(--danger-bg)",
-                  color: "var(--danger-text)",
+                  backgroundColor: "var(--color-danger-soft)",
+                  color: "var(--color-danger-text)",
                   borderRadius: "var(--radius-md)",
                   fontSize: "0.875rem",
                   marginBottom: "1.25rem",
+                  border: "1px solid rgba(239, 68, 68, 0.2)",
                 }}
               >
                 <AlertCircle size={16} />
@@ -199,7 +201,7 @@ export default function ScheduleInterviewModal({
                 <select
                   value={durationMinutes}
                   onChange={(e) => setDurationMinutes(parseInt(e.target.value, 10))}
-                  className="input-field"
+                  className="form-select"
                   style={{ width: "100%" }}
                 >
                   <option value={15}>15 minutes (Screening)</option>

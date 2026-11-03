@@ -28,7 +28,7 @@ export function TrendChart({
         style={{
           background: "var(--color-bg-card, #0e1712)",
           borderRadius: "var(--radius-lg, 12px)",
-          border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
+          border: "1px solid var(--color-border, rgba(255, 225, 124, 0.2))",
           padding: "1.25rem",
           display: "flex",
           flexDirection: "column",
@@ -88,7 +88,7 @@ export function TrendChart({
       style={{
         background: "var(--color-bg-card, #0e1712)",
         borderRadius: "var(--radius-lg, 12px)",
-        border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
+        border: "1px solid var(--color-border, rgba(255, 225, 124, 0.2))",
         padding: "1.25rem",
         display: "flex",
         flexDirection: "column",
@@ -141,7 +141,7 @@ export function TrendChart({
             y1={paddingY + chartHeight}
             x2={svgWidth - paddingX}
             y2={paddingY + chartHeight}
-            stroke="rgba(16, 185, 129, 0.2)"
+            stroke="rgba(255, 225, 124, 0.2)"
           />
 
           {/* Filled Area */}
@@ -176,7 +176,7 @@ export function TrendChart({
               top: `${(hoveredPoint.y / svgHeight) * 100}%`,
               transform: "translate(-50%, -120%)",
               background: "#0d1611",
-              border: "1px solid rgba(16, 185, 129, 0.35)",
+              border: "1px solid rgba(255, 225, 124, 0.35)",
               color: "#ffffff",
               padding: "0.25rem 0.5rem",
               borderRadius: "6px",
@@ -188,7 +188,7 @@ export function TrendChart({
             }}
           >
             <div>{hoveredPoint.point.date}</div>
-            <strong style={{ color: "#34d399" }}>{hoveredPoint.point.count}</strong>
+            <strong style={{ color: "var(--color-primary-text)" }}>{hoveredPoint.point.count}</strong>
           </div>
         )}
       </div>

@@ -15,6 +15,7 @@ import {
   Eye,
   FileText,
   Calendar,
+  Sparkles,
 } from "lucide-react";
 import { Skeleton, SkeletonStatCard } from "../../components/common/Skeleton";
 
@@ -49,14 +50,12 @@ export default function EmployerDashboard() {
   });
 
   const upcomingInterviews = interviewsQuery.data || [];
-
   const companies = companiesQuery.data || [];
   const jobs = jobsQuery.data || [];
 
   const totalJobs = jobs.length;
   const publishedJobs = jobs.filter((j) => j.status === "PUBLISHED").length;
 
-  // Compute total applications and pending applications across all employer jobs
   const totalApplicants = jobs.reduce((acc, job) => acc + (job.Applications?.length || 0), 0);
   const pendingApplicants = jobs.reduce(
     (acc, job) => acc + (job.Applications?.filter((a) => a.status === "PENDING").length || 0),
@@ -69,19 +68,19 @@ export default function EmployerDashboard() {
     switch (status) {
       case "PUBLISHED":
         return (
-          <span style={{ fontSize: "0.75rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: "9999px", backgroundColor: "rgba(16, 185, 129, 0.12)", color: "#059669", border: "1px solid rgba(16, 185, 129, 0.3)" }}>
+          <span style={{ fontSize: "0.75rem", fontWeight: 700, padding: "0.25rem 0.65rem", borderRadius: "9999px", backgroundColor: "rgba(255, 225, 124, 0.12)", color: "var(--color-primary-text)", border: "1px solid rgba(255, 225, 124, 0.3)" }}>
             Published
           </span>
         );
       case "DRAFT":
         return (
-          <span style={{ fontSize: "0.75rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: "9999px", backgroundColor: "rgba(245, 158, 11, 0.12)", color: "#b45309", border: "1px solid rgba(245, 158, 11, 0.3)" }}>
+          <span style={{ fontSize: "0.75rem", fontWeight: 700, padding: "0.25rem 0.65rem", borderRadius: "9999px", backgroundColor: "rgba(245, 158, 11, 0.12)", color: "#b45309", border: "1px solid rgba(245, 158, 11, 0.3)" }}>
             Draft
           </span>
         );
       case "CLOSED":
         return (
-          <span style={{ fontSize: "0.75rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: "9999px", backgroundColor: "rgba(107, 114, 128, 0.12)", color: "#4b5563", border: "1px solid rgba(107, 114, 128, 0.3)" }}>
+          <span style={{ fontSize: "0.75rem", fontWeight: 700, padding: "0.25rem 0.65rem", borderRadius: "9999px", backgroundColor: "rgba(107, 114, 128, 0.12)", color: "#4b5563", border: "1px solid rgba(107, 114, 128, 0.3)" }}>
             Closed
           </span>
         );
@@ -91,10 +90,14 @@ export default function EmployerDashboard() {
   };
 
   return (
-    <div className="dashboard-container">
-      {/* Welcome Banner */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem", marginBottom: "2rem" }}>
+    <div className="dashboard-content-wrap fade-in">
+      {/* Header Block */}
+      <div className="dashboard-header-block">
         <div>
+          <div className="dashboard-pill-badge">
+            <span className="dashboard-yellow-dot" />
+            <span>EMPLOYER PIPELINE</span>
+          </div>
           <h1 className="dashboard-title">
             Welcome back, {user?.first_name || "Employer"}! 👋
           </h1>
@@ -102,12 +105,14 @@ export default function EmployerDashboard() {
             Manage your company job listings, review inbound candidates, and track recruitment progress.
           </p>
         </div>
-        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-          <Link to="/employer/jobs/new" className="btn btn-primary" style={{ fontSize: "0.875rem" }}>
-            <PlusCircle size={16} /> Post a Job
+        <div className="dashboard-actions-cluster">
+          <Link to="/employer/jobs/new" className="btn btn-primary">
+            <PlusCircle size={16} />
+            <span>Post a Job</span>
           </Link>
-          <Link to="/employer/company" className="btn btn-secondary" style={{ fontSize: "0.875rem" }}>
-            <Building2 size={16} /> Manage Company
+          <Link to="/employer/company" className="btn btn-secondary">
+            <Building2 size={16} />
+            <span>Manage Company</span>
           </Link>
         </div>
       </div>
@@ -116,10 +121,10 @@ export default function EmployerDashboard() {
       {companies.length === 0 && (
         <div
           style={{
-            padding: "1.25rem 1.5rem",
-            backgroundColor: "var(--warning-bg)",
+            padding: "1.25rem 1.75rem",
+            backgroundColor: "rgba(245, 158, 11, 0.08)",
             border: "1px solid rgba(245, 158, 11, 0.3)",
-            borderRadius: "var(--radius-lg)",
+            borderRadius: "14px",
             marginBottom: "2rem",
             display: "flex",
             justifyContent: "space-between",
@@ -128,118 +133,123 @@ export default function EmployerDashboard() {
             gap: "1rem",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <AlertTriangle size={24} style={{ color: "var(--warning-text)", flexShrink: 0 }} />
+          <div style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}>
+            <AlertTriangle size={24} style={{ color: "#d97706", flexShrink: 0 }} />
             <div>
-              <strong style={{ color: "var(--warning-text)", fontSize: "0.9375rem" }}>
+              <strong style={{ color: "var(--color-text)", fontSize: "0.9375rem" }}>
                 Company Profile Setup Required
               </strong>
-              <div style={{ fontSize: "0.8125rem", color: "var(--warning-text)", marginTop: "0.15rem" }}>
-                You must register your company before posting jobs so candidates know who is hiring.
+              <div style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)", marginTop: "0.2rem" }}>
+                You must register your company profile before publishing jobs so candidates know who is hiring.
               </div>
             </div>
           </div>
-          <Link to="/employer/company" className="btn btn-primary" style={{ fontSize: "0.8125rem" }}>
-            Complete Company Setup
+          <Link to="/employer/company" className="btn btn-primary">
+            <span>Complete Setup</span>
+            <ArrowRight size={14} />
           </Link>
         </div>
       )}
 
-      {/* Summary Cards */}
+      {/* Summary Stat Cards */}
       {isInitialLoading ? (
-        <div className="summary-cards" style={{ marginBottom: "2.5rem" }}>
+        <div className="nectar-stat-grid">
           <SkeletonStatCard />
           <SkeletonStatCard />
           <SkeletonStatCard />
           <SkeletonStatCard />
         </div>
       ) : (
-        <div className="summary-cards" style={{ marginBottom: "2.5rem" }}>
+        <div className="nectar-stat-grid">
           {/* Total Jobs */}
-          <Link to="/employer/jobs" className="card" style={{ textDecoration: "none", transition: "transform 0.2s" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span className="card-title">Total Postings</span>
-              <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "rgba(37, 99, 235, 0.1)", color: "var(--primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Briefcase size={18} />
+          <Link to="/employer/jobs" className="nectar-stat-card">
+            <div className="nectar-stat-top">
+              <span className="nectar-stat-label">Total Postings</span>
+              <div
+                className="nectar-stat-icon-wrap"
+                style={{ backgroundColor: "rgba(37, 99, 235, 0.1)", color: "#2563eb", border: "1px solid rgba(37, 99, 235, 0.2)" }}
+              >
+                <Briefcase size={20} />
               </div>
             </div>
-            <p className="card-value">{totalJobs}</p>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", fontSize: "0.8125rem", color: "var(--primary)", marginTop: "0.5rem", fontWeight: 500 }}>
+            <div className="nectar-stat-val">{totalJobs}</div>
+            <div className="nectar-stat-meta" style={{ color: "#2563eb" }}>
               <span>Manage all listings</span>
               <ArrowRight size={13} />
             </div>
           </Link>
 
-        {/* Published Jobs */}
-        <Link to="/employer/jobs" className="card" style={{ textDecoration: "none", transition: "transform 0.2s" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span className="card-title">Live / Published</span>
-            <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "rgba(16, 185, 129, 0.1)", color: "#059669", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <CheckCircle2 size={18} />
+          {/* Published Jobs */}
+          <Link to="/employer/jobs" className="nectar-stat-card">
+            <div className="nectar-stat-top">
+              <span className="nectar-stat-label">Live Openings</span>
+              <div
+                className="nectar-stat-icon-wrap"
+                style={{ backgroundColor: "rgba(255, 225, 124, 0.1)", color: "var(--color-primary-text)", border: "1px solid rgba(255, 225, 124, 0.2)" }}
+              >
+                <CheckCircle2 size={20} />
+              </div>
             </div>
-          </div>
-          <p className="card-value">{publishedJobs}</p>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", fontSize: "0.8125rem", color: "#059669", marginTop: "0.5rem", fontWeight: 500 }}>
-            <span>View public jobs</span>
-            <ArrowRight size={13} />
-          </div>
-        </Link>
+            <div className="nectar-stat-val">{publishedJobs}</div>
+            <div className="nectar-stat-meta" style={{ color: "var(--color-primary-text)" }}>
+              <span>Active in marketplace</span>
+              <ArrowRight size={13} />
+            </div>
+          </Link>
 
-        {/* Total Applicants */}
-        <Link to="/employer/applicants" className="card" style={{ textDecoration: "none", transition: "transform 0.2s" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span className="card-title">Total Applicants</span>
-            <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.1)", color: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Users size={18} />
+          {/* Total Applicants */}
+          <Link to="/employer/applicants" className="nectar-stat-card">
+            <div className="nectar-stat-top">
+              <span className="nectar-stat-label">Total Applicants</span>
+              <div
+                className="nectar-stat-icon-wrap"
+                style={{ backgroundColor: "rgba(124, 58, 237, 0.1)", color: "#7c3aed", border: "1px solid rgba(124, 58, 237, 0.2)" }}
+              >
+                <Users size={20} />
+              </div>
             </div>
-          </div>
-          <p className="card-value">{totalApplicants}</p>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", fontSize: "0.8125rem", color: "#7c3aed", marginTop: "0.5rem", fontWeight: 500 }}>
-            <span>Candidate pool</span>
-            <ArrowRight size={13} />
-          </div>
-        </Link>
+            <div className="nectar-stat-val">{totalApplicants}</div>
+            <div className="nectar-stat-meta" style={{ color: "#7c3aed" }}>
+              <span>Inbound talent funnel</span>
+              <ArrowRight size={13} />
+            </div>
+          </Link>
 
-        {/* Needing Review */}
-        <Link to="/employer/applicants" className="card" style={{ textDecoration: "none", transition: "transform 0.2s" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span className="card-title">Needs Review</span>
-            <div style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "rgba(245, 158, 11, 0.1)", color: "#b45309", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Clock size={18} />
+          {/* Needing Review */}
+          <Link to="/employer/applicants" className="nectar-stat-card">
+            <div className="nectar-stat-top">
+              <span className="nectar-stat-label">Pending Review</span>
+              <div
+                className="nectar-stat-icon-wrap"
+                style={{ backgroundColor: "rgba(217, 119, 6, 0.1)", color: "#d97706", border: "1px solid rgba(217, 119, 6, 0.2)" }}
+              >
+                <Clock size={20} />
+              </div>
             </div>
-          </div>
-          <p className="card-value">{pendingApplicants}</p>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", fontSize: "0.8125rem", color: "#b45309", marginTop: "0.5rem", fontWeight: 500 }}>
-            <span>Review pending</span>
-            <ArrowRight size={13} />
-          </div>
-        </Link>
-      </div>
+            <div className="nectar-stat-val">{pendingApplicants}</div>
+            <div className="nectar-stat-meta" style={{ color: "#d97706" }}>
+              <span>Awaiting screening</span>
+              <ArrowRight size={13} />
+            </div>
+          </Link>
+        </div>
       )}
 
-      {/* Upcoming Interviews Banner/Card */}
+      {/* Upcoming Interviews Card */}
       {upcomingInterviews.length > 0 && (
-        <div
-          className="card"
-          style={{
-            marginBottom: "2rem",
-            borderLeft: "4px solid var(--primary)",
-            padding: "1.25rem 1.5rem",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <Calendar size={18} style={{ color: "var(--primary)" }} />
-              <h3 style={{ margin: 0, fontSize: "1.0625rem", fontWeight: 600, color: "var(--text-main)" }}>
-                Upcoming Interviews ({upcomingInterviews.length})
-              </h3>
-            </div>
-            <Link to="/employer/interviews" className="btn btn-secondary" style={{ fontSize: "0.75rem", padding: "0.25rem 0.5rem" }}>
-              View Schedule
+        <div className="nectar-card" style={{ marginBottom: "2rem", borderLeft: "4px solid var(--color-primary)" }}>
+          <div className="nectar-card-header">
+            <h3 className="nectar-card-title">
+              <Calendar size={18} style={{ color: "var(--color-primary-text)" }} />
+              Upcoming Candidate Interviews ({upcomingInterviews.length})
+            </h3>
+            <Link to="/employer/interviews" className="btn btn-secondary" style={{ fontSize: "0.8125rem", padding: "0.4rem 0.85rem" }}>
+              <span>View Full Schedule</span>
+              <ArrowRight size={13} />
             </Link>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "0.75rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
             {upcomingInterviews.slice(0, 3).map((iv: any) => {
               const app = iv.application;
               const applicant = app?.applicant;
@@ -250,31 +260,31 @@ export default function EmployerDashboard() {
                 <div
                   key={iv.id}
                   style={{
-                    padding: "0.75rem 1rem",
-                    backgroundColor: "var(--bg-color)",
-                    borderRadius: "var(--radius-md)",
-                    border: "1px solid var(--border-color)",
+                    padding: "1rem 1.15rem",
+                    backgroundColor: "var(--color-surface-muted)",
+                    borderRadius: "10px",
+                    border: "1px solid var(--color-border)",
                     fontSize: "0.8125rem",
                   }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <strong style={{ color: "var(--text-main)" }}>
+                    <strong style={{ color: "var(--color-text)", fontSize: "0.9375rem" }}>
                       {applicant?.first_name} {applicant?.last_name}
                     </strong>
-                    <span style={{ color: "var(--primary)", fontWeight: 600, fontSize: "0.75rem" }}>
+                    <span className="badge badge-primary" style={{ fontSize: "0.75rem" }}>
                       {iv.interview_type}
                     </span>
                   </div>
-                  <div style={{ color: "var(--text-muted)", fontSize: "0.75rem", marginTop: "0.2rem" }}>
+                  <div style={{ color: "var(--color-text-secondary)", fontSize: "0.8125rem", marginTop: "0.25rem" }}>
                     {job?.title}
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", marginTop: "0.5rem", color: "var(--text-main)", fontWeight: 500 }}>
-                    <Clock size={12} style={{ color: "var(--primary)" }} />
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginTop: "0.65rem", color: "var(--color-text)", fontWeight: 600 }}>
+                    <Clock size={13} style={{ color: "var(--color-primary-text)" }} />
                     <span>
                       {date.toLocaleDateString(undefined, { month: "short", day: "numeric" })},{" "}
                       {date.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
                     </span>
-                    <span style={{ color: "var(--text-muted)" }}>({iv.duration_minutes}m)</span>
+                    <span style={{ color: "var(--color-text-muted)", fontWeight: 400 }}>({iv.duration_minutes}m)</span>
                   </div>
                 </div>
               );
@@ -284,156 +294,141 @@ export default function EmployerDashboard() {
       )}
 
       {/* Grid: Recent Jobs & Inbound Applicants */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "1.5rem" }}>
+      <div className="nectar-dashboard-grid-2">
         {/* Recent Jobs */}
-        <div className="card">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
-            <h3 style={{ fontSize: "1.0625rem", fontWeight: 600, margin: 0, color: "var(--text-main)" }}>
+        <div className="nectar-card">
+          <div className="nectar-card-header">
+            <h3 className="nectar-card-title">
+              <Briefcase size={18} style={{ color: "var(--color-primary-text)" }} />
               Recent Job Postings
             </h3>
-            <Link to="/employer/jobs" className="btn btn-ghost" style={{ fontSize: "0.75rem", padding: "0.25rem 0.5rem" }}>
-              View All ({jobs.length})
+            <Link to="/employer/jobs" className="btn btn-ghost" style={{ fontSize: "0.8125rem", padding: "0.35rem 0.75rem" }}>
+              <span>View All ({jobs.length})</span>
+              <ArrowRight size={13} />
             </Link>
           </div>
 
-          {jobsQuery.isLoading ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              <Skeleton height="56px" borderRadius="var(--radius-md)" />
-              <Skeleton height="56px" borderRadius="var(--radius-md)" />
-              <Skeleton height="56px" borderRadius="var(--radius-md)" />
-            </div>
-          ) : jobs.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "2.5rem 1rem", backgroundColor: "var(--bg-color)", borderRadius: "var(--radius-md)" }}>
-              <Briefcase size={28} style={{ color: "var(--text-light)", marginBottom: "0.5rem" }} />
-              <p style={{ margin: "0 0 0.75rem 0", fontSize: "0.875rem", color: "var(--text-muted)" }}>
-                No job postings created yet.
-              </p>
-              <Link to="/employer/jobs/new" className="btn btn-primary" style={{ fontSize: "0.8125rem" }}>
-                Post Your First Job
-              </Link>
-            </div>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              {jobs.slice(0, 4).map((job) => (
-                <div
-                  key={job.id}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: "0.875rem 1rem",
-                    backgroundColor: "var(--bg-color)",
-                    borderRadius: "var(--radius-md)",
-                    border: "1px solid var(--border-color)",
-                  }}
-                >
-                  <div>
-                    <Link
-                      to={`/employer/jobs/${job.id}/edit`}
-                      style={{
-                        fontWeight: 600,
-                        fontSize: "0.9375rem",
-                        color: "var(--text-main)",
-                        textDecoration: "none",
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = "var(--primary)")}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-main)")}
-                    >
-                      {job.title}
-                    </Link>
-                    <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.2rem" }}>
-                      {job.Company?.name} • {job.location} • {job.Applications?.length || 0} applicants
+          <div className="nectar-card-body">
+            {jobsQuery.isLoading ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                <Skeleton height="60px" borderRadius="10px" />
+                <Skeleton height="60px" borderRadius="10px" />
+                <Skeleton height="60px" borderRadius="10px" />
+              </div>
+            ) : jobs.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "3rem 1.5rem", backgroundColor: "var(--color-surface-muted)", borderRadius: "10px" }}>
+                <Briefcase size={32} style={{ color: "var(--color-text-muted)", margin: "0 auto 0.75rem" }} />
+                <p style={{ margin: "0 0 1rem 0", fontSize: "0.9375rem", color: "var(--color-text-secondary)" }}>
+                  No job postings created yet.
+                </p>
+                <Link to="/employer/jobs/new" className="btn btn-primary">
+                  <PlusCircle size={15} />
+                  <span>Post Your First Job</span>
+                </Link>
+              </div>
+            ) : (
+              <div className="nectar-list-group">
+                {jobs.slice(0, 4).map((job) => (
+                  <div key={job.id} className="nectar-list-row">
+                    <div>
+                      <Link
+                        to={`/employer/jobs/${job.id}/edit`}
+                        style={{
+                          fontWeight: 700,
+                          fontSize: "0.9375rem",
+                          color: "var(--color-text)",
+                          textDecoration: "none",
+                        }}
+                      >
+                        {job.title}
+                      </Link>
+                      <div style={{ fontSize: "0.78125rem", color: "var(--color-text-muted)", marginTop: "0.2rem" }}>
+                        {job.Company?.name} • {job.location || "Phnom Penh"} • {job.Applications?.length || 0} applicants
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                      {getStatusBadge(job.status)}
+                      <Link
+                        to={`/employer/jobs/${job.id}/edit`}
+                        className="btn btn-secondary"
+                        style={{ fontSize: "0.75rem", padding: "0.3rem 0.65rem" }}
+                      >
+                        Edit
+                      </Link>
                     </div>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                    {getStatusBadge(job.status)}
-                    <Link
-                      to={`/employer/jobs/${job.id}/edit`}
-                      className="btn btn-secondary"
-                      style={{ fontSize: "0.75rem", padding: "0.25rem 0.5rem" }}
-                    >
-                      Edit
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Action Center / Applicant Review */}
-        <div className="card">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
-            <h3 style={{ fontSize: "1.0625rem", fontWeight: 600, margin: 0, color: "var(--text-main)" }}>
-              Applicant Pipeline Summary
+        <div className="nectar-card">
+          <div className="nectar-card-header">
+            <h3 className="nectar-card-title">
+              <Users size={18} style={{ color: "#7c3aed" }} />
+              Applicant Funnel
             </h3>
-            <Link to="/employer/applicants" className="btn btn-ghost" style={{ fontSize: "0.75rem", padding: "0.25rem 0.5rem" }}>
-              All Applicants
+            <Link to="/employer/applicants" className="btn btn-ghost" style={{ fontSize: "0.8125rem", padding: "0.35rem 0.75rem" }}>
+              <span>All Candidates</span>
+              <ArrowRight size={13} />
             </Link>
           </div>
 
-          {jobsQuery.isLoading ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              <Skeleton height="56px" borderRadius="var(--radius-md)" />
-              <Skeleton height="56px" borderRadius="var(--radius-md)" />
-              <Skeleton height="56px" borderRadius="var(--radius-md)" />
-            </div>
-          ) : jobs.filter((j) => (j.Applications?.length || 0) > 0).length === 0 ? (
-            <div style={{ textAlign: "center", padding: "2.5rem 1rem", backgroundColor: "var(--bg-color)", borderRadius: "var(--radius-md)" }}>
-              <FileText size={28} style={{ color: "var(--text-light)", marginBottom: "0.5rem" }} />
-              <p style={{ margin: "0 0 0.5rem 0", fontSize: "0.875rem", color: "var(--text-muted)" }}>
-                No candidates have applied to your active postings yet.
-              </p>
-              <div style={{ fontSize: "0.8125rem", color: "var(--text-light)" }}>
-                Publish listings to the public career marketplace to receive applicants.
+          <div className="nectar-card-body">
+            {jobsQuery.isLoading ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                <Skeleton height="60px" borderRadius="10px" />
+                <Skeleton height="60px" borderRadius="10px" />
+                <Skeleton height="60px" borderRadius="10px" />
               </div>
-            </div>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              {jobs
-                .filter((j) => (j.Applications?.length || 0) > 0)
-                .slice(0, 4)
-                .map((job) => {
-                  const pending = job.Applications?.filter((a) => a.status === "PENDING").length || 0;
-                  return (
-                    <div
-                      key={job.id}
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        padding: "0.875rem 1rem",
-                        backgroundColor: "var(--bg-color)",
-                        borderRadius: "var(--radius-md)",
-                        border: "1px solid var(--border-color)",
-                      }}
-                    >
-                      <div>
-                        <div style={{ fontWeight: 600, fontSize: "0.875rem", color: "var(--text-main)" }}>
-                          {job.title}
+            ) : jobs.filter((j) => (j.Applications?.length || 0) > 0).length === 0 ? (
+              <div style={{ textAlign: "center", padding: "3rem 1.5rem", backgroundColor: "var(--color-surface-muted)", borderRadius: "10px" }}>
+                <FileText size={32} style={{ color: "var(--color-text-muted)", margin: "0 auto 0.75rem" }} />
+                <p style={{ margin: "0 0 0.5rem 0", fontSize: "0.9375rem", color: "var(--color-text-secondary)" }}>
+                  No candidates have applied to your active postings yet.
+                </p>
+                <div style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
+                  Publish listings to the public career marketplace to receive applicants.
+                </div>
+              </div>
+            ) : (
+              <div className="nectar-list-group">
+                {jobs
+                  .filter((j) => (j.Applications?.length || 0) > 0)
+                  .slice(0, 4)
+                  .map((job) => {
+                    const pending = job.Applications?.filter((a) => a.status === "PENDING").length || 0;
+                    return (
+                      <div key={job.id} className="nectar-list-row">
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--color-text)" }}>
+                            {job.title}
+                          </div>
+                          <div style={{ fontSize: "0.78125rem", color: "var(--color-text-muted)", marginTop: "0.2rem" }}>
+                            Total: <strong>{job.Applications?.length}</strong> applicants
+                            {pending > 0 && (
+                              <span style={{ color: "#d97706", marginLeft: "0.5rem", fontWeight: 700 }}>
+                                • {pending} pending review
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.2rem" }}>
-                          Total: <strong>{job.Applications?.length}</strong> applicants
-                          {pending > 0 && (
-                            <span style={{ color: "#b45309", marginLeft: "0.5rem", fontWeight: 600 }}>
-                              • {pending} pending review
-                            </span>
-                          )}
-                        </div>
+                        <Link
+                          to={`/employer/applicants?jobId=${job.id}`}
+                          className="btn btn-secondary"
+                          style={{ fontSize: "0.75rem", padding: "0.35rem 0.75rem", display: "inline-flex", alignItems: "center", gap: "0.35rem" }}
+                        >
+                          <Eye size={13} />
+                          <span>Review</span>
+                        </Link>
                       </div>
-                      <Link
-                        to={`/employer/applicants?jobId=${job.id}`}
-                        className="btn btn-secondary"
-                        style={{ fontSize: "0.75rem", padding: "0.3rem 0.6rem" }}
-                      >
-                        <Eye size={12} />
-                        <span>Review</span>
-                      </Link>
-                    </div>
-                  );
-                })}
-            </div>
-          )}
+                    );
+                  })}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -13,7 +13,7 @@ interface BarChartProps {
 
 const DEFAULT_COLORS = [
   "#2563eb", // blue
-  "#10b981", // green
+  "#ffe17c", // green
   "#8b5cf6", // purple
   "#f59e0b", // amber
   "#ec4899", // pink
@@ -33,7 +33,7 @@ export function BarChart({
         style={{
           background: "var(--color-bg-card, #0e1712)",
           borderRadius: "var(--radius-lg, 12px)",
-          border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
+          border: "1px solid var(--color-border, rgba(255, 225, 124, 0.2))",
           padding: "1.25rem",
           display: "flex",
           flexDirection: "column",
@@ -69,7 +69,7 @@ export function BarChart({
       style={{
         background: "var(--color-bg-card, #0e1712)",
         borderRadius: "var(--radius-lg, 12px)",
-        border: "1px solid var(--color-border, rgba(16, 185, 129, 0.2))",
+        border: "1px solid var(--color-border, rgba(255, 225, 124, 0.2))",
         padding: "1.25rem",
         display: "flex",
         flexDirection: "column",

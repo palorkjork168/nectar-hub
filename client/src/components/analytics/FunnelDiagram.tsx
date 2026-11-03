@@ -42,7 +42,7 @@ export function FunnelDiagram({ funnel }: FunnelProps) {
     {
       label: "Accepted",
       count: funnel.accepted,
-      color: "#10b981", // green
+      color: "var(--color-primary-text)", // green
       subtext: "Offer/status accepted",
       rate: funnel.conversionRates.interviewToAcceptedRate,
       rateLabel: "Interview → Accepted",
@@ -50,7 +50,7 @@ export function FunnelDiagram({ funnel }: FunnelProps) {
     {
       label: "Hired",
       count: funnel.hired,
-      color: "#059669", // emerald
+      color: "var(--color-primary-text)", // emerald
       subtext: "Active employee converted",
       rate: funnel.conversionRates.acceptedToHireRate,
       rateLabel: "Accepted → Hired",
@@ -83,8 +83,8 @@ export function FunnelDiagram({ funnel }: FunnelProps) {
           <div
             style={{
               padding: "0.35rem 0.75rem",
-              background: "rgba(16, 185, 129, 0.1)",
-              color: "#059669",
+              background: "rgba(255, 225, 124, 0.1)",
+              color: "var(--color-primary-text)",
               borderRadius: "999px",
               fontSize: "0.85rem",
               fontWeight: 600,

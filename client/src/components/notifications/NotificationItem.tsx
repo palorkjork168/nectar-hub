@@ -31,19 +31,26 @@ function getNotificationIcon(type: NotificationType) {
     case "INTERVIEW_CANCELLED":
       return <AlertCircle size={18} style={{ color: "#dc2626" }} />;
     case "CANDIDATE_HIRED":
-      return <Briefcase size={18} style={{ color: "#16a34a" }} />;
+      return <Briefcase size={18} style={{ color: "var(--color-primary-text)" }} />;
     case "LEAVE_REQUESTED":
       return <CalendarDays size={18} style={{ color: "#7c3aed" }} />;
     case "LEAVE_APPROVED":
-      return <CheckCircle size={18} style={{ color: "#16a34a" }} />;
+      return <CheckCircle size={18} style={{ color: "var(--color-primary-text)" }} />;
     case "LEAVE_REJECTED":
       return <XCircle size={18} style={{ color: "#dc2626" }} />;
     case "LEAVE_CANCELLED":
       return <Clock size={18} style={{ color: "#64748b" }} />;
+    case "ATTENDANCE_CORRECTION_REQUESTED":
+      return <Clock size={18} style={{ color: "#f59e0b" }} />;
+    case "ATTENDANCE_CORRECTION_APPROVED":
+      return <CheckCircle size={18} style={{ color: "var(--color-primary-text)" }} />;
+    case "ATTENDANCE_CORRECTION_REJECTED":
+      return <XCircle size={18} style={{ color: "#ef4444" }} />;
     default:
       return <AlertCircle size={18} style={{ color: "#64748b" }} />;
   }
 }
+
 
 function formatRelativeTime(dateString: string): string {
   const date = new Date(dateString);

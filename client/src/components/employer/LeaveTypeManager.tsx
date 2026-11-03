@@ -66,9 +66,9 @@ export default function LeaveTypeManager({ companyId }: { companyId: string }) {
       </div>
 
       {(isAdding || editingId) && (
-        <div style={{ background: "var(--bg-secondary)", padding: "1.5rem", borderRadius: "var(--radius-md)", marginBottom: "2rem", border: "1px solid var(--border)" }}>
-          <h3 style={{ fontSize: "1rem", marginBottom: "1rem" }}>{editingId ? "Edit Leave Type" : "New Leave Type"}</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <div style={{ background: "var(--color-surface)", padding: "1.5rem", borderRadius: "var(--radius-lg)", marginBottom: "2rem", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-sm)" }}>
+          <h3 style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: "1.25rem", color: "var(--color-text)" }}>{editingId ? "Edit Leave Type" : "New Leave Type"}</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", maxWidth: "600px" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
               <div>
                 <label className="form-label">Type Name *</label>
@@ -107,7 +107,7 @@ export default function LeaveTypeManager({ companyId }: { companyId: string }) {
                 <h4 style={{ margin: 0, fontSize: "1.125rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                   {type.name}
                   {!type.is_active && <span className="badge badge-gray">Inactive</span>}
-                  {type.is_paid ? <span className="badge" style={{ backgroundColor: "rgba(16, 185, 129, 0.1)", color: "#059669" }}>Paid</span> : <span className="badge badge-gray">Unpaid</span>}
+                  {type.is_paid ? <span className="badge" style={{ backgroundColor: "rgba(255, 225, 124, 0.1)", color: "var(--color-primary-text)" }}>Paid</span> : <span className="badge badge-gray">Unpaid</span>}
                 </h4>
                 <div style={{ display: "flex", gap: "1rem", marginTop: "0.375rem", fontSize: "0.875rem", color: "var(--text-muted)" }}>
                   <span>Default Allowance: {type.default_days} days</span>

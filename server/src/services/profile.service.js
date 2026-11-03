@@ -48,6 +48,19 @@ const updateMyProfile = async (
   userId,
   profileData
 ) => {
+  const { first_name, last_name, phone, ...userProfileFields } = profileData;
+
+  const userUpdateData = {};
+  if (first_name !== undefined && first_name !== null) userUpdateData.first_name = first_name;
+  if (last_name !== undefined && last_name !== null) userUpdateData.last_name = last_name;
+  if (phone !== undefined && phone !== null) userUpdateData.phone = phone;
+
+  if (Object.keys(userUpdateData).length > 0) {
+    await User.update(userUpdateData, {
+      where: { id: userId },
+    });
+  }
+
   const [profile] =
     await UserProfile.findOrCreate({
       where: {
@@ -58,9 +71,12 @@ const updateMyProfile = async (
       },
     });
 
-  await profile.update(profileData);
+  const profileUpdateData = { ...userProfileFields };
+  if (phone !== undefined && phone !== null) profileUpdateData.phone = phone;
 
-  return profile;
+  await profile.update(profileUpdateData);
+
+  return getMyProfile(userId);
 };
 
 const createSkill = async (

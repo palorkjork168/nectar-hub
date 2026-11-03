@@ -116,8 +116,8 @@ export function AttendanceTrendChart({
             <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#3b82f6" }} />
             Total Logs
           </span>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", color: "#10b981" }}>
-            <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#10b981" }} />
+          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", color: "var(--color-primary-text)" }}>
+            <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#ffe17c" }} />
             On-Time
           </span>
           <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", color: "#f59e0b" }}>
@@ -177,7 +177,7 @@ export function AttendanceTrendChart({
 
           {/* Trend lines */}
           <path d={totalPath} fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-          <path d={onTimePath} fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d={onTimePath} fill="none" stroke="#ffe17c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           <path d={latePath} fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           <path d={earlyPath} fill="none" stroke="#f43f5e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
 
@@ -225,7 +225,7 @@ export function AttendanceTrendChart({
             <div style={{ display: "flex", justifyContent: "space-between", color: "#93c5fd" }}>
               <span>Total:</span> <strong>{hoveredData.total}</strong>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", color: "#86efac" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", color: "var(--color-primary-text)" }}>
               <span>On-Time:</span> <strong>{hoveredData.onTime}</strong>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", color: "#fde047" }}>

@@ -91,7 +91,33 @@ const login = async (userData) => {
   };
 };
 
+const changePassword = async (userId, { current_password, new_password }) => {
+  const user = await User.findByPk(userId);
+  if (!user) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const isPasswordValid = await bcrypt.compare(
+    current_password,
+    user.password_hash
+  );
+
+  if (!isPasswordValid) {
+    const error = new Error("Current password is incorrect");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const password_hash = await bcrypt.hash(new_password, 12);
+  await user.update({ password_hash });
+
+  return { success: true };
+};
+
 module.exports = {
   register,
   login,
+  changePassword,
 };

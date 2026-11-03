@@ -1,11 +1,14 @@
+const { Op } = require("sequelize");
 const {
   Attendance,
   User,
   Company,
   EmploymentRecord,
   WorkSchedule,
+  ShiftAssignment,
 } = require("../models");
 const attendanceScheduleService = require("./attendanceSchedule.service");
+const locationService = require("./location.service");
 
 /**
  * Check in an active employee for a company.
@@ -39,14 +42,42 @@ const checkIn = async (userId, locationData) => {
     throw error;
   }
 
+  // Authoritative server-side Geofence Verification
+  const geofenceResult = await locationService.verifyGeofence(
+    locationData.companyId,
+    employment.id,
+    locationData.latitude,
+    locationData.longitude
+  );
+
+  // Date-specific shift assignment lookup (Weekly Roster override)
+  let effectiveScheduleId = employment.work_schedule_id;
+  const now = new Date();
+  const todayStr = now.toISOString().split("T")[0];
+
+  const shiftAssignment = await ShiftAssignment.findOne({
+    where: {
+      employment_record_id: employment.id,
+      shift_date: todayStr,
+      status: { [Op.ne]: "CANCELLED" },
+    },
+  });
+
+  if (shiftAssignment) {
+    if (shiftAssignment.is_rest_day) {
+      effectiveScheduleId = null;
+    } else if (shiftAssignment.work_schedule_id) {
+      effectiveScheduleId = shiftAssignment.work_schedule_id;
+    }
+  }
+
   // Work Schedule & Lateness Evaluation
   let workScheduleId = null;
   let isLate = false;
   let lateMinutes = 0;
-  const now = new Date();
 
-  if (employment.work_schedule_id) {
-    const schedule = await WorkSchedule.findByPk(employment.work_schedule_id);
+  if (effectiveScheduleId) {
+    const schedule = await WorkSchedule.findByPk(effectiveScheduleId);
     if (schedule) {
       workScheduleId = schedule.id;
       const lateCalc = attendanceScheduleService.calculateLateMinutes(
@@ -65,6 +96,7 @@ const checkIn = async (userId, locationData) => {
       company_id: employment.company_id,
       employment_record_id: employment.id,
       work_schedule_id: workScheduleId,
+      location_id: geofenceResult.locationId || employment.location_id || null,
       is_late: isLate,
       late_minutes: lateMinutes,
       is_early_departure: false,
@@ -73,6 +105,7 @@ const checkIn = async (userId, locationData) => {
       check_in_time: now,
       check_in_lat: locationData.latitude,
       check_in_long: locationData.longitude,
+      location_status: "VERIFIED_GPS",
     });
 
     return attendance;
@@ -104,10 +137,21 @@ const checkOut = async (userId, locationData) => {
     throw error;
   }
 
+  // Authoritative server-side Geofence Verification on checkout
+  const geofenceResult = await locationService.verifyGeofence(
+    activeAttendance.company_id,
+    activeAttendance.employment_record_id,
+    locationData.latitude,
+    locationData.longitude
+  );
+
   const checkOutTime = new Date();
   activeAttendance.check_out_time = checkOutTime;
   activeAttendance.check_out_lat = locationData.latitude;
   activeAttendance.check_out_long = locationData.longitude;
+  if (!activeAttendance.location_id && geofenceResult.locationId) {
+    activeAttendance.location_id = geofenceResult.locationId;
+  }
 
   // Calculate actual hours worked
   const checkInTime = new Date(activeAttendance.check_in_time);
@@ -173,14 +217,30 @@ const getMyAttendance = async (userId, companyId) => {
 /**
  * Get all attendance records (platform admin).
  */
-const getAllAttendance = async () => {
+const getAllAttendance = async (query = {}) => {
+  const where = {};
+  if (query.companyId && query.companyId !== "ALL") {
+    where.company_id = query.companyId;
+  }
+  if (query.status) {
+    where.status = query.status;
+  }
+  if (query.missingCheckout === "true" || query.unclosedOnly === "true") {
+    where.check_out_time = null;
+  }
+  if (query.isCorrected !== undefined) {
+    where.is_corrected = query.isCorrected === "true" || query.isCorrected === true;
+  }
+
   const attendances = await Attendance.findAll({
+    where,
     include: [
       {
         model: User,
         as: "user",
         attributes: ["id", "first_name", "last_name", "email"],
       },
+      { model: Company, as: "company", attributes: ["id", "name"] },
       { model: WorkSchedule, as: "schedule" },
     ],
     order: [["created_at", "DESC"]],
@@ -225,6 +285,12 @@ const getCompanyAttendance = async (companyId, query = {}) => {
   if (query.isLate !== undefined) {
     where.is_late = query.isLate === "true" || query.isLate === true;
   }
+  if (query.missingCheckout === "true" || query.unclosedOnly === "true") {
+    where.check_out_time = null;
+  }
+  if (query.isCorrected !== undefined) {
+    where.is_corrected = query.isCorrected === "true" || query.isCorrected === true;
+  }
 
   const attendances = await Attendance.findAll({
     where,
@@ -243,6 +309,7 @@ const getCompanyAttendance = async (companyId, query = {}) => {
   });
 
   return attendances;
+
 };
 
 module.exports = {

@@ -2,12 +2,31 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../services/api";
 import type { EducationItem } from "../../types/profile";
-import { Plus, Edit2, Trash2, X, GraduationCap, Calendar, AlertCircle } from "lucide-react";
+import { Plus, Edit2, Trash2, GraduationCap, Calendar, AlertCircle } from "lucide-react";
 import { useToast } from "../../contexts/ToastContext";
+import Modal from "../common/Modal";
 
 interface EducationSectionProps {
   educations: EducationItem[];
 }
+
+const RECOMMENDED_DEGREES = [
+  "Bachelor's Degree",
+  "Master's Degree",
+  "Associate Degree",
+  "High School Diploma",
+  "Professional Certificate",
+  "Bootcamp Graduate",
+];
+
+const RECOMMENDED_FIELDS = [
+  "Computer Science",
+  "Information Technology",
+  "Software Engineering",
+  "Business Administration",
+  "Data Science",
+  "Design & Media",
+];
 
 export default function EducationSection({ educations }: EducationSectionProps) {
   const queryClient = useQueryClient();
@@ -65,10 +84,11 @@ export default function EducationSection({ educations }: EducationSectionProps) 
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
+      toast.success("Education record added!");
       resetForm();
     },
     onError: (err: any) => {
-      setFormError(err.response?.data?.message || "Failed to add education record");
+      setFormError(err.response?.data?.message || "Failed to add education");
     },
   });
 
@@ -80,10 +100,11 @@ export default function EducationSection({ educations }: EducationSectionProps) 
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
+      toast.success("Education record updated!");
       resetForm();
     },
     onError: (err: any) => {
-      setFormError(err.response?.data?.message || "Failed to update education record");
+      setFormError(err.response?.data?.message || "Failed to update education");
     },
   });
 
@@ -95,28 +116,29 @@ export default function EducationSection({ educations }: EducationSectionProps) 
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
+      toast.success("Education record removed");
       setDeleteConfirmId(null);
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.message || "Failed to delete education record");
+      toast.error(err.response?.data?.message || "Failed to delete education");
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!institution.trim()) {
-      setFormError("Institution name is required");
+      setFormError("Institution / University name is required");
       return;
     }
 
-    const payload: any = {
+    const payload = {
       institution: institution.trim(),
-      degree: degree.trim() || undefined,
-      field_of_study: fieldOfStudy.trim() || undefined,
-      start_date: startDate || undefined,
-      end_date: isCurrent ? undefined : endDate || undefined,
+      degree: degree.trim() || null,
+      field_of_study: fieldOfStudy.trim() || null,
+      start_date: startDate || null,
+      end_date: isCurrent ? null : endDate || null,
       is_current: isCurrent,
-      description: description.trim() || undefined,
+      description: description.trim() || null,
     };
 
     if (editingItem) {
@@ -128,20 +150,16 @@ export default function EducationSection({ educations }: EducationSectionProps) 
 
   const formatDateDisplay = (start?: string | null, end?: string | null, current?: boolean) => {
     if (!start && !end && !current) return null;
-    const format = (dStr: string) => {
+    const formatY = (d: string) => {
       try {
-        const d = new Date(dStr);
-        return d.toLocaleDateString(undefined, { year: "numeric", month: "short" });
+        return new Date(d).getFullYear();
       } catch {
-        return dStr;
+        return d;
       }
     };
-
-    const s = start ? format(start) : "";
-    const e = current ? "Present" : end ? format(end) : "";
-    if (s && e) return `${s} - ${e}`;
-    if (s) return `${s} - Present`;
-    return e;
+    const s = start ? formatY(start) : "";
+    const e = current ? "Present" : end ? formatY(end) : "";
+    return `${s} — ${e}`;
   };
 
   const isSubmitting = addMutation.isPending || editMutation.isPending;
@@ -150,24 +168,42 @@ export default function EducationSection({ educations }: EducationSectionProps) 
     <div className="card" style={{ marginBottom: "1.5rem" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
         <div>
-          <h3 style={{ fontSize: "1.125rem", fontWeight: 600, margin: 0, color: "var(--text-main)" }}>
-            Education
-          </h3>
-          <p style={{ fontSize: "0.8125rem", color: "var(--text-muted)", margin: "0.25rem 0 0 0" }}>
-            Add your degrees, certifications, and educational credentials
+          <h2 style={{ fontSize: "1.25rem", fontWeight: 700, margin: 0 }}>Education & Qualifications</h2>
+          <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.875rem", color: "var(--color-text-secondary)" }}>
+            Degrees, academic background, coursework, and credentials.
           </p>
         </div>
-        <button onClick={openAddModal} className="btn btn-secondary" style={{ fontSize: "0.8125rem", padding: "0.4rem 0.75rem" }}>
-          <Plus size={15} /> Add Education
+        <button
+          type="button"
+          onClick={openAddModal}
+          className="btn btn-primary"
+          style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.5rem 1rem" }}
+        >
+          <Plus size={16} />
+          <span>Add Education</span>
         </button>
       </div>
 
+      {/* Empty State */}
       {educations.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "2rem 1rem", backgroundColor: "var(--bg-color)", borderRadius: "var(--radius-md)", border: "1px dashed var(--border-color)" }}>
-          <GraduationCap size={32} style={{ color: "var(--text-light)", marginBottom: "0.5rem" }} />
-          <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--text-muted)" }}>
-            No education history added yet.
+        <div
+          style={{
+            padding: "2.5rem 1.5rem",
+            textAlign: "center",
+            border: "1px dashed var(--color-border)",
+            borderRadius: "14px",
+            background: "var(--color-surface)",
+          }}
+        >
+          <GraduationCap size={36} style={{ color: "var(--color-text-secondary)", margin: "0 auto 0.75rem" }} />
+          <h3 style={{ fontSize: "1rem", fontWeight: 600, marginBottom: "0.35rem" }}>No education listed yet</h3>
+          <p style={{ fontSize: "0.875rem", color: "var(--color-text-secondary)", maxWidth: "380px", margin: "0 auto 1.25rem" }}>
+            Add your degrees or relevant educational background to showcase your credentials.
           </p>
+          <button type="button" onClick={openAddModal} className="btn btn-outline btn-sm">
+            <Plus size={14} style={{ marginRight: "0.35rem" }} />
+            Add Education
+          </button>
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -179,35 +215,35 @@ export default function EducationSection({ educations }: EducationSectionProps) 
                 justifyContent: "space-between",
                 alignItems: "flex-start",
                 padding: "1rem",
-                backgroundColor: "var(--bg-color)",
-                border: "1px solid var(--border-color)",
-                borderRadius: "var(--radius-md)",
+                borderRadius: "12px",
+                border: "1px solid var(--color-border)",
+                backgroundColor: "var(--color-surface)",
               }}
             >
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", flexWrap: "wrap" }}>
-                  <h4 style={{ margin: 0, fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-main)" }}>
+                  <h4 style={{ margin: 0, fontSize: "0.9375rem", fontWeight: 600, color: "var(--color-text)" }}>
                     {edu.institution}
                   </h4>
                   {edu.degree && (
-                    <span style={{ fontSize: "0.875rem", color: "var(--primary)", fontWeight: 500 }}>
+                    <span style={{ fontSize: "0.875rem", color: "var(--color-primary-text)", fontWeight: 500 }}>
                       • {edu.degree}
                     </span>
                   )}
                 </div>
 
                 {edu.field_of_study && (
-                  <div style={{ fontSize: "0.8125rem", color: "var(--text-muted)", marginTop: "0.25rem" }}>
+                  <div style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)", marginTop: "0.25rem" }}>
                     Field: {edu.field_of_study}
                   </div>
                 )}
 
                 {formatDateDisplay(edu.start_date, edu.end_date, edu.is_current) && (
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", fontSize: "0.75rem", color: "var(--text-light)", marginTop: "0.375rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.375rem", fontSize: "0.75rem", color: "var(--color-text-secondary)", marginTop: "0.375rem" }}>
                     <Calendar size={12} />
                     <span>{formatDateDisplay(edu.start_date, edu.end_date, edu.is_current)}</span>
                     {edu.is_current && (
-                      <span className="badge badge-success" style={{ fontSize: "0.6875rem", padding: "0 0.4rem" }}>
+                      <span className="badge badge-success" style={{ fontSize: "0.6875rem", padding: "0.1rem 0.4rem" }}>
                         Current
                       </span>
                     )}
@@ -215,7 +251,7 @@ export default function EducationSection({ educations }: EducationSectionProps) 
                 )}
 
                 {edu.description && (
-                  <p style={{ margin: "0.5rem 0 0 0", fontSize: "0.8125rem", color: "var(--text-muted)", whiteSpace: "pre-line" }}>
+                  <p style={{ margin: "0.5rem 0 0 0", fontSize: "0.8125rem", color: "var(--color-text-secondary)", whiteSpace: "pre-line" }}>
                     {edu.description}
                   </p>
                 )}
@@ -235,7 +271,7 @@ export default function EducationSection({ educations }: EducationSectionProps) 
                   onClick={() => setDeleteConfirmId(edu.id)}
                   className="btn-icon"
                   title="Delete education"
-                  style={{ color: "var(--danger)" }}
+                  style={{ color: "var(--color-danger, #ef4444)" }}
                 >
                   <Trash2 size={14} />
                 </button>
@@ -246,179 +282,212 @@ export default function EducationSection({ educations }: EducationSectionProps) 
       )}
 
       {/* Add / Edit Education Modal */}
-      {modalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h3 style={{ margin: 0, fontSize: "1.125rem", fontWeight: 600 }}>
-                {editingItem ? "Edit Education" : "Add Education"}
-              </h3>
-              <button onClick={resetForm} className="btn-icon">
-                <X size={18} />
-              </button>
+      <Modal
+        isOpen={modalOpen}
+        onClose={resetForm}
+        title={editingItem ? "Edit Education Record" : "Add Education Record"}
+        description="Share your school, university, degree, or credentials."
+        maxWidth="540px"
+        footer={
+          <>
+            <button type="button" onClick={resetForm} className="btn btn-secondary">
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={isSubmitting || !institution.trim()}
+              className="btn btn-primary"
+            >
+              {isSubmitting ? "Saving..." : editingItem ? "Save Changes" : "Add Education"}
+            </button>
+          </>
+        }
+      >
+        <form onSubmit={handleSubmit}>
+          {formError && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                padding: "0.75rem",
+                backgroundColor: "var(--color-danger-bg, #fee2e2)",
+                color: "var(--color-danger-text, #b91c1c)",
+                borderRadius: "8px",
+                fontSize: "0.8125rem",
+                marginBottom: "1rem",
+              }}
+            >
+              <AlertCircle size={16} />
+              <span>{formError}</span>
             </div>
-            <form onSubmit={handleSubmit}>
-              <div className="modal-body">
-                {formError && (
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      padding: "0.75rem",
-                      backgroundColor: "var(--danger-bg)",
-                      color: "var(--danger-text)",
-                      borderRadius: "var(--radius-md)",
-                      fontSize: "0.8125rem",
-                      marginBottom: "1rem",
-                    }}
-                  >
-                    <AlertCircle size={16} />
-                    <span>{formError}</span>
-                  </div>
-                )}
+          )}
 
-                <div className="form-group" style={{ marginBottom: "1rem" }}>
-                  <label className="form-label">
-                    Institution / University <span className="required">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={institution}
-                    onChange={(e) => setInstitution(e.target.value)}
-                    placeholder="e.g. Royal University of Phnom Penh"
-                    className="input-field"
-                    style={{ width: "100%" }}
-                    autoFocus
-                  />
-                </div>
-
-                <div className="form-grid two-cols" style={{ marginBottom: "1rem" }}>
-                  <div className="form-group">
-                    <label className="form-label">Degree</label>
-                    <input
-                      type="text"
-                      value={degree}
-                      onChange={(e) => setDegree(e.target.value)}
-                      placeholder="e.g. Bachelor's Degree"
-                      className="input-field"
-                      style={{ width: "100%" }}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Field of Study</label>
-                    <input
-                      type="text"
-                      value={fieldOfStudy}
-                      onChange={(e) => setFieldOfStudy(e.target.value)}
-                      placeholder="e.g. Computer Science"
-                      className="input-field"
-                      style={{ width: "100%" }}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-grid two-cols" style={{ marginBottom: "1rem" }}>
-                  <div className="form-group">
-                    <label className="form-label">Start Date</label>
-                    <input
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      className="input-field"
-                      style={{ width: "100%" }}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">End Date</label>
-                    <input
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      disabled={isCurrent}
-                      className="input-field"
-                      style={{ width: "100%", opacity: isCurrent ? 0.5 : 1 }}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group" style={{ marginBottom: "1rem" }}>
-                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.875rem", cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={isCurrent}
-                      onChange={(e) => {
-                        setIsCurrent(e.target.checked);
-                        if (e.target.checked) setEndDate("");
-                      }}
-                    />
-                    <span>I am currently studying here</span>
-                  </label>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Description / Activities (Optional)</label>
-                  <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Brief description of your coursework, achievements, or honors..."
-                    className="input-field"
-                    rows={3}
-                    style={{ width: "100%", resize: "vertical" }}
-                  />
-                </div>
-              </div>
-
-              <div className="modal-footer">
-                <button type="button" onClick={resetForm} className="btn btn-secondary">
-                  Cancel
-                </button>
-                <button type="submit" disabled={isSubmitting} className="btn btn-primary">
-                  {isSubmitting ? "Saving..." : editingItem ? "Save Changes" : "Add Education"}
-                </button>
-              </div>
-            </form>
+          <div className="form-group" style={{ marginBottom: "1rem" }}>
+            <label className="form-label">
+              Institution / University <span className="required" style={{ color: "var(--color-danger)" }}>*</span>
+            </label>
+            <input
+              type="text"
+              value={institution}
+              onChange={(e) => setInstitution(e.target.value)}
+              placeholder="e.g. Royal University of Phnom Penh"
+              className="input-field"
+              style={{ width: "100%" }}
+              autoFocus
+            />
           </div>
-        </div>
-      )}
+
+          {/* Degree with Recommendation Chips */}
+          <div className="form-group" style={{ marginBottom: "1rem" }}>
+            <label className="form-label">Degree</label>
+            <input
+              type="text"
+              value={degree}
+              onChange={(e) => setDegree(e.target.value)}
+              placeholder="e.g. Bachelor's Degree"
+              className="input-field"
+              style={{ width: "100%" }}
+            />
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem", marginTop: "0.35rem" }}>
+              {RECOMMENDED_DEGREES.map((deg) => (
+                <button
+                  key={deg}
+                  type="button"
+                  onClick={() => setDegree(deg)}
+                  style={{
+                    padding: "0.15rem 0.45rem",
+                    fontSize: "0.68rem",
+                    borderRadius: "4px",
+                    background: degree === deg ? "var(--color-primary)" : "var(--color-surface-muted, #f1f5f9)",
+                    color: degree === deg ? "#fff" : "var(--color-text)",
+                    border: "1px solid var(--color-border)",
+                    cursor: "pointer",
+                  }}
+                >
+                  {deg}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Field of Study with Recommendation Chips */}
+          <div className="form-group" style={{ marginBottom: "1rem" }}>
+            <label className="form-label">Field of Study / Major</label>
+            <input
+              type="text"
+              value={fieldOfStudy}
+              onChange={(e) => setFieldOfStudy(e.target.value)}
+              placeholder="e.g. Computer Science, Information Technology"
+              className="input-field"
+              style={{ width: "100%" }}
+            />
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem", marginTop: "0.35rem" }}>
+              {RECOMMENDED_FIELDS.map((fld) => (
+                <button
+                  key={fld}
+                  type="button"
+                  onClick={() => setFieldOfStudy(fld)}
+                  style={{
+                    padding: "0.15rem 0.45rem",
+                    fontSize: "0.68rem",
+                    borderRadius: "4px",
+                    background: fieldOfStudy === fld ? "var(--color-primary)" : "var(--color-surface-muted, #f1f5f9)",
+                    color: fieldOfStudy === fld ? "#fff" : "var(--color-text)",
+                    border: "1px solid var(--color-border)",
+                    cursor: "pointer",
+                  }}
+                >
+                  {fld}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="form-grid two-cols" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
+            <div className="form-group">
+              <label className="form-label">Start Date</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="input-field"
+                style={{ width: "100%" }}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">End Date</label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                disabled={isCurrent}
+                className="input-field"
+                style={{ width: "100%", opacity: isCurrent ? 0.5 : 1 }}
+              />
+            </div>
+          </div>
+
+          <div className="form-group" style={{ marginBottom: "1rem" }}>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.875rem" }}>
+              <input
+                type="checkbox"
+                checked={isCurrent}
+                onChange={(e) => {
+                  setIsCurrent(e.target.checked);
+                  if (e.target.checked) setEndDate("");
+                }}
+              />
+              <span>I am currently studying here</span>
+            </label>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Description / Activities (Optional)</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Brief description of your coursework, achievements, or honors..."
+              className="input-field"
+              rows={3}
+              style={{ width: "100%", resize: "vertical" }}
+            />
+          </div>
+        </form>
+      </Modal>
 
       {/* Delete Confirmation Modal */}
-      {deleteConfirmId && (
-        <div className="modal-overlay">
-          <div className="modal-content" style={{ maxWidth: "380px" }}>
-            <div className="modal-header">
-              <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600, color: "var(--danger)" }}>
-                Delete Education
-              </h3>
-              <button onClick={() => setDeleteConfirmId(null)} className="btn-icon">
-                <X size={18} />
-              </button>
-            </div>
-            <div className="modal-body">
-              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--text-main)" }}>
-                Are you sure you want to remove this education record?
-              </p>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                onClick={() => setDeleteConfirmId(null)}
-                className="btn btn-secondary"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => deleteMutation.mutate(deleteConfirmId)}
-                disabled={deleteMutation.isPending}
-                className="btn btn-danger"
-              >
-                {deleteMutation.isPending ? "Deleting..." : "Delete"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={!!deleteConfirmId}
+        onClose={() => setDeleteConfirmId(null)}
+        title="Delete Education Record"
+        description="Are you sure you want to remove this education record?"
+        maxWidth="400px"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setDeleteConfirmId(null)}
+              className="btn btn-secondary"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => deleteConfirmId && deleteMutation.mutate(deleteConfirmId)}
+              disabled={deleteMutation.isPending}
+              className="btn btn-danger"
+            >
+              {deleteMutation.isPending ? "Deleting..." : "Delete"}
+            </button>
+          </>
+        }
+      >
+        <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--color-text-secondary)" }}>
+          This record will be permanently removed from your profile.
+        </p>
+      </Modal>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../services/api";
+import { useAuth } from "../../contexts/AuthContext";
 import type { Job, GetJobResponse, EmploymentType, ExperienceLevel } from "../../types/job";
 import JobSkillsManager from "../../components/employer/JobSkillsManager";
 import {
@@ -10,6 +11,7 @@ import {
   Loader2,
   Users,
   ExternalLink,
+  ShieldCheck,
 } from "lucide-react";
 import BackButton from "../../components/common/BackButton";
 
@@ -17,6 +19,7 @@ export default function EditJob() {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
+  const { isAdmin } = useAuth();
 
   const isJustCreated = searchParams.get("created") === "true";
 
@@ -159,8 +162,18 @@ export default function EditJob() {
       {/* Back Link & Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem", marginBottom: "1.5rem" }}>
         <div>
-          <BackButton label="Back to My Jobs" fallback="/employer/jobs" />
-          <h1 className="dashboard-title">Edit Job Posting</h1>
+          <BackButton
+            label={isAdmin ? "Back to Job Oversight" : "Back to My Jobs"}
+            fallback={isAdmin ? "/employer/jobs" : "/employer/jobs"}
+          />
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", marginTop: "0.25rem" }}>
+            <h1 className="dashboard-title">Edit Job Posting</h1>
+            {isAdmin && (
+              <span className="floating-glass-pill" style={{ color: "var(--color-primary-text)" }}>
+                <ShieldCheck size={14} /> Admin Mode
+              </span>
+            )}
+          </div>
           <p className="dashboard-subtitle">
             Hiring for <strong>{job.Company?.name}</strong> • Job ID: {job.id.substring(0, 8)}...
           </p>

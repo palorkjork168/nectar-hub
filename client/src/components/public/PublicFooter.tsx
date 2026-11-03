@@ -11,9 +11,9 @@ export default function PublicFooter() {
             <div className="brand-icon" style={{ width: "32px", height: "32px" }}>
               <NectarIcon size={18} />
             </div>
-            <h3 style={{ margin: 0, fontSize: "1.125rem", color: "#ffffff", fontWeight: 800 }}>Nectar Hub</h3>
+            <h3 style={{ margin: 0, fontSize: "1.125rem", color: "var(--color-text)", fontWeight: 800 }}>Nectar Hub</h3>
           </div>
-          <p style={{ color: "#94a3b8", fontSize: "0.875rem", lineHeight: 1.6, maxWidth: "320px" }}>
+          <p style={{ color: "var(--color-text-muted)", fontSize: "0.875rem", lineHeight: 1.6, maxWidth: "320px" }}>
             The unified workforce and talent platform connecting job seekers, employers, and teams across modern workplaces.
           </p>
         </div>
@@ -55,10 +55,16 @@ export default function PublicFooter() {
 
       <div className="footer-bottom">
         <div>&copy; {new Date().getFullYear()} Nectar Hub. All rights reserved.</div>
-        <div style={{ display: "flex", gap: "1.5rem" }}>
-          <span>Privacy Policy</span>
-          <span>Terms of Service</span>
-          <span>Contact Support</span>
+        <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+          <Link to="/coming-soon?feature=Privacy%20Policy%20%26%20Data%20Protection&category=Legal%20%26%20Governance&eta=v1.1%20Release" style={{ color: "var(--color-text-muted)", textDecoration: "none" }}>
+            Privacy Policy
+          </Link>
+          <Link to="/coming-soon?feature=Terms%20of%20Service%20%26%20User%20Agreement&category=Legal%20%26%20Governance&eta=v1.1%20Release" style={{ color: "var(--color-text-muted)", textDecoration: "none" }}>
+            Terms of Service
+          </Link>
+          <Link to="/contact" style={{ color: "var(--color-text-muted)", textDecoration: "none" }}>
+            Contact Support
+          </Link>
         </div>
       </div>
     </footer>

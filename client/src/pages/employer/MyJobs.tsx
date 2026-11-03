@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../services/api";
+import { useAuth } from "../../contexts/AuthContext";
 import type { Job, GetMyJobsResponse } from "../../types/job";
 import JobSkillsManager from "../../components/employer/JobSkillsManager";
 import {
@@ -15,6 +16,7 @@ import {
   Tag,
   ExternalLink,
   AlertCircle,
+  ShieldCheck,
   X,
 } from "lucide-react";
 import BackButton from "../../components/common/BackButton";
@@ -24,7 +26,9 @@ import { useToast } from "../../contexts/ToastContext";
 export default function MyJobs() {
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { isAdmin } = useAuth();
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  const [companyFilter, setCompanyFilter] = useState<string>("ALL");
   const [skillsModalJobId, setSkillsModalJobId] = useState<{ id: string; title: string } | null>(null);
 
   const { data: jobs, isLoading, error } = useQuery<Job[]>({
@@ -44,22 +48,29 @@ export default function MyJobs() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["myJobs"] });
       queryClient.invalidateQueries({ queryKey: ["employerDashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["adminPlatformOverview"] });
     },
     onError: (err: any) => {
       toast.error(err.response?.data?.message || "Failed to update job status");
     },
   });
 
+  // Extract unique companies from jobs list for admin filtering
+  const companiesList = Array.from(
+    new Map((jobs || []).map((j) => [j.company_id, j.Company])).values()
+  ).filter(Boolean);
+
   const filteredJobs = (jobs || []).filter((job) => {
-    if (statusFilter === "ALL") return true;
-    return job.status === statusFilter;
+    const matchesStatus = statusFilter === "ALL" || job.status === statusFilter;
+    const matchesCompany = companyFilter === "ALL" || job.company_id === companyFilter;
+    return matchesStatus && matchesCompany;
   });
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "PUBLISHED":
         return (
-          <span style={{ fontSize: "0.75rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: "9999px", backgroundColor: "rgba(16, 185, 129, 0.12)", color: "#059669", border: "1px solid rgba(16, 185, 129, 0.3)" }}>
+          <span style={{ fontSize: "0.75rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: "9999px", backgroundColor: "rgba(255, 225, 124, 0.12)", color: "var(--color-primary-text)", border: "1px solid rgba(255, 225, 124, 0.3)" }}>
             Published
           </span>
         );
@@ -96,14 +107,26 @@ export default function MyJobs() {
   return (
     <div className="dashboard-container">
       {/* Back Navigation */}
-      <BackButton label="Back to Dashboard" fallback="/employer/dashboard" />
+      <BackButton
+        label={isAdmin ? "Back to Admin Dashboard" : "Back to Dashboard"}
+        fallback={isAdmin ? "/admin/dashboard" : "/employer/dashboard"}
+      />
 
       {/* Header */}
       <div className="dashboard-header" style={{ marginBottom: "1.5rem" }}>
         <div>
-          <h1 className="dashboard-title">My Job Postings</h1>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", flexWrap: "wrap" }}>
+            <h1 className="dashboard-title">{isAdmin ? "Platform Job Listings" : "My Job Postings"}</h1>
+            {isAdmin && (
+              <span className="floating-glass-pill" style={{ color: "var(--color-primary-text)" }}>
+                <ShieldCheck size={14} /> Cross-Tenant Oversight
+              </span>
+            )}
+          </div>
           <p className="dashboard-subtitle">
-            Manage your listings, toggle publishing status, and review applicant volumes
+            {isAdmin
+              ? "Platform Administrator Console • Comprehensive vacancy oversight and publishing controls across all registered enterprise tenants"
+              : "Manage your listings, toggle publishing status, and review applicant volumes"}
           </p>
         </div>
         <Link to="/employer/jobs/new" className="btn btn-primary" style={{ fontSize: "0.875rem" }}>
@@ -111,24 +134,48 @@ export default function MyJobs() {
         </Link>
       </div>
 
-      {/* Filter Tabs */}
-      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
-        {[
-          { label: "All Jobs", value: "ALL" },
-          { label: "Published", value: "PUBLISHED" },
-          { label: "Drafts", value: "DRAFT" },
-          { label: "Closed", value: "CLOSED" },
-        ].map((tab) => (
-          <button
-            key={tab.value}
-            type="button"
-            onClick={() => setStatusFilter(tab.value)}
-            className={`btn ${statusFilter === tab.value ? "btn-primary" : "btn-secondary"}`}
-            style={{ fontSize: "0.8125rem", padding: "0.4rem 0.8rem" }}
-          >
-            {tab.label}
-          </button>
-        ))}
+      {/* Filter Tabs & Company Dropdown */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          {[
+            { label: "All Jobs", value: "ALL" },
+            { label: "Published", value: "PUBLISHED" },
+            { label: "Drafts", value: "DRAFT" },
+            { label: "Closed", value: "CLOSED" },
+          ].map((tab) => (
+            <button
+              key={tab.value}
+              type="button"
+              onClick={() => setStatusFilter(tab.value)}
+              className={`btn ${statusFilter === tab.value ? "btn-primary" : "btn-secondary"}`}
+              style={{ fontSize: "0.8125rem", padding: "0.4rem 0.8rem" }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Admin Company Filter */}
+        {isAdmin && companiesList.length > 0 && (
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <label style={{ fontSize: "0.8125rem", color: "var(--color-text-secondary)", fontWeight: 600 }}>
+              Company:
+            </label>
+            <select
+              value={companyFilter}
+              onChange={(e) => setCompanyFilter(e.target.value)}
+              className="input-field"
+              style={{ fontSize: "0.8125rem", padding: "0.4rem 0.75rem", minWidth: "170px" }}
+            >
+              <option value="ALL">All Companies ({jobs?.length || 0})</option>
+              {companiesList.map((comp) => (
+                <option key={comp!.id} value={comp!.id}>
+                  {comp!.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       {isLoading && (

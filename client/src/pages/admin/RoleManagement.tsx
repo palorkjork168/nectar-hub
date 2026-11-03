@@ -57,8 +57,8 @@ const CATEGORY_META: Record<string, { label: string; description: string; icon: 
     label: "Jobs & Postings",
     description: "Create, edit, and manage job listings",
     icon: Briefcase,
-    color: "#059669",
-    colorBg: "rgba(5, 150, 105, 0.08)",
+    color: "var(--color-primary-text)",
+    colorBg: "rgba(255, 225, 124, 0.08)",
   },
   applicants: {
     label: "Candidates & Applications",
@@ -591,7 +591,7 @@ function PermissionConfigModal({
                           boxShadow: "0 1px 2px rgba(0,0,0,0.06)",
                         }}
                       >
-                        <Icon size={18} color={meta.color || "#10b981"} />
+                        <Icon size={18} color={meta.color || "#ffe17c"} />
                       </div>
                       <div style={{ minWidth: 0 }}>
                         <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--color-text)" }}>
@@ -698,9 +698,9 @@ function PermissionConfigModal({
                               padding: "0.75rem 0.875rem",
                               borderRadius: "var(--radius-md)",
                               border: isChecked
-                                ? "1.5px solid rgba(16, 185, 129, 0.45)"
+                                ? "1.5px solid rgba(255, 225, 124, 0.45)"
                                 : "1.5px solid var(--color-border)",
-                              backgroundColor: isChecked ? "rgba(16, 185, 129, 0.06)" : "var(--color-surface)",
+                              backgroundColor: isChecked ? "rgba(255, 225, 124, 0.06)" : "var(--color-surface)",
                               cursor: locked ? "not-allowed" : "pointer",
                               opacity: locked ? 0.75 : 1,
                               transition: "all var(--transition-fast)",
@@ -713,8 +713,8 @@ function PermissionConfigModal({
                                 width: "18px",
                                 height: "18px",
                                 borderRadius: "4px",
-                                border: isChecked ? "2px solid #10b981" : "2px solid var(--color-border-strong)",
-                                backgroundColor: isChecked ? "#10b981" : "transparent",
+                                border: isChecked ? "2px solid #ffe17c" : "2px solid var(--color-border-strong)",
+                                backgroundColor: isChecked ? "#ffe17c" : "transparent",
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
@@ -910,7 +910,7 @@ export default function RoleManagement() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "var(--color-primary)",
+              color: "var(--color-primary-text)",
             }}
           >
             <ShieldCheck size={24} />
@@ -937,7 +937,7 @@ export default function RoleManagement() {
       >
         {[
           { icon: Shield, color: "#2563eb", bg: "rgba(37, 99, 235, 0.1)", label: "Total Roles", value: rolesLoading ? "..." : stats.totalRoles },
-          { icon: Lock, color: "#059669", bg: "rgba(16, 185, 129, 0.1)", label: "Core System Roles", value: rolesLoading ? "..." : stats.coreRoles },
+          { icon: Lock, color: "var(--color-primary-text)", bg: "rgba(255, 225, 124, 0.1)", label: "Core System Roles", value: rolesLoading ? "..." : stats.coreRoles },
           { icon: Building2, color: "#7c3aed", bg: "rgba(147, 51, 234, 0.1)", label: "Company Roles", value: rolesLoading ? "..." : stats.companyRoles },
           { icon: Sparkles, color: "#d97706", bg: "rgba(217, 119, 6, 0.1)", label: "Domain Permissions", value: permsLoading ? "..." : stats.totalPerms },
         ].map(({ icon: Icon, color, bg, label, value }) => (

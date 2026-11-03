@@ -93,7 +93,7 @@ export default function RequestLeaveModal({ onClose, balance, companyId }: Reque
         <div className="modal-header">
           <div>
             <h2 className="modal-title">
-              <CalendarIcon size={20} style={{ color: "var(--color-primary)" }} />
+              <CalendarIcon size={20} style={{ color: "var(--color-primary-text)" }} />
               Request Time Off
             </h2>
             <p style={{ margin: "2px 0 0", fontSize: "0.8125rem", color: "var(--color-text-secondary)" }}>
@@ -119,7 +119,7 @@ export default function RequestLeaveModal({ onClose, balance, companyId }: Reque
                 height: "52px",
                 borderRadius: "var(--radius-xl)",
                 backgroundColor: "var(--color-surface-muted)",
-                color: "var(--color-warning)",
+                color: "var(--color-warning-text)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -237,7 +237,7 @@ export default function RequestLeaveModal({ onClose, balance, companyId }: Reque
                   <span style={{ fontSize: "0.875rem", color: "var(--color-text-secondary)", fontWeight: 500 }}>
                     Requested Duration
                   </span>
-                  <span style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--color-primary)" }}>
+                  <span style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--color-primary-text)" }}>
                     {days} calendar {days === 1 ? "day" : "days"}
                   </span>
                 </div>

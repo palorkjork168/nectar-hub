@@ -66,6 +66,10 @@ export interface Attendance {
   actual_hours: number | string | null;
   completion_percentage: number | null;
   status: AttendanceStatus;
+  is_corrected?: boolean;
+  location_status?: string | null;
+  original_check_in_time?: string | null;
+  original_check_out_time?: string | null;
   created_at: string;
   updated_at: string;
   user?: {
@@ -75,3 +79,50 @@ export interface Attendance {
     email: string;
   };
 }
+
+export type CorrectionType =
+  | "MISSING_CHECK_OUT"
+  | "MISSING_CHECK_IN"
+  | "INCORRECT_TIMES"
+  | "MISSED_SHIFT";
+
+export type CorrectionStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export interface AttendanceCorrectionRequest {
+  id: string;
+  attendance_id?: string | null;
+  user_id: string;
+  company_id: string;
+  employment_record_id?: string | null;
+  work_schedule_id?: string | null;
+  correction_type: CorrectionType;
+  requested_check_in_time?: string | null;
+  requested_check_out_time?: string | null;
+  original_check_in_time?: string | null;
+  original_check_out_time?: string | null;
+  reason: string;
+  status: CorrectionStatus;
+  reviewed_by?: string | null;
+  reviewed_at?: string | null;
+  review_note?: string | null;
+  created_at: string;
+  updated_at: string;
+  company?: { id: string; name: string } | null;
+  workSchedule?: WorkSchedule | null;
+  attendance?: Attendance | null;
+  reviewer?: { id: string; first_name: string; last_name: string; email: string } | null;
+  user?: { id: string; first_name: string; last_name: string; email: string; avatar_url?: string } | null;
+  employmentRecord?: {
+    id: string;
+    department?: { id: string; name: string } | null;
+    position?: { id: string; title: string } | null;
+  } | null;
+}
+
+export interface BatchReviewResult {
+  total: number;
+  succeeded: Array<{ id: string; status: "APPROVED" | "REJECTED"; data?: any }>;
+  failed: Array<{ id: string; error: string }>;
+  allSucceeded: boolean;
+}
+

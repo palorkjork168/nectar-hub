@@ -134,7 +134,7 @@ export default function WorkScheduleFormModal({
       <div className="modal-content" style={{ maxWidth: "520px" }}>
         <div className="modal-header">
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <Clock size={20} style={{ color: "var(--color-primary)" }} />
+            <Clock size={20} style={{ color: "var(--color-primary-text)" }} />
             <h2 className="modal-title">
               {isEditing ? "Edit Work Schedule" : "Create Work Schedule"}
             </h2>

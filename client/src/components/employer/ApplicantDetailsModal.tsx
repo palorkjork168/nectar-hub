@@ -106,7 +106,7 @@ export default function ApplicantDetailsModal({
         );
       case "ACCEPTED":
         return (
-          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontSize: "0.75rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: "9999px", backgroundColor: "rgba(16, 185, 129, 0.12)", color: "#059669", border: "1px solid rgba(16, 185, 129, 0.3)" }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", fontSize: "0.75rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: "9999px", backgroundColor: "rgba(255, 225, 124, 0.12)", color: "var(--color-primary-text)", border: "1px solid rgba(255, 225, 124, 0.3)" }}>
             <CheckCircle2 size={12} /> Accepted
           </span>
         );
@@ -130,18 +130,18 @@ export default function ApplicantDetailsModal({
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content" style={{ maxWidth: "780px", maxHeight: "90vh", overflowY: "auto" }}>
+      <div className="modal-content" style={{ maxWidth: "780px", maxHeight: "90vh" }}>
         {/* Header */}
         <div className="modal-header">
           <div>
-            <h3 style={{ margin: 0, fontSize: "1.125rem", fontWeight: 700 }}>
+            <h3 className="modal-title">
               Candidate Application Details
             </h3>
-            <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.8125rem", color: "var(--text-muted)" }}>
-              Applying for <strong>{application?.Job?.title}</strong>
+            <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
+              Applying for <strong style={{ color: "var(--color-text)" }}>{application?.Job?.title}</strong>
             </p>
           </div>
-          <button onClick={onClose} className="btn-icon">
+          <button onClick={onClose} className="modal-close" aria-label="Close dialog">
             <X size={18} />
           </button>
         </div>
@@ -150,8 +150,8 @@ export default function ApplicantDetailsModal({
         <div className="modal-body">
           {isLoading && (
             <div style={{ textAlign: "center", padding: "3rem" }}>
-              <Loader2 className="animate-spin" size={24} style={{ color: "var(--primary)" }} />
-              <div style={{ marginTop: "0.5rem", color: "var(--text-muted)", fontSize: "0.875rem" }}>
+              <Loader2 className="animate-spin" size={24} style={{ color: "var(--color-primary-text)" }} />
+              <div style={{ marginTop: "0.5rem", color: "var(--color-text-muted)", fontSize: "0.875rem" }}>
                 Loading applicant profile...
               </div>
             </div>
@@ -161,8 +161,8 @@ export default function ApplicantDetailsModal({
             <div
               style={{
                 padding: "1rem",
-                backgroundColor: "var(--danger-bg)",
-                color: "var(--danger-text)",
+                backgroundColor: "var(--color-danger-soft)",
+                color: "var(--color-danger-text)",
                 borderRadius: "var(--radius-md)",
                 display: "flex",
                 alignItems: "center",
@@ -180,9 +180,9 @@ export default function ApplicantDetailsModal({
               <div
                 style={{
                   padding: "1rem 1.25rem",
-                  backgroundColor: "var(--bg-color)",
+                  backgroundColor: "var(--color-surface-muted)",
                   borderRadius: "var(--radius-md)",
-                  border: "1px solid var(--border-color)",
+                  border: "1px solid var(--color-border)",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
@@ -191,7 +191,7 @@ export default function ApplicantDetailsModal({
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                  <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-muted)" }}>Current Status:</span>
+                  <span style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text-muted)" }}>Current Status:</span>
                   {getStatusBadge(application.status)}
                 </div>
 
@@ -205,7 +205,7 @@ export default function ApplicantDetailsModal({
                     <Calendar size={13} />
                     <span>Schedule Interview</span>
                   </button>
-                  <span style={{ fontSize: "0.8125rem", color: "var(--text-muted)", marginLeft: "0.25rem" }}>Change to:</span>
+                  <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", marginLeft: "0.25rem" }}>Change to:</span>
                   {(["PENDING", "REVIEWING", "INTERVIEW", "ACCEPTED", "REJECTED"] as ApplicationStatus[]).map((st) => (
                     <button
                       key={st}
@@ -235,9 +235,9 @@ export default function ApplicantDetailsModal({
                           fontWeight: 600,
                           padding: "0.28rem 0.65rem",
                           borderRadius: "9999px",
-                          backgroundColor: "rgba(16, 185, 129, 0.15)",
-                          color: "#059669",
-                          border: "1px solid rgba(16, 185, 129, 0.3)",
+                          backgroundColor: "rgba(255, 225, 124, 0.15)",
+                          color: "var(--color-primary-text)",
+                          border: "1px solid rgba(255, 225, 124, 0.3)",
                           marginLeft: "0.25rem",
                         }}
                       >
@@ -255,8 +255,8 @@ export default function ApplicantDetailsModal({
                           display: "inline-flex",
                           alignItems: "center",
                           gap: "0.35rem",
-                          backgroundColor: "var(--success)",
-                          borderColor: "var(--success)",
+                          backgroundColor: "var(--color-success)",
+                          borderColor: "var(--color-success)",
                           color: "#ffffff",
                           fontWeight: 600,
                           marginLeft: "0.25rem",
@@ -281,7 +281,7 @@ export default function ApplicantDetailsModal({
                   }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontWeight: 600, fontSize: "0.875rem", color: "var(--primary)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontWeight: 600, fontSize: "0.875rem", color: "var(--color-primary-text)" }}>
                       <Calendar size={16} />
                       <span>Scheduled Interviews ({interviews.length})</span>
                     </div>
@@ -300,9 +300,9 @@ export default function ApplicantDetailsModal({
                         key={iv.id}
                         style={{
                           padding: "0.6rem 0.75rem",
-                          backgroundColor: "#ffffff",
+                          backgroundColor: "var(--color-surface)",
                           borderRadius: "var(--radius-sm)",
-                          border: "1px solid var(--border-color)",
+                          border: "1px solid var(--color-border)",
                           display: "flex",
                           justifyContent: "space-between",
                           alignItems: "center",
@@ -312,11 +312,11 @@ export default function ApplicantDetailsModal({
                         }}
                       >
                         <div>
-                          <strong style={{ color: "var(--text-main)" }}>
+                          <strong style={{ color: "var(--color-text)" }}>
                             {new Date(iv.scheduled_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
                           </strong>{" "}
-                          ({iv.duration_minutes} mins) • <span style={{ color: "var(--primary)", fontWeight: 500 }}>{iv.interview_type}</span>
-                          {iv.location && <span style={{ color: "var(--text-muted)", marginLeft: "0.5rem" }}>• {iv.location}</span>}
+                          ({iv.duration_minutes} mins) • <span style={{ color: "var(--color-primary-text)", fontWeight: 500 }}>{iv.interview_type}</span>
+                          {iv.location && <span style={{ color: "var(--color-text-muted)", marginLeft: "0.5rem" }}>• {iv.location}</span>}
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                           {iv.meeting_link && (
@@ -325,7 +325,7 @@ export default function ApplicantDetailsModal({
                               target="_blank"
                               rel="noreferrer"
                               className="btn btn-ghost"
-                              style={{ fontSize: "0.75rem", padding: "0.2rem 0.4rem", color: "var(--primary)" }}
+                              style={{ fontSize: "0.75rem", padding: "0.2rem 0.4rem", color: "var(--color-primary-text)" }}
                             >
                               <Video size={13} /> Link
                             </a>
@@ -340,14 +340,14 @@ export default function ApplicantDetailsModal({
                                 iv.status === "SCHEDULED"
                                   ? "rgba(37, 99, 235, 0.1)"
                                   : iv.status === "COMPLETED"
-                                  ? "rgba(16, 185, 129, 0.1)"
+                                  ? "rgba(255, 225, 124, 0.1)"
                                   : "rgba(239, 68, 68, 0.1)",
                               color:
                                 iv.status === "SCHEDULED"
-                                  ? "var(--primary)"
+                                  ? "var(--color-primary)"
                                   : iv.status === "COMPLETED"
-                                  ? "var(--success)"
-                                  : "var(--danger)",
+                                  ? "var(--color-success)"
+                                  : "var(--color-danger)",
                             }}
                           >
                             {iv.status}
@@ -360,14 +360,14 @@ export default function ApplicantDetailsModal({
               )}
 
               {statusSuccess && (
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--success)", fontSize: "0.8125rem" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--color-success-text)", fontSize: "0.8125rem" }}>
                   <CheckCircle2 size={15} />
                   <span>{statusSuccess}</span>
                 </div>
               )}
 
               {statusError && (
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--danger)", fontSize: "0.8125rem" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--color-danger)", fontSize: "0.8125rem" }}>
                   <AlertCircle size={15} />
                   <span>{statusError}</span>
                 </div>
@@ -380,15 +380,15 @@ export default function ApplicantDetailsModal({
                     width: "60px",
                     height: "60px",
                     borderRadius: "50%",
-                    backgroundColor: "var(--primary-bg)",
-                    color: "var(--primary)",
+                    backgroundColor: "var(--color-primary-soft)",
+                    color: "var(--color-primary-text)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     fontWeight: 700,
                     fontSize: "1.25rem",
                     overflow: "hidden",
-                    border: "2px solid var(--border-color)",
+                    border: "2px solid var(--color-border)",
                     flexShrink: 0,
                   }}
                 >
@@ -400,14 +400,14 @@ export default function ApplicantDetailsModal({
                 </div>
 
                 <div style={{ flex: 1 }}>
-                  <h4 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 700, color: "var(--text-main)" }}>
+                  <h4 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 700, color: "var(--color-text)" }}>
                     {applicant?.first_name} {applicant?.last_name}
                   </h4>
-                  <div style={{ fontSize: "0.9375rem", color: "var(--primary)", fontWeight: 500, marginTop: "0.15rem" }}>
+                  <div style={{ fontSize: "0.9375rem", color: "var(--color-primary-text)", fontWeight: 500, marginTop: "0.15rem" }}>
                     {profile?.professional_title || "Job Applicant"}
                   </div>
 
-                  <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", marginTop: "0.5rem", fontSize: "0.8125rem", color: "var(--text-muted)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", marginTop: "0.5rem", fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
                       <Mail size={13} />
                       <span>{applicant?.email}</span>
@@ -444,11 +444,11 @@ export default function ApplicantDetailsModal({
 
               {/* Bio */}
               {profile?.bio && (
-                <div style={{ borderTop: "1px solid var(--border-color)", paddingTop: "1rem" }}>
-                  <h5 style={{ margin: "0 0 0.4rem 0", fontSize: "0.8125rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase" }}>
+                <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem" }}>
+                  <h5 style={{ margin: "0 0 0.4rem 0", fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase" }}>
                     Professional Summary
                   </h5>
-                  <p style={{ margin: 0, fontSize: "0.875rem", lineHeight: 1.6, color: "var(--text-main)", whiteSpace: "pre-line" }}>
+                  <p style={{ margin: 0, fontSize: "0.875rem", lineHeight: 1.6, color: "var(--color-text)", whiteSpace: "pre-line" }}>
                     {profile.bio}
                   </p>
                 </div>
@@ -456,19 +456,19 @@ export default function ApplicantDetailsModal({
 
               {/* Cover Letter */}
               {application.cover_letter && (
-                <div style={{ borderTop: "1px solid var(--border-color)", paddingTop: "1rem" }}>
-                  <h5 style={{ margin: "0 0 0.4rem 0", fontSize: "0.8125rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase" }}>
+                <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem" }}>
+                  <h5 style={{ margin: "0 0 0.4rem 0", fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase" }}>
                     Cover Letter
                   </h5>
                   <div
                     style={{
                       padding: "1rem",
-                      backgroundColor: "var(--bg-color)",
+                      backgroundColor: "var(--color-surface-muted)",
                       borderRadius: "var(--radius-md)",
-                      border: "1px solid var(--border-color)",
+                      border: "1px solid var(--color-border)",
                       fontSize: "0.875rem",
                       lineHeight: 1.6,
-                      color: "var(--text-main)",
+                      color: "var(--color-text)",
                       whiteSpace: "pre-line",
                     }}
                   >
@@ -479,10 +479,10 @@ export default function ApplicantDetailsModal({
 
               {/* Candidate Skills */}
               {skillsList.length > 0 && (
-                <div style={{ borderTop: "1px solid var(--border-color)", paddingTop: "1rem" }}>
+                <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
-                    <Award size={16} style={{ color: "var(--primary)" }} />
-                    <h5 style={{ margin: 0, fontSize: "0.875rem", fontWeight: 600, color: "var(--text-main)" }}>
+                    <Award size={16} style={{ color: "var(--color-primary-text)" }} />
+                    <h5 style={{ margin: 0, fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text)" }}>
                       Skills & Proficiency
                     </h5>
                   </div>
@@ -495,12 +495,12 @@ export default function ApplicantDetailsModal({
                           fontWeight: 500,
                           padding: "0.25rem 0.55rem",
                           borderRadius: "var(--radius-sm)",
-                          backgroundColor: "var(--bg-color)",
-                          border: "1px solid var(--border-color)",
-                          color: "var(--text-main)",
+                          backgroundColor: "var(--color-surface-muted)",
+                          border: "1px solid var(--color-border)",
+                          color: "var(--color-text)",
                         }}
                       >
-                        {sk.skill_name} {sk.level && <strong style={{ color: "var(--primary)", marginLeft: "0.25rem" }}>({sk.level})</strong>}
+                        {sk.skill_name} {sk.level && <strong style={{ color: "var(--color-primary-text)", marginLeft: "0.25rem" }}>({sk.level})</strong>}
                       </span>
                     ))}
                   </div>
@@ -509,24 +509,24 @@ export default function ApplicantDetailsModal({
 
               {/* Candidate Experience */}
               {experienceList.length > 0 && (
-                <div style={{ borderTop: "1px solid var(--border-color)", paddingTop: "1rem" }}>
+                <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
-                    <Briefcase size={16} style={{ color: "var(--primary)" }} />
-                    <h5 style={{ margin: 0, fontSize: "0.875rem", fontWeight: 600, color: "var(--text-main)" }}>
+                    <Briefcase size={16} style={{ color: "var(--color-primary-text)" }} />
+                    <h5 style={{ margin: 0, fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text)" }}>
                       Work Experience
                     </h5>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                     {experienceList.map((exp: any) => (
                       <div key={exp.id} style={{ fontSize: "0.8125rem" }}>
-                        <div style={{ fontWeight: 600, color: "var(--text-main)" }}>
-                          {exp.position} at <span style={{ color: "var(--primary)" }}>{exp.company_name}</span>
+                        <div style={{ fontWeight: 600, color: "var(--color-text)" }}>
+                          {exp.position} at <span style={{ color: "var(--color-primary-text)" }}>{exp.company_name}</span>
                         </div>
-                        <div style={{ color: "var(--text-muted)", fontSize: "0.75rem", marginTop: "0.15rem" }}>
+                        <div style={{ color: "var(--color-text-muted)", fontSize: "0.75rem", marginTop: "0.15rem" }}>
                           {exp.employment_type} {exp.location && `• ${exp.location}`} • {exp.start_date} - {exp.is_current ? "Present" : exp.end_date || "N/A"}
                         </div>
                         {exp.description && (
-                          <div style={{ color: "var(--text-muted)", marginTop: "0.25rem", whiteSpace: "pre-line" }}>
+                          <div style={{ color: "var(--color-text-muted)", marginTop: "0.25rem", whiteSpace: "pre-line" }}>
                             {exp.description}
                           </div>
                         )}
@@ -538,20 +538,20 @@ export default function ApplicantDetailsModal({
 
               {/* Candidate Education */}
               {educationList.length > 0 && (
-                <div style={{ borderTop: "1px solid var(--border-color)", paddingTop: "1rem" }}>
+                <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "1rem" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
-                    <GraduationCap size={16} style={{ color: "var(--primary)" }} />
-                    <h5 style={{ margin: 0, fontSize: "0.875rem", fontWeight: 600, color: "var(--text-main)" }}>
+                    <GraduationCap size={16} style={{ color: "var(--color-primary-text)" }} />
+                    <h5 style={{ margin: 0, fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text)" }}>
                       Education Credentials
                     </h5>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                     {educationList.map((edu: any) => (
                       <div key={edu.id} style={{ fontSize: "0.8125rem" }}>
-                        <div style={{ fontWeight: 600, color: "var(--text-main)" }}>
+                        <div style={{ fontWeight: 600, color: "var(--color-text)" }}>
                           {edu.institution} {edu.degree && `— ${edu.degree}`}
                         </div>
-                        <div style={{ color: "var(--text-muted)", fontSize: "0.75rem", marginTop: "0.15rem" }}>
+                        <div style={{ color: "var(--color-text-muted)", fontSize: "0.75rem", marginTop: "0.15rem" }}>
                           {edu.field_of_study && `Field: ${edu.field_of_study} • `}
                           {edu.start_date} - {edu.is_current ? "Present" : edu.end_date || "N/A"}
                         </div>

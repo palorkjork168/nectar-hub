@@ -1,4 +1,4 @@
-﻿const multer = require("multer");
+const multer = require("multer");
 
 const errorHandler = (err, req, res, next) => {
   // Always log full detailed error server-side for internal debugging
@@ -57,8 +57,10 @@ const errorHandler = (err, req, res, next) => {
     lowerMsg.includes("syntax error at or near") ||
     lowerMsg.includes("sequelize")
   ) {
-    statusCode = statusCode === 400 ? 400 : 500;
-    message = statusCode === 400 ? "Invalid request parameter" : "Internal server error";
+    if (statusCode >= 500) {
+      statusCode = 500;
+      message = "Internal server error";
+    }
   }
 
   // Response is ALWAYS sanitized and never exposes stack traces to clients

@@ -168,7 +168,7 @@ export default function EmployerAnalytics() {
                 style={{
                   padding: "0.4rem 0.75rem",
                   borderRadius: "var(--radius-md, 8px)",
-                  border: "1px solid var(--color-border, rgba(16, 185, 129, 0.3))",
+                  border: "1px solid var(--color-border, rgba(255, 225, 124, 0.3))",
                   fontSize: "0.9rem",
                   fontWeight: 600,
                   color: "var(--color-text-main, #f8fafc)",
@@ -373,7 +373,7 @@ export default function EmployerAnalytics() {
                     <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #64748b)" }}>
                       Active Jobs
                     </span>
-                    <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(16, 185, 129, 0.1)", color: "#10b981" }}>
+                    <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(255, 225, 124, 0.1)", color: "var(--color-primary-text)" }}>
                       <Briefcase size={18} />
                     </div>
                   </div>
@@ -429,7 +429,7 @@ export default function EmployerAnalytics() {
                     <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #64748b)" }}>
                       Confirmed Hires
                     </span>
-                    <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(5, 150, 105, 0.1)", color: "#059669" }}>
+                    <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(255, 225, 124, 0.1)", color: "var(--color-primary-text)" }}>
                       <UserCheck size={18} />
                     </div>
                   </div>
@@ -650,7 +650,7 @@ export default function EmployerAnalytics() {
                 </div>
                 <div style={{ background: "var(--color-bg-subtle, #f8fafc)", padding: "0.75rem", borderRadius: "8px" }}>
                   <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted, #64748b)" }}>Active Sessions Now</div>
-                  <div style={{ fontSize: "1.35rem", fontWeight: 700, color: "#059669" }}>
+                  <div style={{ fontSize: "1.35rem", fontWeight: 700, color: "var(--color-primary-text)" }}>
                     {data?.attendance.activeSessionsNow || 0}
                   </div>
                 </div>
@@ -699,7 +699,7 @@ export default function EmployerAnalytics() {
                   Leave Requests & Utilization
                 </h3>
                 <span style={{ fontSize: "0.8rem", color: "var(--color-text-muted, #64748b)" }}>
-                  Approved: <strong style={{ color: "#059669" }}>{data?.leave.approvedLeaveDays || 0} days</strong>
+                  Approved: <strong style={{ color: "var(--color-primary-text)" }}>{data?.leave.approvedLeaveDays || 0} days</strong>
                 </span>
               </div>
 
@@ -712,7 +712,7 @@ export default function EmployerAnalytics() {
                 </div>
                 <div style={{ background: "#f8fafc", padding: "0.5rem", borderRadius: "6px" }}>
                   <div style={{ fontSize: "0.75rem", color: "#64748b" }}>Approved</div>
-                  <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#10b981" }}>
+                  <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--color-primary-text)" }}>
                     {data?.leave.summary.approved || 0}
                   </div>
                 </div>
@@ -805,7 +805,7 @@ export default function EmployerAnalytics() {
                   style={{
                     padding: "0.4rem 0.75rem",
                     borderRadius: "6px",
-                    border: "1px solid var(--color-border, rgba(16, 185, 129, 0.25))",
+                    border: "1px solid var(--color-border, rgba(255, 225, 124, 0.25))",
                     fontSize: "0.85rem",
                     background: "#09120e",
                     color: "var(--color-text-main, #f8fafc)",
@@ -832,7 +832,7 @@ export default function EmployerAnalytics() {
                   style={{
                     padding: "0.4rem 0.75rem",
                     borderRadius: "6px",
-                    border: "1px solid var(--color-border, rgba(16, 185, 129, 0.25))",
+                    border: "1px solid var(--color-border, rgba(255, 225, 124, 0.25))",
                     fontSize: "0.85rem",
                     background: "#09120e",
                     color: "var(--color-text-main, #f8fafc)",
@@ -859,7 +859,7 @@ export default function EmployerAnalytics() {
                   style={{
                     padding: "0.4rem 0.75rem",
                     borderRadius: "6px",
-                    border: "1px solid var(--color-border, rgba(16, 185, 129, 0.25))",
+                    border: "1px solid var(--color-border, rgba(255, 225, 124, 0.25))",
                     fontSize: "0.85rem",
                     background: "#09120e",
                     color: "var(--color-text-main, #f8fafc)",
@@ -886,14 +886,14 @@ export default function EmployerAnalytics() {
                   alignItems: "center",
                   gap: "0.4rem",
                   padding: "0.5rem 1rem",
-                  background: "rgba(16, 28, 20, 0.8)",
-                  color: "#34d399",
-                  border: "1px solid rgba(16, 185, 129, 0.3)",
-                  borderRadius: "6px",
+                  background: "var(--color-surface-hover, #f1f5f9)",
+                  color: "var(--color-primary-text)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-md, 8px)",
                   fontWeight: 600,
                   fontSize: "0.85rem",
                   cursor: isExportingCsv ? "not-allowed" : "pointer",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
+                  boxShadow: "var(--shadow-xs)",
                 }}
               >
                 {isExportingCsv ? <RefreshCw size={15} className="animate-spin" /> : <Download size={15} />}
@@ -1028,14 +1028,14 @@ export default function EmployerAnalytics() {
                     <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #64748b)" }}>
                       On-Time Check-Ins
                     </span>
-                    <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(16, 185, 129, 0.1)", color: "#10b981" }}>
+                    <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(255, 225, 124, 0.1)", color: "var(--color-primary-text)" }}>
                       <CheckCircle2 size={18} />
                     </div>
                   </div>
-                  <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "#15803d" }}>
+                  <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-primary-text)" }}>
                     {attendanceData?.kpis.onTimeCount || 0}
                   </div>
-                  <div style={{ fontSize: "0.8rem", color: "#166534", fontWeight: 600 }}>
+                  <div style={{ fontSize: "0.8rem", color: "var(--color-primary-text)", fontWeight: 600 }}>
                     {attendanceData?.compliance.onTimeRate || 0}% punctuality rate
                   </div>
                 </div>
@@ -1140,14 +1140,14 @@ export default function EmployerAnalytics() {
                     <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--color-text-muted, #64748b)" }}>
                       Avg Shift Completion
                     </span>
-                    <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(16, 185, 129, 0.1)", color: "#059669" }}>
+                    <div style={{ padding: "0.4rem", borderRadius: "8px", background: "rgba(255, 225, 124, 0.1)", color: "var(--color-primary-text)" }}>
                       <Percent size={18} />
                     </div>
                   </div>
-                  <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "#047857" }}>
+                  <div style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-primary-text)" }}>
                     {attendanceData?.compliance.avgShiftCompletionPercentage || 0}%
                   </div>
-                  <div style={{ fontSize: "0.8rem", color: "#065f46" }}>
+                  <div style={{ fontSize: "0.8rem", color: "var(--color-primary-text)" }}>
                     Of total expected shift hours
                   </div>
                 </div>
@@ -1183,14 +1183,14 @@ export default function EmployerAnalytics() {
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontSize: "0.9rem", fontWeight: 600, color: "#1e293b" }}>Punctuality Compliance</span>
-                <span style={{ fontSize: "1.25rem", fontWeight: 700, color: "#15803d" }}>
+                <span style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--color-primary-text)" }}>
                   {attendanceData?.compliance.onTimeRate || 0}%
                 </span>
               </div>
               <div style={{ background: "#e2e8f0", height: "8px", borderRadius: "4px", overflow: "hidden" }}>
                 <div
                   style={{
-                    background: "#10b981",
+                    background: "#ffe17c",
                     height: "100%",
                     width: `${Math.min(attendanceData?.compliance.onTimeRate || 0, 100)}%`,
                     borderRadius: "4px",
@@ -1318,7 +1318,7 @@ export default function EmployerAnalytics() {
                           style={{
                             padding: "10px 12px",
                             fontWeight: 600,
-                            color: dept.onTimeRate >= 80 ? "#15803d" : dept.onTimeRate >= 60 ? "#d97706" : "#b91c1c",
+                            color: dept.onTimeRate >= 80 ? "var(--color-primary-text)" : dept.onTimeRate >= 60 ? "#d97706" : "#b91c1c",
                           }}
                         >
                           {dept.onTimeRate}%
@@ -1391,7 +1391,7 @@ export default function EmployerAnalytics() {
                           style={{
                             padding: "10px 12px",
                             fontWeight: 600,
-                            color: sch.onTimeRate >= 80 ? "#15803d" : sch.onTimeRate >= 60 ? "#d97706" : "#b91c1c",
+                            color: sch.onTimeRate >= 80 ? "var(--color-primary-text)" : sch.onTimeRate >= 60 ? "#d97706" : "#b91c1c",
                           }}
                         >
                           {sch.onTimeRate}%

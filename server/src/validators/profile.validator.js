@@ -5,6 +5,18 @@ const { z } = require("zod");
 // ==========================================
 
 const updateProfileSchema = z.object({
+  first_name: z
+    .string()
+    .min(1, "First name cannot be empty")
+    .max(100)
+    .optional(),
+
+  last_name: z
+    .string()
+    .min(1, "Last name cannot be empty")
+    .max(100)
+    .optional(),
+
   professional_title: z
     .string()
     .max(150)
