@@ -96,13 +96,13 @@ export default function EmployerDashboard() {
         <div>
           <div className="dashboard-pill-badge">
             <span className="dashboard-yellow-dot" />
-            <span>EMPLOYER PIPELINE</span>
+            <span>OVERVIEW</span>
           </div>
           <h1 className="dashboard-title">
-            Welcome back, {user?.first_name || "Employer"}! 👋
+            Welcome back, {user?.first_name || "Employer"}
           </h1>
           <p className="dashboard-subtitle">
-            Manage your company job listings, review inbound candidates, and track recruitment progress.
+            Manage your job listings, applicants, and recruitment.
           </p>
         </div>
         <div className="dashboard-actions-cluster">
@@ -112,7 +112,7 @@ export default function EmployerDashboard() {
           </Link>
           <Link to="/employer/company" className="btn btn-secondary">
             <Building2 size={16} />
-            <span>Manage Company</span>
+            <span>Company Profile</span>
           </Link>
         </div>
       </div>

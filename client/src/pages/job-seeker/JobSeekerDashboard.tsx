@@ -123,23 +123,23 @@ export default function JobSeekerDashboard() {
         <div>
           <div className="dashboard-pill-badge">
             <span className="dashboard-yellow-dot" />
-            <span>TALENT LAUNCHPAD</span>
+            <span>OVERVIEW</span>
           </div>
           <h1 className="dashboard-title">
-            Welcome back, {user?.first_name || "Job Seeker"}! 🚀
+            Welcome back, {user?.first_name || "Job Seeker"}
           </h1>
           <p className="dashboard-subtitle">
-            Track your job applications, interview schedules, and explore matching positions.
+            Track your applications and interview schedules.
           </p>
         </div>
         <div className="dashboard-actions-cluster">
           <Link to="/jobs" className="btn btn-primary">
             <Search size={16} />
-            <span>Browse All Jobs</span>
+            <span>Browse Jobs</span>
           </Link>
           <Link to="/job-seeker/profile" className="btn btn-secondary">
             <User size={16} />
-            <span>Edit Profile</span>
+            <span>Profile</span>
           </Link>
         </div>
       </div>

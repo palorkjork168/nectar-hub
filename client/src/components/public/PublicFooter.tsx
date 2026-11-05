@@ -14,7 +14,7 @@ export default function PublicFooter() {
             <h3 style={{ margin: 0, fontSize: "1.125rem", color: "var(--color-text)", fontWeight: 800 }}>Nectar Hub</h3>
           </div>
           <p style={{ color: "var(--color-text-muted)", fontSize: "0.875rem", lineHeight: 1.6, maxWidth: "320px" }}>
-            The unified workforce and talent platform connecting job seekers, employers, and teams across modern workplaces.
+            Connecting job seekers, employers, and modern teams.
           </p>
         </div>
 

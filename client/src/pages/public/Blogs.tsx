@@ -8,9 +8,9 @@ export default function Blogs() {
       title: "Top 10 High-Demand Skills Employers Look For in 2026",
       category: "Career Advice",
       date: "Oct 12, 2026",
-      readTime: "5 min read",
-      author: "Nectar Talent Editorial",
-      excerpt: "From AI prompt engineering to adaptive workforce leadership, explore the skills driving maximum compensation and hiring velocity.",
+      readTime: "5 min",
+      author: "Nectar Editorial",
+      excerpt: "The technical and leadership skills driving modern compensation and hiring velocity.",
       imageUrl: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80",
     },
     {
@@ -18,9 +18,9 @@ export default function Blogs() {
       title: "How to Build a High-Converting Resume That Beats ATS Filters",
       category: "Resume Guide",
       date: "Oct 08, 2026",
-      readTime: "7 min read",
-      author: "HR Insights Team",
-      excerpt: "Step-by-step guidance on formatting keywords, quantifiable achievements, and modern structural standards that recruitment engines love.",
+      readTime: "7 min",
+      author: "HR Team",
+      excerpt: "Formatting guidelines, quantifiable metrics, and structures modern ATS systems prefer.",
       imageUrl: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=800&q=80",
     },
     {
@@ -28,9 +28,9 @@ export default function Blogs() {
       title: "The Future of Hybrid Work in Southeast Asia: Trends & Strategies",
       category: "Industry Trends",
       date: "Sep 28, 2026",
-      readTime: "6 min read",
-      author: "Workforce Strategy Board",
-      excerpt: "How forward-thinking enterprises in Phnom Penh and regional hubs are structuring remote-friendly collaboration and retention.",
+      readTime: "6 min",
+      author: "Strategy Board",
+      excerpt: "How companies are structuring hybrid collaboration, shift flexibility, and retention.",
       imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
     },
   ];
@@ -40,13 +40,13 @@ export default function Blogs() {
       <div style={{ textAlign: "center", maxWidth: "750px", margin: "0 auto 3.5rem" }}>
         <div className="hero-career-pill" style={{ margin: "0 auto 1.25rem" }}>
           <Sparkles size={14} />
-          <span>Insights & Guides</span>
+          <span>Insights</span>
         </div>
         <h1 style={{ fontSize: "clamp(2.25rem, 4vw, 3.25rem)", fontWeight: 900, margin: "0 0 1rem", letterSpacing: "-0.03em" }}>
-          Workforce & Career Blogs
+          Articles & Insights
         </h1>
         <p style={{ fontSize: "1.125rem", color: "var(--color-text-secondary)", lineHeight: 1.6 }}>
-          Expert insights, market compensation analyses, interview frameworks, and recruitment strategies from regional talent leaders.
+          Practical advice on hiring, careers, and workforce trends.
         </p>
       </div>
 

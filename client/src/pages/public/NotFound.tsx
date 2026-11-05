@@ -53,7 +53,7 @@ export default function NotFound() {
           lineHeight: 1.6,
         }}
       >
-        The page you are looking for does not exist, has been removed, or is temporarily unavailable.
+        This page does not exist or has been moved.
       </p>
 
       <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "center" }}>

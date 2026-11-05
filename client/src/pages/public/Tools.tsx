@@ -25,13 +25,13 @@ export default function Tools() {
       <div style={{ textAlign: "center", maxWidth: "750px", margin: "0 auto 3.5rem" }}>
         <div className="hero-career-pill" style={{ margin: "0 auto 1.25rem" }}>
           <Sparkles size={14} />
-          <span>Workforce Utilities</span>
+          <span>Tools</span>
         </div>
         <h1 style={{ fontSize: "clamp(2.25rem, 4vw, 3.25rem)", fontWeight: 900, margin: "0 0 1rem", letterSpacing: "-0.03em" }}>
-          Career & Compensation Tools
+          Career Tools
         </h1>
         <p style={{ fontSize: "1.125rem", color: "var(--color-text-secondary)", lineHeight: 1.6 }}>
-          Practical calculators and career planning tools to evaluate your market rate, estimate net income, and craft competitive candidate profiles.
+          Calculators and utilities to evaluate compensation and assess resumes.
         </p>
       </div>
 
@@ -44,7 +44,7 @@ export default function Tools() {
             </div>
             <div>
               <h3 style={{ margin: 0, fontSize: "1.2rem", fontWeight: 800 }}>Net Pay Estimator</h3>
-              <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>Cambodia standard payroll benchmark</span>
+              <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>Salary & tax benchmark</span>
             </div>
           </div>
 
@@ -100,12 +100,12 @@ export default function Tools() {
             </div>
             <div>
               <h3 style={{ margin: 0, fontSize: "1.2rem", fontWeight: 800 }}>ATS Resume Scorecard</h3>
-              <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>Automated candidate screening readiness</span>
+              <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>Resume screening readiness</span>
             </div>
           </div>
 
           <p style={{ color: "var(--color-text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: "1.25rem" }}>
-            Test your resume formatting against the algorithms modern enterprises use before applying to competitive positions.
+            Check your resume formatting and keyword density against standard enterprise ATS algorithms.
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginBottom: "1.5rem" }}>

@@ -15,7 +15,7 @@ const { seedPermissions } = require("./database/seedPermissions");
 
 require("./models");
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 const IS_PRODUCTION = process.env.NODE_ENV === "production";
 
 let server;

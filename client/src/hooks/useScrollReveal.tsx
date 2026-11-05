@@ -128,27 +128,56 @@ export function splitWords(text: string, baseDelay = 0): React.ReactNode[] {
  */
 export function useWebsiteMotion() {
   useEffect(() => {
+    const revealSelector = "[data-rev], .rev-word-container, .rev-word";
     const isReduced = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const elements = new Set<HTMLElement>();
+    let observer: IntersectionObserver | undefined;
 
-    const elements = document.querySelectorAll<HTMLElement>("[data-rev], .rev-word-container, .rev-word");
-    if (isReduced) {
-      elements.forEach((el) => el.classList.add("is-revealed"));
-      return;
+    const reveal = (element: HTMLElement) => {
+      element.classList.add("is-revealed");
+      observer?.unobserve(element);
+    };
+
+    const observeElement = (element: HTMLElement) => {
+      if (elements.has(element)) return;
+      elements.add(element);
+      if (isReduced || !("IntersectionObserver" in window)) {
+        reveal(element);
+      } else {
+        observer?.observe(element);
+      }
+    };
+
+    const observeTree = (node: ParentNode) => {
+      if (node instanceof HTMLElement && node.matches(revealSelector)) {
+        observeElement(node);
+      }
+      node.querySelectorAll<HTMLElement>(revealSelector).forEach(observeElement);
+    };
+
+    if (!isReduced && "IntersectionObserver" in window) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              reveal(entry.target as HTMLElement);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+      );
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-revealed");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
-    );
+    observeTree(document);
 
-    elements.forEach((el) => observer.observe(el));
+    const mutationObserver = new MutationObserver((records) => {
+      records.forEach((record) => record.addedNodes.forEach((node) => {
+        if (node instanceof Element || node instanceof DocumentFragment) {
+          observeTree(node);
+        }
+      }));
+    });
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
 
     let ticking = false;
     const handleScroll = () => {
@@ -158,17 +187,25 @@ export function useWebsiteMotion() {
           const root = document.documentElement;
           root.style.setProperty("--site-scroll-y", `${scrollY}px`);
           root.style.setProperty("--hero-drift", `${Math.min(100, scrollY * 0.25)}px`);
+          elements.forEach((element) => {
+            if (!element.classList.contains("is-revealed") && element.getBoundingClientRect().top <= window.innerHeight * 0.9) {
+              reveal(element);
+            }
+          });
           ticking = false;
         });
         ticking = true;
       }
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
+    if (!isReduced) {
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      handleScroll();
+    }
 
     return () => {
-      observer.disconnect();
+      observer?.disconnect();
+      mutationObserver.disconnect();
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);

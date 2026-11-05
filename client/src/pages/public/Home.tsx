@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../services/api";
 import type { GetJobsResponse, Job } from "../../types/job";
-import JobCard from "../../components/public/JobCard";
 import EmptyState from "../../components/common/EmptyState";
 import {
   Briefcase,
@@ -16,6 +15,7 @@ import {
 import FluxHeroSection from "../../components/public/FluxHeroSection";
 import FluxServices from "../../components/public/FluxServices";
 import FluxFinalCta from "../../components/public/FluxFinalCta";
+import FeaturedRoleSpotlight from "../../components/public/FeaturedRoleSpotlight";
 import { useWebsiteMotion, splitWords } from "../../hooks/useScrollReveal";
 
 export default function Home() {
@@ -26,7 +26,7 @@ export default function Home() {
     queryFn: async () => {
       const response = await api.get<GetJobsResponse>("/jobs", {
         params: {
-          limit: 6,
+          limit: 8,
           sort_by: "created_at",
           sort_order: "desc",
         },
@@ -55,14 +55,14 @@ export default function Home() {
                 style={{ marginBottom: "0.75rem", "--d": "60ms" } as React.CSSProperties}
               >
                 <span className="flux-yellow-dot" />
-                <span className="flux-badge-text">VERIFIED PIPELINE</span>
+                <span className="flux-badge-text">FEATURED</span>
               </div>
               <h2
                 className="flux-jobs-headline rev-word-container"
                 data-rev
                 style={{ "--d": "100ms" } as React.CSSProperties}
               >
-                {splitWords("FEATURED JOB OPENINGS", 80)}
+                {splitWords("FEATURED JOBS", 80)}
                 <span className="flux-title-dot">.</span>
               </h2>
             </div>
@@ -73,7 +73,7 @@ export default function Home() {
               style={{ "--d": "140ms" } as React.CSSProperties}
             >
               <Search size={15} />
-              <span>Browse All Positions</span>
+              <span>Browse All</span>
               <ChevronRight size={16} />
             </Link>
           </div>
@@ -113,27 +113,19 @@ export default function Home() {
             <EmptyState
               icon={Briefcase}
               title="No open positions right now"
-              description="New enterprise roles are posted daily. Check back soon or register your profile to get notified."
+              description="Check back soon for new opportunities."
               action={{
-                label: "Browse Catalog",
+                label: "Browse Jobs",
                 to: "/jobs",
                 icon: Search,
               }}
             />
           )}
 
-          {/* Populated Live Jobs */}
+          {/* Populated Live Jobs: Interactive Spotlight */}
           {!isLoading && !isError && data && data.length > 0 && (
-            <div className="flux-jobs-grid">
-              {data.map((job: Job, idx: number) => (
-                <div
-                  key={job.id}
-                  data-rev
-                  style={{ "--d": `${80 + idx * 70}ms` } as React.CSSProperties}
-                >
-                  <JobCard job={job} />
-                </div>
-              ))}
+            <div data-rev style={{ "--d": "120ms" } as React.CSSProperties}>
+              <FeaturedRoleSpotlight jobs={data} />
             </div>
           )}
         </div>

@@ -150,7 +150,7 @@ export default function PublicNavbar() {
                       <span className="tools-item-title">Resume Builder</span>
                       <span style={{ fontSize: "0.65rem", fontWeight: 700, padding: "0.15rem 0.4rem", borderRadius: "4px", background: "rgba(245, 158, 11, 0.15)", color: "#d97706" }}>SOON</span>
                     </div>
-                    <div className="tools-item-sub">Craft ATS-friendly professional resumes</div>
+                    <div className="tools-item-sub">ATS-ready resume builder</div>
                   </div>
                 </Link>
 
@@ -167,7 +167,7 @@ export default function PublicNavbar() {
                   </div>
                   <div>
                     <div className="tools-item-title">Salary Calculator</div>
-                    <div className="tools-item-sub">Market benchmarks & compensation rates</div>
+                    <div className="tools-item-sub">Benchmark compensation</div>
                   </div>
                 </Link>
 
@@ -187,7 +187,7 @@ export default function PublicNavbar() {
                       <span className="tools-item-title">Career Assessment</span>
                       <span style={{ fontSize: "0.65rem", fontWeight: 700, padding: "0.15rem 0.4rem", borderRadius: "4px", background: "rgba(245, 158, 11, 0.15)", color: "#d97706" }}>SOON</span>
                     </div>
-                    <div className="tools-item-sub">Discover high-fit roles for your skills</div>
+                    <div className="tools-item-sub">Find matching roles</div>
                   </div>
                 </Link>
 
@@ -207,7 +207,7 @@ export default function PublicNavbar() {
                       <span className="tools-item-title">Interview Prep</span>
                       <span style={{ fontSize: "0.65rem", fontWeight: 700, padding: "0.15rem 0.4rem", borderRadius: "4px", background: "rgba(245, 158, 11, 0.15)", color: "#d97706" }}>SOON</span>
                     </div>
-                    <div className="tools-item-sub">Question bank & interview training</div>
+                    <div className="tools-item-sub">Practice questions & guides</div>
                   </div>
                 </Link>
               </div>
@@ -243,11 +243,11 @@ export default function PublicNavbar() {
             <div style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}>
               <Link to="/login" className="flux-nav-login">
                 <LogIn size={15} />
-                <span>LOGIN</span>
+                <span>Log In</span>
               </Link>
               <Link to="/register" className="flux-nav-waitlist-btn">
                 <UserPlus size={15} />
-                <span>GET STARTED</span>
+                <span>Sign Up</span>
               </Link>
             </div>
           )}

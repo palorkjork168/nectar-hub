@@ -6,39 +6,39 @@ export default function FluxServices() {
   const services = [
     {
       icon: Briefcase,
-      title: "Talent Recruitment & Job Portal",
+      title: "Job Portal",
       description:
-        "Fast faceted job discovery, verified candidate profiles, resume portfolios, and structured interview pipelines for employers.",
-      badge: "HIRING PIPELINE",
+        "Verified candidate profiles, resumes, and structured hiring pipelines.",
+      badge: "HIRING",
       link: "/jobs",
-      linkText: "Explore Job Openings",
+      linkText: "Explore Jobs",
     },
     {
       icon: MapPin,
-      title: "GPS-Verified Shift Attendance",
+      title: "Shift Attendance",
       description:
-        "Tamper-proof geofenced mobile clock-in and clock-out with automated lateness tracking and real-time worked hours computation.",
-      badge: "SMART ATTENDANCE",
+        "Geofenced mobile clock-in with automated hours and attendance tracking.",
+      badge: "ATTENDANCE",
       link: "/register",
       linkText: "Learn More",
     },
     {
       icon: CalendarCheck,
-      title: "HR Leave & Schedule Management",
+      title: "Leave & Schedules",
       description:
-        "Company-scoped leave types, collision-guarded approval workflows, leave balance tracking, and flexible team work schedules.",
-      badge: "WORKFORCE OPS",
+        "Custom leave policies, approval workflows, and flexible shift schedules.",
+      badge: "WORKFORCE",
       link: "/register",
       linkText: "Get Started",
     },
     {
       icon: ShieldCheck,
-      title: "Multi-Role RBAC & Governance",
+      title: "Role Permissions",
       description:
-        "Strict multi-tenant company isolation with granular platform roles for Administrators, HR Managers, Employers, Employees, and Job Seekers.",
-      badge: "ENTERPRISE SECURITY",
+        "Granular access control and secure enterprise company isolation.",
+      badge: "SECURITY",
       link: "/about",
-      linkText: "Our Governance",
+      linkText: "Learn More",
     },
   ];
 
@@ -53,14 +53,14 @@ export default function FluxServices() {
             style={{ margin: "0 auto 1.25rem", "--d": "60ms" } as React.CSSProperties}
           >
             <span className="flux-yellow-dot" />
-            <span className="flux-badge-text">OUR CORE SERVICES</span>
+            <span className="flux-badge-text">SERVICES</span>
           </div>
           <h2
             className="flux-services-headline rev-word-container"
             data-rev
             style={{ "--d": "100ms" } as React.CSSProperties}
           >
-            {splitWords("BUILT FOR MODERN WORKPLACES", 100)}
+            {splitWords("MODERN WORKFORCE", 100)}
             <span className="flux-title-dot">.</span>
           </h2>
           <p
@@ -69,7 +69,7 @@ export default function FluxServices() {
             style={{ "--d": "160ms" } as React.CSSProperties}
           >
             {splitWords(
-              "From hiring verified candidates to managing daily attendance and leave schedules, Nectar Hub powers your entire employment lifecycle.",
+              "Everything you need to hire, schedule, and manage your team in one place.",
               180
             )}
           </p>

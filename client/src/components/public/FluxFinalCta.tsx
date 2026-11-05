@@ -17,7 +17,7 @@ export default function FluxFinalCta() {
           data-rev
           style={{ "--d": "80ms" } as React.CSSProperties}
         >
-          {splitWords("READY TO ELEVATE YOUR WORKFORCE?", 80)}
+          {splitWords("READY TO GET STARTED?", 80)}
         </h2>
 
         <p
@@ -26,7 +26,7 @@ export default function FluxFinalCta() {
           style={{ "--d": "160ms" } as React.CSSProperties}
         >
           {splitWords(
-            "Whether you're hiring top talent or advancing your career, Nectar Hub gives you the modern tools to succeed.",
+            "Hire top talent or take the next step in your career.",
             140
           )}
         </p>
@@ -39,12 +39,12 @@ export default function FluxFinalCta() {
         >
           <Link to="/jobs" className="flux-final-primary-btn">
             <Search size={20} />
-            <span>FIND YOUR NEXT ROLE</span>
+            <span>FIND JOBS</span>
             <ArrowRight size={18} />
           </Link>
           <Link to="/register" className="flux-final-secondary-btn">
             <Briefcase size={20} />
-            <span>POST A JOB / SIGN UP</span>
+            <span>POST A JOB</span>
             <ArrowRight size={18} />
           </Link>
         </div>
@@ -56,9 +56,9 @@ export default function FluxFinalCta() {
         >
           <span>Free for job seekers</span>
           <span className="dot">•</span>
-          <span>No credit card required for employers</span>
+          <span>No credit card required</span>
           <span className="dot">•</span>
-          <span>Instant onboarding</span>
+          <span>Instant setup</span>
         </div>
       </div>
     </section>

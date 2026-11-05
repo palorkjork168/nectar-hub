@@ -197,7 +197,7 @@ export default function JobList() {
             <input
               type="text"
               className="jobs-search-input-field"
-              placeholder="Search by job title, skill, or keyword..."
+              placeholder="Search jobs, skills, or keywords..."
               value={search}
               onFocus={() => setShowSearchSuggestions(true)}
               onChange={(e) => {
@@ -570,7 +570,7 @@ export default function JobList() {
               <Briefcase size={36} style={{ color: "var(--color-primary-text)", margin: "0 auto 1rem" }} />
               <h3 style={{ margin: "0 0 0.5rem" }}>No matching jobs found</h3>
               <p style={{ color: "var(--color-text-muted)", maxWidth: "440px", margin: "0 auto 1.5rem", lineHeight: 1.5 }}>
-                We couldn't find any job openings matching your current search or filter criteria. Try adjusting your keywords or clearing filters.
+                No jobs match your current filters. Try adjusting keywords or clearing filters.
               </p>
               {hasActiveFilters && (
                 <button onClick={handleClearAll} className="btn btn-primary">

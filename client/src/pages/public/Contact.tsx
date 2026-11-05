@@ -18,10 +18,10 @@ export default function Contact() {
           <span>Get in Touch</span>
         </div>
         <h1 style={{ fontSize: "clamp(2.25rem, 4vw, 3.25rem)", fontWeight: 900, margin: "0 0 1rem", letterSpacing: "-0.03em" }}>
-          Contact Our Team
+          Contact Us
         </h1>
         <p style={{ fontSize: "1.125rem", color: "var(--color-text-secondary)", lineHeight: 1.6 }}>
-          Have questions regarding talent acquisition, recruitment packages, or technical assistance? We are here to help.
+          Have questions or need assistance? We're here to help.
         </p>
       </div>
 
@@ -33,8 +33,8 @@ export default function Contact() {
               <Mail size={22} />
             </div>
             <div>
-              <h4 style={{ margin: "0 0 0.25rem", fontSize: "1rem", fontWeight: 700 }}>Direct Inquiries</h4>
-              <p style={{ margin: "0 0 0.5rem", color: "var(--color-text-secondary)", fontSize: "0.875rem" }}>Our team replies within 1 business day.</p>
+              <h4 style={{ margin: "0 0 0.25rem", fontSize: "1rem", fontWeight: 700 }}>Email</h4>
+              <p style={{ margin: "0 0 0.5rem", color: "var(--color-text-secondary)", fontSize: "0.875rem" }}>We reply within 1 business day.</p>
               <a href="mailto:support@nectarhub.asia" style={{ color: "var(--color-primary-text)", fontWeight: 700, fontSize: "0.9375rem", textDecoration: "none" }}>
                 support@nectarhub.asia
               </a>
@@ -46,8 +46,8 @@ export default function Contact() {
               <Phone size={22} />
             </div>
             <div>
-              <h4 style={{ margin: "0 0 0.25rem", fontSize: "1rem", fontWeight: 700 }}>Customer Hotline</h4>
-              <p style={{ margin: "0 0 0.5rem", color: "var(--color-text-secondary)", fontSize: "0.875rem" }}>Mon - Fri, 8:00 AM - 5:30 PM (GMT+7)</p>
+              <h4 style={{ margin: "0 0 0.25rem", fontSize: "1rem", fontWeight: 700 }}>Phone</h4>
+              <p style={{ margin: "0 0 0.5rem", color: "var(--color-text-secondary)", fontSize: "0.875rem" }}>Mon - Fri, 8:00 AM - 5:30 PM</p>
               <a href="tel:+85523999888" style={{ color: "var(--color-primary-text)", fontWeight: 700, fontSize: "0.9375rem", textDecoration: "none" }}>
                 +855 (0) 23 999 888
               </a>
@@ -59,9 +59,9 @@ export default function Contact() {
               <MapPin size={22} />
             </div>
             <div>
-              <h4 style={{ margin: "0 0 0.25rem", fontSize: "1rem", fontWeight: 700 }}>Headquarters</h4>
+              <h4 style={{ margin: "0 0 0.25rem", fontSize: "1rem", fontWeight: 700 }}>Office</h4>
               <p style={{ margin: 0, color: "var(--color-text-secondary)", fontSize: "0.875rem", lineHeight: 1.5 }}>
-                Level 18, Canadia Tower, Monivong Blvd, Daun Penh, Phnom Penh, Cambodia.
+                Level 18, Canadia Tower, Phnom Penh, Cambodia.
               </p>
             </div>
           </div>
@@ -74,9 +74,9 @@ export default function Contact() {
               <div style={{ width: "54px", height: "54px", borderRadius: "50%", background: "rgba(255, 225, 124, 0.15)", color: "var(--color-primary-text)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.25rem" }}>
                 <CheckCircle2 size={32} />
               </div>
-              <h3 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "0 0 0.5rem" }}>Message Dispatched</h3>
+              <h3 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "0 0 0.5rem" }}>Message Sent</h3>
               <p style={{ color: "var(--color-text-secondary)", fontSize: "0.9375rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
-                Thank you for contacting Nectar Hub. One of our talent consultants will reach out to you shortly.
+                Thanks for reaching out. We will get back to you shortly.
               </p>
               <button type="button" onClick={() => setSubmitted(false)} className="btn btn-secondary">
                 Send Another Message
@@ -84,8 +84,8 @@ export default function Contact() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-              <h3 style={{ fontSize: "1.35rem", fontWeight: 800, margin: "0 0 0.25rem" }}>Send a Direct Message</h3>
-              <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", margin: "0 0 0.5rem" }}>Fill in the details below and we will get right back to you.</p>
+              <h3 style={{ fontSize: "1.35rem", fontWeight: 800, margin: "0 0 0.25rem" }}>Send a Message</h3>
+              <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", margin: "0 0 0.5rem" }}>Leave your message below and we'll reply soon.</p>
 
               <div>
                 <label style={{ display: "block", fontSize: "0.8125rem", fontWeight: 700, marginBottom: "0.35rem" }}>Your Name</label>
@@ -138,7 +138,7 @@ export default function Contact() {
 
               <button type="submit" className="btn btn-primary" style={{ padding: "0.85rem", justifyContent: "center", marginTop: "0.5rem" }}>
                 <Send size={16} />
-                <span>Submit Message</span>
+                <span>Send Message</span>
               </button>
             </form>
           )}

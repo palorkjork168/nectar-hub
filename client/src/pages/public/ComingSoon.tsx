@@ -181,7 +181,7 @@ export default function ComingSoon() {
               margin: "0 auto 2.5rem",
             }}
           >
-            We are actively engineering and polishing this capability for Nectar Hub v1.1. Our team is finalizing rigorous testing, data validation, and seamless integration with existing jobs and employee tools.
+            We are actively building and testing this feature for the next release.
           </p>
 
           {/* Interactive Roadmap Stepper */}

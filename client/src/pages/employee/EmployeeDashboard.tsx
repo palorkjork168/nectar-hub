@@ -217,10 +217,10 @@ export default function EmployeeDashboard() {
         <div>
           <div className="dashboard-pill-badge">
             <span className="dashboard-yellow-dot" />
-            <span>DAILY WORKSPACE</span>
+            <span>OVERVIEW</span>
           </div>
-          <h1 className="dashboard-title">Good day, {user?.first_name || "Employee"}! 👋</h1>
-          <p className="dashboard-subtitle">Track your daily shift attendance and review your work hours.</p>
+          <h1 className="dashboard-title">Good day, {user?.first_name || "Employee"}</h1>
+          <p className="dashboard-subtitle">Track shift attendance and work hours.</p>
         </div>
         <div className="dashboard-actions-cluster">
           <button
@@ -237,11 +237,11 @@ export default function EmployeeDashboard() {
           </button>
           <Link to="/employee/leave" className="btn btn-primary">
             <Calendar size={16} />
-            <span>Request Time Off</span>
+            <span>Request Leave</span>
           </Link>
           <Link to="/employee/attendance" className="btn btn-secondary">
             <History size={16} />
-            <span>Attendance History</span>
+            <span>History</span>
           </Link>
         </div>
       </div>

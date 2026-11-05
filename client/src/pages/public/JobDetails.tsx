@@ -370,7 +370,7 @@ export default function JobDetails() {
         {/* Right Sticky Sidebar Column matching Reference Image 3 */}
         <aside className="job-details-sidebar-column">
           <div className="card job-details-sidebar-card">
-            <h3 className="sidebar-apply-title">Apply for this position</h3>
+            <h3 className="sidebar-apply-title">Apply for Position</h3>
 
             {/* Main Apply Button */}
             {applySuccess ? (
@@ -396,7 +396,7 @@ export default function JobDetails() {
                 className={`sidebar-action-btn ${isSaved ? "saved" : ""}`}
               >
                 {isSaved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
-                <span>{isSaved ? "Saved" : "Save Job"}</span>
+                <span>{isSaved ? "Saved" : "Save"}</span>
               </button>
 
               <button
@@ -405,7 +405,7 @@ export default function JobDetails() {
                 className="sidebar-action-btn"
               >
                 <Share2 size={16} />
-                <span>Share Job</span>
+                <span>Share</span>
               </button>
             </div>
 
@@ -485,9 +485,9 @@ export default function JobDetails() {
                 >
                   <CheckCircle2 size={32} />
                 </div>
-                <h3 style={{ margin: "0 0 0.5rem 0" }}>Application Submitted!</h3>
+                <h3 style={{ margin: "0 0 0.5rem 0" }}>Application Submitted</h3>
                 <p style={{ color: "var(--text-muted)", margin: "0 0 1.5rem 0", lineHeight: 1.5 }}>
-                  Your application and profile have been delivered to the hiring team at {jobData.Company?.name}.
+                  The hiring team has received your application.
                 </p>
                 <button onClick={() => setIsApplyModalOpen(false)} className="btn btn-primary">
                   Done
@@ -518,7 +518,7 @@ export default function JobDetails() {
                     <textarea
                       className="input-field"
                       rows={5}
-                      placeholder="Share why you're a great fit for this position and company..."
+                      placeholder="Why are you a good fit for this role?"
                       value={coverLetter}
                       onChange={(e) => setCoverLetter(e.target.value)}
                       maxLength={5000}
@@ -530,7 +530,7 @@ export default function JobDetails() {
 
                   <div className="form-group">
                     <label className="form-label" style={{ display: "flex", alignItems: "center", gap: "0.375rem" }}>
-                      <Link2 size={15} /> Online CV / Portfolio URL <span style={{ color: "var(--text-muted)", fontWeight: 400 }}>(Optional)</span>
+                      <Link2 size={15} /> CV / Portfolio URL <span style={{ color: "var(--text-muted)", fontWeight: 400 }}>(Optional)</span>
                     </label>
                     <input
                       type="url"

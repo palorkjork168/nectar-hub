@@ -115,6 +115,86 @@
   z-index: 0;
 }
 
+/* Ambient Slow Floating Aurora Blobs */
+.flux-hero-ambient-wrap {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.flux-ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  will-change: transform;
+}
+
+.flux-ambient-orb-1 {
+  top: -10%;
+  left: 28%;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(255, 225, 124, 0.45) 0%, rgba(255, 217, 92, 0.15) 50%, transparent 75%);
+  animation: fluxOrbFloat1 18s ease-in-out infinite alternate;
+}
+
+.flux-ambient-orb-2 {
+  bottom: 8%;
+  right: 12%;
+  width: 440px;
+  height: 440px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, rgba(14, 165, 233, 0.08) 50%, transparent 75%);
+  animation: fluxOrbFloat2 22s ease-in-out infinite alternate;
+}
+
+.flux-ambient-orb-3 {
+  bottom: 12%;
+  left: 8%;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.06) 50%, transparent 75%);
+  animation: fluxOrbFloat3 26s ease-in-out infinite alternate;
+}
+
+@keyframes fluxOrbFloat1 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(35px, 25px) scale(1.08);
+  }
+  100% {
+    transform: translate(-25px, 40px) scale(0.96);
+  }
+}
+
+@keyframes fluxOrbFloat2 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-45px, -35px) scale(1.1);
+  }
+  100% {
+    transform: translate(20px, -20px) scale(0.94);
+  }
+}
+
+@keyframes fluxOrbFloat3 {
+  0% {
+    transform: translate(0, 0) scale(0.96);
+  }
+  50% {
+    transform: translate(30px, -30px) scale(1.06);
+  }
+  100% {
+    transform: translate(-15px, 15px) scale(1);
+  }
+}
+
 .flux-hero-container {
   position: relative;
   z-index: 1;
@@ -1470,6 +1550,413 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.75rem;
+}
+
+/* ==========================================================================
+   INTERACTIVE ROLE SPOTLIGHT SHOWCASE (HOME PAGE FEATURED SECTION)
+   ========================================================================== */
+.spotlight-showcase-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.spotlight-category-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+  padding-bottom: 0.5rem;
+}
+
+.spotlight-cat-pill {
+  padding: 0.5rem 1.15rem;
+  border-radius: 9999px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-flux-card-border-strong);
+  color: var(--color-text-secondary);
+  font-family: var(--font-body, 'Onest', sans-serif);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.spotlight-cat-pill:hover {
+  color: var(--color-text);
+  border-color: var(--color-flux-yellow, #ffe17c);
+  transform: translateY(-1px);
+}
+
+.spotlight-cat-pill.active {
+  background: var(--color-flux-yellow, #ffe17c);
+  color: #111827;
+  border-color: var(--color-flux-yellow, #ffe17c);
+  box-shadow: 0 4px 14px rgba(255, 225, 124, 0.35);
+}
+
+.spotlight-dual-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .spotlight-dual-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Left Column: Role Selector Feed */
+.spotlight-role-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.spotlight-role-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.15rem 1.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-flux-card-border-strong);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  user-select: none;
+}
+
+.spotlight-role-row:hover {
+  transform: translateX(4px);
+  border-color: var(--color-flux-yellow, #ffe17c);
+}
+
+.spotlight-role-row.is-selected {
+  border-color: var(--color-flux-yellow, #ffe17c);
+  background: var(--color-surface);
+  box-shadow: 0 8px 24px rgba(255, 225, 124, 0.18);
+  position: relative;
+}
+
+.spotlight-role-row.is-selected::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 15%;
+  bottom: 15%;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--color-flux-yellow, #ffe17c);
+}
+
+.spotlight-mini-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-flux-card-border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.spotlight-mini-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.spotlight-row-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.spotlight-row-title-line {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.spotlight-row-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spotlight-mini-badge.remote {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  background: rgba(56, 189, 248, 0.12);
+  color: #0284c7;
+  letter-spacing: 0.02em;
+}
+
+.spotlight-row-company-line {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.spotlight-row-company {
+  font-weight: 600;
+}
+
+.spotlight-sep {
+  opacity: 0.4;
+}
+
+.spotlight-row-loc {
+  color: var(--color-text-muted);
+}
+
+.spotlight-row-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.spotlight-salary-tag {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-primary-text);
+  background: rgba(255, 225, 124, 0.15);
+  padding: 0.3rem 0.65rem;
+  border-radius: 8px;
+}
+
+.spotlight-row-chevron {
+  color: var(--color-text-muted);
+  transition: transform 0.2s ease;
+}
+
+.spotlight-role-row.is-selected .spotlight-row-chevron {
+  color: var(--color-primary-text);
+  transform: translateX(3px);
+}
+
+.spotlight-empty-state {
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px dashed var(--color-flux-card-border-strong);
+  border-radius: 16px;
+  color: var(--color-text-muted);
+}
+
+/* Right Column: Spotlight Preview Desk */
+.spotlight-preview-card {
+  position: sticky;
+  top: 100px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-flux-card-border-strong);
+  border-radius: 20px;
+  padding: 2.25rem 2rem;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.spotlight-preview-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.spotlight-preview-company-box {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.spotlight-preview-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-flux-card-border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--color-text);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.spotlight-preview-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.spotlight-preview-company-name {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.spotlight-preview-verified-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.spotlight-verified-icon {
+  color: #10b981;
+}
+
+.spotlight-preview-pill {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  background: rgba(255, 225, 124, 0.25);
+  color: #92400e;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.spotlight-preview-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 900;
+  line-height: 1.25;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+.spotlight-metric-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--color-bg-secondary);
+  border-radius: 14px;
+}
+
+@media (max-width: 600px) {
+  .spotlight-metric-tiles {
+    grid-template-columns: 1fr;
+  }
+}
+
+.spotlight-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.spotlight-tile-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  letter-spacing: 0.04em;
+}
+
+.spotlight-tile-val {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.spotlight-tile-val.highlighted {
+  color: var(--color-primary-text);
+  font-size: 0.9375rem;
+}
+
+.spotlight-preview-desc {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.spotlight-perks-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.spotlight-perk-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.spotlight-perk-item svg {
+  color: #10b981;
+}
+
+.spotlight-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-flux-card-border-strong);
+  flex-wrap: wrap;
+}
+
+.spotlight-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.4rem;
+  border-radius: 12px;
+  background: var(--color-flux-yellow, #ffe17c);
+  color: #111827;
+  font-weight: 800;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.spotlight-view-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 225, 124, 0.35);
+}
+
+.spotlight-catalog-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.spotlight-catalog-link:hover {
+  color: var(--color-text);
 }
 
 .flux-error-card {

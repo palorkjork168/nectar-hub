@@ -11,11 +11,10 @@ export default function AboutUs() {
           <span>About Nectar Hub</span>
         </div>
         <h1 style={{ fontSize: "clamp(2.25rem, 4vw, 3.5rem)", fontWeight: 900, lineHeight: 1.15, margin: "0 0 1.25rem", letterSpacing: "-0.03em" }}>
-          Connecting Talent with Enterprise Opportunity
+          Connecting Talent & Teams
         </h1>
         <p style={{ fontSize: "1.125rem", color: "var(--color-text-secondary)", lineHeight: 1.7, margin: "0 auto" }}>
-          Inspired by leading global workforce ecosystems, Nectar Hub is Cambodia and Southeast Asia's modern workforce platform.
-          We empower professionals to accelerate their careers and enable forward-thinking companies to discover, manage, and nurture verified talent.
+          A modern workforce platform empowering professionals to grow and companies to hire, manage, and succeed.
         </p>
       </div>
 
@@ -27,7 +26,7 @@ export default function AboutUs() {
           </div>
           <h2 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "0 0 0.75rem" }}>Our Mission</h2>
           <p style={{ color: "var(--color-text-secondary)", lineHeight: 1.7, margin: 0 }}>
-            To bridge the gap between education and real-world employment by providing transparent, skill-verified recruitment pathways, training solutions, and modern workforce intelligence.
+            Bridge the gap between talent and opportunity through verified hiring, skills training, and modern tools.
           </p>
         </div>
 
@@ -37,7 +36,7 @@ export default function AboutUs() {
           </div>
           <h2 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "0 0 0.75rem" }}>Our Standards</h2>
           <p style={{ color: "var(--color-text-secondary)", lineHeight: 1.7, margin: 0 }}>
-            Every job opening, employer, and candidate on Nectar Hub is authenticated with enterprise diligence to protect data integrity, prevent fraud, and establish trusted career growth.
+            Every job, company, and candidate profile is authenticated to ensure data integrity, trust, and safety.
           </p>
         </div>
 
@@ -45,45 +44,45 @@ export default function AboutUs() {
           <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "rgba(245, 158, 11, 0.12)", color: "#f59e0b", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.5rem" }}>
             <Award size={24} />
           </div>
-          <h2 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "0 0 0.75rem" }}>Training & Development</h2>
+          <h2 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "0 0 0.75rem" }}>Training & Growth</h2>
           <p style={{ color: "var(--color-text-secondary)", lineHeight: 1.7, margin: 0 }}>
-            In addition to recruitment, we partner with industry leaders to provide vocational skill workshops, HR solutions, and career readiness training tailored for regional market demand.
+            Practical workshops and skill programs designed to meet current market demands.
           </p>
         </div>
       </div>
 
       {/* Stats Counter Bar */}
       <div className="card" style={{ padding: "3rem 2rem", borderRadius: "var(--radius-xl)", background: "linear-gradient(135deg, #ffe17c 0%, #ffe17c 60%, #ffe17c 100%)", color: "#ffffff", textAlign: "center", marginBottom: "4rem", boxShadow: "0 16px 36px rgba(255, 225, 124, 0.25)" }}>
-        <h2 style={{ fontSize: "1.85rem", fontWeight: 800, margin: "0 0 2rem", color: "#ffffff" }}>Proven Impact in Numbers</h2>
+        <h2 style={{ fontSize: "1.85rem", fontWeight: 800, margin: "0 0 2rem", color: "#ffffff" }}>Platform Impact</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "2rem" }}>
           <div>
             <div style={{ fontSize: "2.75rem", fontWeight: 900 }}>12,500+</div>
-            <div style={{ opacity: 0.9, fontSize: "0.9375rem" }}>Successful Placements</div>
+            <div style={{ opacity: 0.9, fontSize: "0.9375rem" }}>Placements</div>
           </div>
           <div>
             <div style={{ fontSize: "2.75rem", fontWeight: 900 }}>650+</div>
-            <div style={{ opacity: 0.9, fontSize: "0.9375rem" }}>Partner Organizations</div>
+            <div style={{ opacity: 0.9, fontSize: "0.9375rem" }}>Partners</div>
           </div>
           <div>
-            <div style={{ fontSize: "2.75rem", fontWeight: 900 }}>98.4%</div>
-            <div style={{ opacity: 0.9, fontSize: "0.9375rem" }}>Employer Retention Rate</div>
+            <div style={{ fontSize: "2.75rem", fontWeight: 900 }}>98%</div>
+            <div style={{ opacity: 0.9, fontSize: "0.9375rem" }}>Retention Rate</div>
           </div>
           <div>
             <div style={{ fontSize: "2.75rem", fontWeight: 900 }}>25+</div>
-            <div style={{ opacity: 0.9, fontSize: "0.9375rem" }}>Training Programs</div>
+            <div style={{ opacity: 0.9, fontSize: "0.9375rem" }}>Programs</div>
           </div>
         </div>
       </div>
 
       {/* CTA Footer */}
       <div style={{ textAlign: "center" }}>
-        <h3 style={{ fontSize: "1.75rem", fontWeight: 800, margin: "0 0 1rem" }}>Ready to find your next opportunity?</h3>
+        <h3 style={{ fontSize: "1.75rem", fontWeight: 800, margin: "0 0 1rem" }}>Ready to get started?</h3>
         <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
           <Link to="/jobs" className="btn btn-primary" style={{ padding: "0.85rem 2rem" }}>
-            Browse Open Roles <ArrowUpRight size={16} />
+            Browse Jobs <ArrowUpRight size={16} />
           </Link>
           <Link to="/register" className="btn btn-secondary" style={{ padding: "0.85rem 2rem" }}>
-            Register as Candidate
+            Sign Up
           </Link>
         </div>
       </div>

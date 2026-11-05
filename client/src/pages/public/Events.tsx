@@ -8,32 +8,32 @@ export default function Events() {
       title: "Cambodia Tech & HR Career Expo 2026",
       date: "Nov 15, 2026",
       time: "9:00 AM - 5:00 PM",
-      location: "Diamond Island Convention Center, Phnom Penh",
+      location: "Diamond Island, Phnom Penh",
       category: "Job Fair",
       attendees: "3,500+ Registered",
-      description: "Meet face-to-face with hiring leaders from 80+ top companies across technology, banking, logistics, and hospitality.",
+      description: "Connect directly with hiring leaders from 80+ top companies across technology, banking, and logistics.",
       badgeColor: "#0284c7",
     },
     {
       id: 2,
-      title: "Resume & Interview Mastery Masterclass",
+      title: "Resume & Interview Masterclass",
       date: "Nov 22, 2026",
       time: "2:00 PM - 4:30 PM",
-      location: "Live Interactive Webinar",
+      location: "Live Webinar",
       category: "Workshop",
       attendees: "1,200+ Attending",
-      description: "Learn how to optimize your resume for ATS screening, articulate your career story, and ace technical interviews.",
+      description: "Learn ATS resume optimization, interview communication, and salary negotiation skills.",
       badgeColor: "#ffe17c",
     },
     {
       id: 3,
-      title: "Executive HR & Talent Acquisition Summit",
+      title: "HR & Talent Acquisition Summit",
       date: "Dec 05, 2026",
       time: "8:30 AM - 4:00 PM",
       location: "Rosewood Phnom Penh",
       category: "Conference",
       attendees: "300+ Executives",
-      description: "Strategic conference for HR directors, CEOs, and talent acquisition leaders on modern workforce management and retention.",
+      description: "Insights on modern workforce operations, retention strategies, and regional market trends.",
       badgeColor: "#f59e0b",
     },
   ];
@@ -43,13 +43,13 @@ export default function Events() {
       <div style={{ textAlign: "center", maxWidth: "750px", margin: "0 auto 3.5rem" }}>
         <div className="hero-career-pill" style={{ margin: "0 auto 1.25rem" }}>
           <Sparkles size={14} />
-          <span>Upcoming Gatherings</span>
+          <span>Events</span>
         </div>
         <h1 style={{ fontSize: "clamp(2.25rem, 4vw, 3.25rem)", fontWeight: 900, margin: "0 0 1rem", letterSpacing: "-0.03em" }}>
-          Career Events, Job Fairs & Workshops
+          Events & Workshops
         </h1>
         <p style={{ fontSize: "1.125rem", color: "var(--color-text-secondary)", lineHeight: 1.6 }}>
-          Participate in premier career expos, skill development webinars, and employer networking events designed to elevate your professional trajectory.
+          Career expos, masterclasses, and networking sessions.
         </p>
       </div>
 

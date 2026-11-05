@@ -114,10 +114,10 @@ export default function Login() {
             </div>
           </Link>
           <h1 style={{ fontSize: "1.5rem", fontWeight: 800, margin: "0 0 0.375rem", color: "var(--color-text)" }}>
-            Sign in to continue
+            Sign in
           </h1>
           <p style={{ color: "var(--color-text-secondary)", fontSize: "0.875rem", margin: 0 }}>
-            Access your jobs, applications, and workforce portal.
+            Welcome back. Please enter your details.
           </p>
         </div>
 

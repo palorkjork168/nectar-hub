@@ -55,24 +55,24 @@ export default function AdminDashboard() {
 
   const statCards = [
     {
-      label: "Total Registered Users",
+      label: "Total Users",
       value: stats?.users ?? 0,
       icon: Users,
       color: "#2563eb",
       bg: "rgba(37, 99, 235, 0.1)",
       border: "rgba(37, 99, 235, 0.2)",
       link: "/admin/employees",
-      linkText: "View staff list",
+      linkText: "Staff list",
     },
     {
-      label: "Registered Companies",
+      label: "Companies",
       value: stats?.companies ?? 0,
       icon: Building2,
       color: "var(--color-primary-text)",
       bg: "rgba(255, 225, 124, 0.1)",
       border: "rgba(255, 225, 124, 0.2)",
       link: "/employer/company",
-      linkText: "Tenant directory",
+      linkText: "Directory",
     },
     {
       label: "Published Jobs",
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
       bg: "rgba(124, 58, 237, 0.1)",
       border: "rgba(124, 58, 237, 0.2)",
       link: "/employer/jobs",
-      linkText: "Manage listings",
+      linkText: "Manage jobs",
     },
     {
       label: "Job Applications",
@@ -92,7 +92,7 @@ export default function AdminDashboard() {
       bg: "rgba(217, 119, 6, 0.1)",
       border: "rgba(217, 119, 6, 0.2)",
       link: "/admin/analytics",
-      linkText: "Review conversion",
+      linkText: "Analytics",
     },
     {
       label: "Active Employees",
@@ -102,17 +102,17 @@ export default function AdminDashboard() {
       bg: "rgba(2, 132, 199, 0.1)",
       border: "rgba(2, 132, 199, 0.2)",
       link: "/admin/employees",
-      linkText: "Employee roster",
+      linkText: "Roster",
     },
     {
-      label: "Pending Leave Requests",
+      label: "Pending Leaves",
       value: stats?.pending_leaves ?? 0,
       icon: Calendar,
       color: "#dc2626",
       bg: "rgba(220, 38, 38, 0.1)",
       border: "rgba(220, 38, 38, 0.2)",
       link: "/admin/roles",
-      linkText: "HR governance",
+      linkText: "Governance",
     },
   ];
 
@@ -123,11 +123,11 @@ export default function AdminDashboard() {
         <div>
           <div className="dashboard-pill-badge">
             <span className="dashboard-yellow-dot" />
-            <span>SYSTEM OPERATIONS</span>
+            <span>OVERVIEW</span>
           </div>
           <h1 className="dashboard-title">Platform Admin Console</h1>
           <p className="dashboard-subtitle">
-            Cross-tenant platform overview of workforce operations, vacancies, and hiring pipelines.
+            Platform overview of workforce operations, jobs, and metrics.
           </p>
         </div>
         <div className="dashboard-actions-cluster">
@@ -137,7 +137,7 @@ export default function AdminDashboard() {
           </Link>
           <Link to="/admin/analytics" className="btn btn-secondary">
             <BarChart3 size={16} />
-            <span>Platform Analytics</span>
+            <span>Analytics</span>
           </Link>
         </div>
       </div>
